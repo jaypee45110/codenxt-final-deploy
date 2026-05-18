@@ -1,2916 +1,2340 @@
-import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import QRCodeStyling from 'qr-code-styling';
-import { getLang } from '../i18n';
-import roundQrImage from '../assets/round-qr.png';
-import setlistImg from '../assets/setlist.png';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import QRCode from 'qrcode';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import { getLang, setLang as persistLang, t as getAppCopy } from '../i18n';
+import badgeBase from '../assets/cpBadges/codepod-badge.png';
 
-const API_BASE = "https://codenxt-backend-production.up.railway.app";
-export default function Dashboard() {
-  const saved = (() => {
+const API_BASE = 'https://codenxt-backend-production.up.railway.app';
+const STORAGE_KEYS = ['codenxt_event', 'codepod_latest_event'];
+const BONUS_TIERS = ['gold', 'silver', 'general'];
+const BONUS_TYPES = ['pdf', 'image', 'audio', 'video', 'url'];
+const DEFAULT_TIER_SPLIT = { gold: 10, silver: 20, general: 70 };
+
+const dashboardCopy = {
+  no: {
+    title: 'KONTROLLSENTER',
+    subtitle: 'Kontrollpanel for presentasjon, bonusinnhold og rapportering.',
+    byline: 'codePod by codeNXT',
+    missingEpisode: 'Ingen episode funnet. Opprett episoden i Checkout først.',
+    refreshData: 'Oppdater fra Checkout',
+    podcastFallback: 'Podcast mangler',
+    episodeFallback: 'Episode mangler',
+    logoFallback: 'Logo klargjøres fra Checkout',
+    publishDate: 'Publ. dato',
+    expectedListeners: 'Antatt lyttere',
+    host: 'Vert',
+    episodeCode: 'Episodekode',
+    platform: 'Plattform',
+    listenerLink: 'Lytterlenke',
+    scans: 'Skanninger',
+    uniqueScans: 'Unike skanninger',
+    insideJoins: 'InSide joins',
+    conversionRate: 'Konverteringsrate',
+    presentation: 'Presentasjon',
+    insideMessage: 'Bli med i InSide',
+    downloadImage: 'Last ned bilde',
+    presentationHint: 'Legg bildet inn som hale etter podcasten. Anbefalt varighet: 12 sekunder.',
+    imageReady: 'Bilde klart.',
+    imageError: 'Kunne ikke lage bilde. Prøv igjen.',
+    bonus: 'Bonus',
+    bonusHelp: 'Bonusinnhold for hver InSide-niva.',
+    tierCount: 'Antall bonusnivåer',
+    tierCount1: '1 nivå: Gull',
+    tierCount2: '2 nivåer: Gull + Sølv',
+    tierCount3: '3 nivåer: Gull + Sølv + Generell',
+    tier: 'Nivå',
+    gold: 'Gull',
+    silver: 'Sølv',
+    general: 'Generell',
+    titleLabel: 'Tittel',
+    description: 'Beskrivelse',
+    type: 'Type',
+    pdf: 'PDF',
+    image: 'Bilde',
+    audio: 'Lyd',
+    video: 'Video',
+    url: 'Lenke',
+    fileOrUrl: 'Fil eller URL',
+    chooseFile: 'Velg fil',
+    edit: 'Rediger',
+    saveBonus: 'Lagre bonus',
+    savingBonus: 'Lagrer...',
+    saved: 'Lagret',
+    empty: 'Tom',
+    localFallback: 'Backend svarte ikke. Bonusen er lagret lokalt.',
+    ready: 'Klar',
+    notSet: 'Ikke satt',
+    report: 'Rapport',
+    reportHelp: 'Hent rapport eller last ned CSV for episoden.',
+    viewReport: 'Hent rapport',
+    downloadCsv: 'Last ned CSV',
+    reportUnavailable: 'Rapport-endepunktet er ikke tilgjengelig. Lokale tall vises hvis de finnes.',
+    reportPdfTitle: 'Podcastrapport',
+    collaborationLabel: 'I samarbeid med',
+    sentDate: 'Sendt dato',
+    eventCodeLabel: 'Eventkode',
+    bonusDistribution24h: 'Bonusfordeling (24 timer etter release)',
+    bonusActive24h: '${esc(text.bonusActive24h || text.bonusDistribution24h || "Bonus aktiv: 24 timer etter release")}',
+    csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
+    unavailable: 'Ikke tilgjengelig',
+  },
+  en: {
+    title: 'CONTROL CENTER',
+    subtitle: 'Control panel for presentation, bonus content, and reporting.',
+    byline: 'codePod by codeNXT',
+    missingEpisode: 'No episode found. Create the episode in Checkout first.',
+    refreshData: 'Refresh from Checkout',
+    podcastFallback: 'Podcast missing',
+    episodeFallback: 'Episode missing',
+    logoFallback: 'Logo prepared from Checkout',
+    publishDate: 'Publ. date',
+    expectedListeners: 'Expected listeners',
+    host: 'Host',
+    episodeCode: 'Episode code',
+    platform: 'Platform',
+    listenerLink: 'Listener link',
+    scans: 'Scans',
+    uniqueScans: 'Unique scans',
+    insideJoins: 'InSide joins',
+    conversionRate: 'Conversion rate',
+    presentation: 'Presentation',
+    insideMessage: 'Join InSide',
+    downloadImage: 'Download image',
+    presentationHint: 'Use this image as a tail after the podcast. Recommended duration: 12 seconds.',
+    imageReady: 'Image ready.',
+    imageError: 'Could not create image. Try again.',
+    bonus: 'Bonus',
+    bonusHelp: 'Only bonus content is managed here. Podcast data comes from Checkout.',
+    tier: 'Tier',
+    gold: 'Gold',
+    silver: 'Silver',
+    general: 'General',
+    titleLabel: 'Title',
+    description: 'Description',
+    type: 'Type',
+    pdf: 'PDF',
+    image: 'Image',
+    audio: 'Audio',
+    video: 'Video',
+    url: 'Link',
+    fileOrUrl: 'File or URL',
+    chooseFile: 'Choose file',
+    edit: 'Edit',
+    saveBonus: 'Save bonus',
+    savingBonus: 'Saving...',
+    saved: 'Saved',
+    empty: 'Empty',
+    localFallback: 'The backend did not respond. Bonus saved locally.',
+    ready: 'Ready',
+    notSet: 'Not set',
+    report: 'Report',
+    reportHelp: 'View the report or download CSV for the episode.',
+    viewReport: 'View report',
+    downloadCsv: 'Download CSV',
+    reportUnavailable: 'The report endpoint is not available. Local numbers are shown if present.',
+    reportPdfTitle: 'Podcast report',
+    collaborationLabel: 'In collaboration with',
+    sentDate: 'Release date',
+    eventCodeLabel: 'Event code',
+    bonusDistribution24h: 'Bonus distribution (24 hours after release)',
+    bonusActive24h: 'Bonus active: 24 hours after release',
+    csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
+    unavailable: 'Unavailable',
+  },
+  de: {
+    title: 'KONTROLLZENTRUM',
+    subtitle: 'Kontrollpanel fuer Praesentation, Bonusinhalte und Reporting.',
+    byline: 'codePod by codeNXT',
+    missingEpisode: 'Keine Episode gefunden. Erstelle die Episode zuerst im Checkout.',
+    refreshData: 'Aus Checkout aktualisieren',
+    podcastFallback: 'Podcast fehlt',
+    episodeFallback: 'Episode fehlt',
+    logoFallback: 'Logo aus Checkout vorbereitet',
+    publishDate: 'Veroeff. datum',
+    expectedListeners: 'Erwartete Hoerer',
+    host: 'Host',
+    episodeCode: 'Episodencode',
+    platform: 'Plattform',
+    listenerLink: 'Hoererlink',
+    scans: 'Scans',
+    uniqueScans: 'Einmalige Scans',
+    insideJoins: 'InSide-Beitritte',
+    conversionRate: 'Conversion Rate',
+    presentation: 'Praesentation',
+    insideMessage: 'InSide beitreten',
+    downloadImage: 'Bild herunterladen',
+    presentationHint: 'Dieses Bild als Abspann nach dem Podcast verwenden. Empfohlene Dauer: 12 Sekunden.',
+    imageReady: 'Bild bereit.',
+    imageError: 'Bild konnte nicht erstellt werden. Bitte erneut versuchen.',
+    bonus: 'Bonus',
+    bonusHelp: 'Hier werden nur Bonusinhalte verwaltet. Podcastdaten kommen aus Checkout.',
+    tier: 'Stufe',
+    gold: 'Gold',
+    silver: 'Silber',
+    general: 'Allgemein',
+    titleLabel: 'Titel',
+    description: 'Beschreibung',
+    type: 'Typ',
+    pdf: 'PDF',
+    image: 'Bild',
+    audio: 'Audio',
+    video: 'Video',
+    url: 'Link',
+    fileOrUrl: 'Datei oder URL',
+    chooseFile: 'Datei waehlen',
+    edit: 'Bearbeiten',
+    saveBonus: 'Bonus speichern',
+    savingBonus: 'Speichert...',
+    saved: 'Gespeichert',
+    empty: 'Leer',
+    localFallback: 'Das Backend hat nicht geantwortet. Bonus lokal gespeichert.',
+    ready: 'Bereit',
+    notSet: 'Nicht gesetzt',
+    report: 'Bericht',
+    reportHelp: 'Bericht ansehen oder CSV fuer die Episode herunterladen.',
+    viewReport: 'Bericht ansehen',
+    downloadCsv: 'CSV herunterladen',
+    reportUnavailable: 'Der Report-Endpunkt ist nicht verfuegbar. Lokale Zahlen werden angezeigt, wenn vorhanden.',
+    reportPdfTitle: 'Podcast-Bericht',
+    collaborationLabel: 'In Zusammenarbeit mit',
+    sentDate: 'Veroeffentlichungsdatum',
+    eventCodeLabel: 'Eventcode',
+    bonusDistribution24h: 'Bonusverteilung (24 Stunden nach Veroeffentlichung)',
+    bonusActive24h: 'Bonus aktiv: 24 Stunden nach Veroeffentlichung',
+    csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
+    unavailable: 'Nicht verfuegbar',
+  },
+  fr: {
+    title: 'CENTRE DE CONTROLE',
+    subtitle: 'Panneau de controle pour presentation, contenu bonus et reporting.',
+    byline: 'codePod by codeNXT',
+    missingEpisode: 'Aucun episode trouve. Creez d abord l episode dans Checkout.',
+    refreshData: 'Actualiser depuis Checkout',
+    podcastFallback: 'Podcast manquant',
+    episodeFallback: 'Episode manquant',
+    logoFallback: 'Logo prepare depuis Checkout',
+    publishDate: 'Date publ.',
+    expectedListeners: 'Auditeurs prevus',
+    host: 'Hote',
+    episodeCode: 'Code episode',
+    platform: 'Plateforme',
+    listenerLink: 'Lien auditeur',
+    scans: 'Scans',
+    uniqueScans: 'Scans uniques',
+    insideJoins: 'Rejoins InSide',
+    conversionRate: 'Taux de conversion',
+    presentation: 'Presentation',
+    insideMessage: 'Rejoindre InSide',
+    downloadImage: 'Telecharger image',
+    presentationHint: 'Utilisez cette image comme fin après le podcast. Durée recommandée : 12 secondes.',
+    imageReady: 'Image prete.',
+    imageError: 'Impossible de creer l image. Reessayez.',
+    bonus: 'Bonus',
+    bonusHelp: 'Seul le contenu bonus est gere ici. Les donnees podcast viennent de Checkout.',
+    tier: 'Niveau',
+    gold: 'Or',
+    silver: 'Argent',
+    general: 'General',
+    titleLabel: 'Titre',
+    description: 'Description',
+    type: 'Type',
+    pdf: 'PDF',
+    image: 'Image',
+    audio: 'Audio',
+    video: 'Video',
+    url: 'Lien',
+    fileOrUrl: 'Fichier ou URL',
+    chooseFile: 'Choisir fichier',
+    edit: 'Modifier',
+    saveBonus: 'Enregistrer bonus',
+    savingBonus: 'Enregistrement...',
+    saved: 'Enregistre',
+    empty: 'Vide',
+    localFallback: 'Le backend n a pas repondu. Bonus enregistre localement.',
+    ready: 'Pret',
+    notSet: 'Non defini',
+    report: 'Rapport',
+    reportHelp: 'Voir le rapport ou telecharger le CSV de l episode.',
+    viewReport: 'Voir rapport',
+    downloadCsv: 'Telecharger CSV',
+    reportUnavailable: 'Le endpoint rapport n est pas disponible. Les chiffres locaux sont affiches si disponibles.',
+    reportPdfTitle: 'Rapport podcast',
+    collaborationLabel: 'En collaboration avec',
+    sentDate: 'Date de publication',
+    eventCodeLabel: 'Code evenement',
+    bonusDistribution24h: 'Repartition bonus (24 heures apres publication)',
+    bonusActive24h: 'Bonus actif : 24 heures apres publication',
+    csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
+    unavailable: 'Indisponible',
+  },
+  es: {
+    title: 'CENTRO DE CONTROL',
+    subtitle: 'Panel de control para presentacion, contenido extra e informes.',
+    byline: 'codePod by codeNXT',
+    missingEpisode: 'No se encontro ningun episodio. Crea primero el episodio en Checkout.',
+    refreshData: 'Actualizar desde Checkout',
+    podcastFallback: 'Podcast faltante',
+    episodeFallback: 'Episodio faltante',
+    logoFallback: 'Logo preparado desde Checkout',
+    publishDate: 'Fecha publ.',
+    expectedListeners: 'Oyentes previstos',
+    host: 'Host',
+    episodeCode: 'Codigo episodio',
+    platform: 'Plataforma',
+    listenerLink: 'Enlace oyente',
+    scans: 'Scans',
+    uniqueScans: 'Scans unicos',
+    insideJoins: 'Uniones a InSide',
+    conversionRate: 'Tasa conversion',
+    presentation: 'Presentacion',
+    insideMessage: 'Unirse a InSide',
+    downloadImage: 'Descargar imagen',
+    presentationHint: 'Usa esta imagen como cierre del podcast. Duración recomendada: 12 segundos.',
+    imageReady: 'Imagen lista.',
+    imageError: 'No se pudo crear la imagen. Intentalo de nuevo.',
+    bonus: 'Bonus',
+    bonusHelp: 'Aqui solo se gestiona contenido extra. Los datos del podcast vienen de Checkout.',
+    tier: 'Nivel',
+    gold: 'Oro',
+    silver: 'Plata',
+    general: 'General',
+    titleLabel: 'Titulo',
+    description: 'Descripcion',
+    type: 'Tipo',
+    pdf: 'PDF',
+    image: 'Imagen',
+    audio: 'Audio',
+    video: 'Video',
+    url: 'Enlace',
+    fileOrUrl: 'Archivo o URL',
+    chooseFile: 'Elegir archivo',
+    edit: 'Editar',
+    saveBonus: 'Guardar bonus',
+    savingBonus: 'Guardando...',
+    saved: 'Guardado',
+    empty: 'Vacio',
+    localFallback: 'El backend no respondio. Bonus guardado localmente.',
+    ready: 'Listo',
+    notSet: 'No definido',
+    report: 'Informe',
+    reportHelp: 'Ver informe o descargar CSV del episodio.',
+    viewReport: 'Ver informe',
+    downloadCsv: 'Descargar CSV',
+    reportUnavailable: 'El endpoint de informe no esta disponible. Se muestran datos locales si existen.',
+    reportPdfTitle: 'Informe podcast',
+    collaborationLabel: 'En colaboracion con',
+    sentDate: 'Fecha de publicacion',
+    eventCodeLabel: 'Codigo del evento',
+    bonusDistribution24h: 'Distribucion de bonus (24 horas despues del lanzamiento)',
+    bonusActive24h: 'Bonus activo: 24 horas despues del lanzamiento',
+    csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
+    unavailable: 'No disponible',
+  },
+};
+
+function readJsonStorage(key) {
   try {
-    return JSON.parse(localStorage.getItem('codenxt_event') || '{}');
+    return JSON.parse(localStorage.getItem(key) || '{}');
   } catch {
     return {};
   }
-})();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const qrRef = useRef(null);
-  const qrInstanceRef = useRef(null);
+}
 
-  const [lang, setLangState] = useState(getLang());
-  const [eventStatus, setEventStatus] = useState('ready');
-  const [rewardUploaded, setRewardUploaded] = useState(false);
-  const [rewardUnlocked, setRewardUnlocked] = useState(false);
-  const [selectedRewardType, setSelectedRewardType] = useState('');
-  const [selectedAccessMode, setSelectedAccessMode] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [screenLive, setScreenLive] = useState(false);
-  const [unlockAt, setUnlockAt] = useState(null);
-  const [serverTime, setServerTime] = useState(Date.now());
-  const [localTime, setLocalTime] = useState(Date.now());
-  const [statsTick, setStatsTick] = useState(0);
-  const [showMode, setShowMode] = useState(false);
-  const [liveStats, setLiveStats] = useState({ rawScans: 0, uniqueScans: 0, joins: 0 });
-  const [eventData, setEventData] = useState({
+function firstValue(...values) {
+  return values.find((value) => value !== undefined && value !== null && String(value).trim() !== '') || '';
+}
 
-    artistName: 'Artist / Event Name',
-    venue: 'Venue Name',
-    city: 'City',
-    eventDate: '2026-07-02',
-eventCode: '',
-code: '',
-shortLink: '',
-    artistLogo: '',
-    customerName: '',
-    email: '',
-    phone: '',
-    audienceSize: '',
-    selectedTypes: [],
-    comment: '',
-  });
-  const statusStorageKey = eventData?.eventCode
-    ? `codenxt_status_${eventData.eventCode}`
-    : 'codenxt_status_default';  
-    const copy = {
-    en: {
-      kicker: 'Control Center',
-      title: 'Event command dashboard',
-      subtitle: 'Manage live access, QR visibility, reward timing, and core event actions from one clean control surface.',
-      venue: 'Venue',
-      city: 'City',
-      date: 'Date',
-      eventCode: 'Event Code',
-      tickets: 'Tickets / Audience',
-      totalScans: 'Total Scans',
-      scanRate: 'Scan Rate',
-      joins: 'InnerCircle Joins',
-      estimated: 'Estimated',
-      scanCount: 'Live scan count',
-      scanRatio: 'Audience-to-scan ratio',
-      joinCount: 'Joined audience count',
-      qrTitle: 'Event QR',
-      artistLogo: 'Artist logo',
-      noLogo: 'No logo transferred.',
-      qrTarget: 'QR target',
-      arrangementType: 'Arrangement type',
-      noArrangementType: 'No arrangement type selected',
-      customer: 'Customer',
-      notAvailable: 'Not available',
-      noEmail: 'No email',
-      noPhone: 'No phone',
-      controlActions: 'Control actions',
-      grouped: 'Grouped for clarity: core event control first, utility actions second.',
-      eventControl: 'Event Control',
-      utility: 'Utility',
-      uploadReward: 'SAVE REWARD',
-      rewardUploaded: 'SAVED',
-      uploadRewardNote: 'Store the live reward that Open now will reveal.',
-      rewardUploadedNote: 'A reward is now stored and ready for the join flow.',
-      unlockReward: 'GO LIVE',
-      rewardUnlocked: 'Reward unlocked',
-      unlockRewardNote: 'Open access to the audience at the chosen moment.',
-      sendToScreen: 'Send to screen',
-      sendToScreenNote: 'Push QR prompt and event access to the big screen.',
-      stopScreen: 'Stop screen',
-      stopScreenNote: 'Remove the on-screen QR call to action.',
-      printQr: 'Print QR code',
-      printQrNote: 'Generate a printable version for venue use.',
-      sendReport: 'MAKE REPORT',
-      sendReportNote: 'Generate PDF report',
-      operationalNote: 'Operational note',
-      operationalNoteText: 'The QR stays real and scannable. Artist and venue now live in the ring, not inside the code.',
-      customerNote: 'Customer note',
-      draft: 'Draft',
-      ready: 'Ready',
-      live: 'Live',
-      closed: 'Closed',
-      openJoin: 'OPEN JOIN PAGE',
-    },
-    no: {
-      kicker: 'Kontrollsenter',
-      title: 'Event-dashboard',
-      subtitle: 'Styr live-tilgang, QR-synlighet, reward-timing og kjernehandlinger fra ett rent kontrollpanel.',
-      venue: 'Venue',
-      city: 'By',
-      date: 'Dato',
-      eventCode: 'Eventkode',
-      tickets: 'Billetter / publikum',
-      totalScans: 'Totale scan',
-      scanRate: 'Scan-rate',
-      joins: 'InnerCircle-medlemmer',
-      estimated: 'Estimert publikum fra checkout',
-      scanCount: 'Plassholder for live scan-tall',
-      scanRatio: 'Plassholder for forhold scan/publikum',
-      joinCount: 'Plassholder for innmeldte',
-      qrTitle: 'codeTone QR',
-      artistLogo: 'Artistlogo',
-      noLogo: 'Ingen logo overført.',
-      qrTarget: 'QR-mål',
-      arrangementType: 'Arrangementstype',
-      noArrangementType: 'Ingen arrangementstype valgt',
-      customer: 'Kunde',
-      notAvailable: 'Ikke tilgjengelig',
-      noEmail: 'Ingen e-post',
-      noPhone: 'Ingen telefon',
-      controlActions: 'Kontrollhandlinger',
-      grouped: 'Gruppert for klarhet: eventkontroll først, verktøy deretter.',
-      eventControl: 'Eventkontroll',
-      utility: 'Verktøy',
-      uploadReward: 'Last opp reward',
-      rewardUploaded: 'Reward lastet opp',
-      uploadRewardNote: 'Lagre live-rewarden som Open now skal vise.',
-      rewardUploadedNote: 'Reward er nå lagret og klar for join-flyten.',
-      unlockReward: 'Åpne reward',
-      rewardUnlocked: 'Reward åpnet',
-      unlockRewardNote: 'Åpne tilgang for publikum på valgt tidspunkt.',
-      sendToScreen: 'Send til skjerm',
-      sendToScreenNote: 'Send QR-prompt og tilgang til storskjerm.',
-      stopScreen: 'Stopp skjerm',
-      stopScreenNote: 'Fjern QR-kallet fra skjermen.',
-      printQr: 'Skriv ut QR-kode',
-      printQrNote: 'Lag en utskriftsvennlig versjon for venue.',
-      sendReport: 'Send rapport',
-      sendReportNote: 'Send en enkel oppsummering etter aktivering.',
-      operationalNote: 'Operativ merknad',
-      operationalNoteText: 'QR-en forblir ekte og skannbar. Artist og venue ligger nå i ringen, ikke inni koden.',
-      customerNote: 'Kundenotat',
-      draft: 'Utkast',
-      ready: 'Klar',
-      live: 'Live',
-      closed: 'Lukket',
-      openJoin: 'Åpne join-side',
-    },
-    sv: {
-      kicker: 'Kontrollcenter',
-      title: 'Eventdashboard',
-      subtitle: 'Hantera liveåtkomst, QR-synlighet, reward-timing och kärnaktiviteter från en ren kontrollpanel.',
-      venue: 'Venue',
-      city: 'Stad',
-      date: 'Datum',
-      eventCode: 'Eventkod',
-      tickets: 'Biljetter / publik',
-      totalScans: 'Totala scans',
-      scanRate: 'Scan-rate',
-      joins: 'InnerCircle-anslutningar',
-      estimated: 'Beräknad publik från checkout',
-      scanCount: 'Platshållare för live scans',
-      scanRatio: 'Platshållare för publik/scans',
-      joinCount: 'Platshållare för anslutningar',
-      qrTitle: 'codeTone QR',
-      artistLogo: 'Artistlogga',
-      noLogo: 'Ingen logga överförd.',
-      qrTarget: 'QR-mål',
-      arrangementType: 'Typ av arrangemang',
-      noArrangementType: 'Ingen typ vald',
-      customer: 'Kund',
-      notAvailable: 'Inte tillgänglig',
-      noEmail: 'Ingen e-post',
-      noPhone: 'Ingen telefon',
-      controlActions: 'Kontrollåtgärder',
-      grouped: 'Grupperat för tydlighet: eventkontroll först, verktyg därefter.',
-      eventControl: 'Eventkontroll',
-      utility: 'Verktyg',
-      uploadReward: 'Ladda upp reward',
-      rewardUploaded: 'Reward uppladdad',
-      uploadRewardNote: 'Spara live-rewarden som Open now ska visa.',
-      rewardUploadedNote: 'Reward är nu sparad och klar för join-flödet.',
-      unlockReward: 'Öppna reward',
-      rewardUnlocked: 'Reward öppnad',
-      unlockRewardNote: 'Öppna åtkomst för publiken i rätt ögonblick.',
-      sendToScreen: 'Skicka till skärm',
-      sendToScreenNote: 'Skicka QR-prompt och åtkomst till storbild.',
-      stopScreen: 'Stoppa skärm',
-      stopScreenNote: 'Ta bort QR-uppmaningen från skärmen.',
-      printQr: 'Skriv ut QR-kod',
-      printQrNote: 'Skapa en utskriftsvänlig version för venue.',
-      sendReport: 'Skicka rapport',
-      sendReportNote: 'Skicka en enkel sammanfattning efter aktivering.',
-      operationalNote: 'Operativ notering',
-      operationalNoteText: 'QR-koden förblir äkta och skannbar. Artist och venue ligger nu i ringen, inte i själva koden.',
-      customerNote: 'Kundnotering',
-      draft: 'Utkast',
-      ready: 'Klar',
-      live: 'Live',
-      closed: 'Stängd',
-      openJoin: 'Öppna join-sida',
-    },
-    de: {
-      kicker: 'Control Center',
-      title: 'Event-Dashboard',
-      subtitle: 'Steuere Live-Zugang, QR-Sichtbarkeit, Reward-Timing und Kernaktionen über eine saubere Oberfläche.',
-      venue: 'Venue',
-      city: 'Stadt',
-      date: 'Datum',
-      eventCode: 'Eventcode',
-      tickets: 'Tickets / Publikum',
-      totalScans: 'Scans gesamt',
-      scanRate: 'Scan-Rate',
-      joins: 'InnerCircle-Beitritte',
-      estimated: 'Geschätztes Publikum aus dem Checkout',
-      scanCount: 'Platzhalter für Live-Scans',
-      scanRatio: 'Platzhalter für Verhältnis Publikum/Scans',
-      joinCount: 'Platzhalter für Beitritte',
-      qrTitle: 'codeTone QR',
-      artistLogo: 'Künstlerlogo',
-      noLogo: 'Kein Logo übertragen.',
-      qrTarget: 'QR-Ziel',
-      arrangementType: 'Veranstaltungsart',
-      noArrangementType: 'Keine Veranstaltungsart gewählt',
-      customer: 'Kunde',
-      notAvailable: 'Nicht verfügbar',
-      noEmail: 'Keine E-Mail',
-      noPhone: 'Kein Telefon',
-      controlActions: 'Steueraktionen',
-      grouped: 'Zur Klarheit gruppiert: zuerst Event-Steuerung, dann Werkzeuge.',
-      eventControl: 'Event-Steuerung',
-      utility: 'Werkzeuge',
-      uploadReward: 'Reward hochladen',
-      rewardUploaded: 'Reward hochgeladen',
-      uploadRewardNote: 'Speichere den Live-Reward, den Open now zeigen soll.',
-      rewardUploadedNote: 'Reward ist jetzt gespeichert und für den Join-Flow bereit.',
-      unlockReward: 'Reward freigeben',
-      rewardUnlocked: 'Reward freigegeben',
-      unlockRewardNote: 'Öffne den Zugang für das Publikum im richtigen Moment.',
-      sendToScreen: 'An Bildschirm senden',
-      sendToScreenNote: 'QR-Prompt und Zugang auf die Großbildfläche schicken.',
-      stopScreen: 'Bildschirm stoppen',
-      stopScreenNote: 'QR-Aufruf vom Bildschirm entfernen.',
-      printQr: 'QR-Code drucken',
-      printQrNote: 'Eine druckbare Version für die Venue erstellen.',
-      sendReport: 'Bericht senden',
-      sendReportNote: 'Nach der Aktivierung eine einfache Zusammenfassung senden.',
-      operationalNote: 'Operativer Hinweis',
-      operationalNoteText: 'Der QR-Code bleibt echt und scanbar. Künstler und Venue leben jetzt im Ring, nicht im Code.',
-      customerNote: 'Kundennotiz',
-      draft: 'Entwurf',
-      ready: 'Bereit',
-      live: 'Live',
-      closed: 'Geschlossen',
-      openJoin: 'Join-Seite öffnen',
-    },
-    th: {
-      kicker: 'ศูนย์ควบคุม',
-      title: 'แดชบอร์ดอีเวนต์',
-      subtitle: 'จัดการการเข้าถึงแบบสด การแสดง QR เวลาเปิด reward และการควบคุมหลักจากหน้าจอเดียว',
-      venue: 'สถานที่',
-      city: 'เมือง',
-      date: 'วันที่',
-      eventCode: 'รหัสอีเวนต์',
-      tickets: 'ตั๋ว / ผู้ชม',
-      totalScans: 'สแกนทั้งหมด',
-      scanRate: 'อัตราการสแกน',
-      joins: 'เข้าร่วม InnerCircle',
-      estimated: 'จำนวนผู้ชมโดยประมาณจาก checkout',
-      scanCount: 'ตัวอย่างจำนวนสแกนสด',
-      scanRatio: 'ตัวอย่างอัตราผู้ชมต่อการสแกน',
-      joinCount: 'ตัวอย่างจำนวนเข้าร่วม',
-      qrTitle: 'codeTone QR',
-      artistLogo: 'โลโก้ศิลปิน',
-      noLogo: 'ยังไม่มีการส่งโลโก้',
-      qrTarget: 'ปลายทาง QR',
-      arrangementType: 'ประเภทงาน',
-      noArrangementType: 'ยังไม่ได้เลือกประเภทงาน',
-      customer: 'ลูกค้า',
-      notAvailable: 'ไม่มีข้อมูล',
-      noEmail: 'ไม่มีอีเมล',
-      noPhone: 'ไม่มีโทรศัพท์',
-      controlActions: 'การควบคุม',
-      grouped: 'จัดกลุ่มเพื่อความชัดเจน: ควบคุมอีเวนต์ก่อน แล้วค่อยเครื่องมือ',
-      eventControl: 'ควบคุมอีเวนต์',
-      utility: 'เครื่องมือ',
-      uploadReward: 'อัปโหลด reward',
-      rewardUploaded: 'อัปโหลด reward แล้ว',
-      uploadRewardNote: 'บันทึก reward ที่ Open now จะเปิดให้ดู',
-      rewardUploadedNote: 'reward ถูกบันทึกและพร้อมสำหรับ join flow แล้ว',
-      unlockReward: 'เปิด reward',
-      rewardUnlocked: 'เปิด reward แล้ว',
-      unlockRewardNote: 'เปิดการเข้าถึงให้ผู้ชมในจังหวะที่ต้องการ',
-      sendToScreen: 'ส่งขึ้นจอ',
-      sendToScreenNote: 'ส่ง QR และข้อความไปยังจอใหญ่',
-      stopScreen: 'หยุดหน้าจอ',
-      stopScreenNote: 'ลบ QR ออกจากหน้าจอ',
-      printQr: 'พิมพ์ QR',
-      printQrNote: 'สร้างเวอร์ชันสำหรับพิมพ์ใช้งานในสถานที่',
-      sendReport: 'ส่งรายงาน',
-      sendReportNote: 'ส่งสรุปหลังจบการใช้งาน',
-      operationalNote: 'หมายเหตุการใช้งาน',
-      operationalNoteText: 'QR ยังเป็นของจริงและสแกนได้ ศิลปินและสถานที่อยู่ในวงแหวน ไม่ได้อยู่ในตัวโค้ด',
-      customerNote: 'บันทึกลูกค้า',
-      draft: 'ร่าง',
-      ready: 'พร้อม',
-      live: 'สด',
-      closed: 'ปิด',
-      openJoin: 'เปิดหน้า join',
+function normalizeEpisodeData(data = {}, previous = {}) {
+  const eventCode = firstValue(data.eventCode, data.code, previous.eventCode, previous.code);
+  const podcastName = firstValue(data.podcastName, data.artistName, data.name, previous.podcastName, previous.artistName);
+  const episodeTitle = firstValue(data.episodeTitle, data.episodeName, data.title, previous.episodeTitle, previous.episodeName);
+  const logo = firstValue(data.podcastLogo, data.podcastImage, data.logoUrl, data.artistLogo, data.image, previous.podcastLogo, previous.podcastImage, previous.logoUrl, previous.artistLogo);
+  const publishDate = firstValue(data.publishDate, data.releaseDate, data.eventDate, data.startAt, previous.publishDate, previous.releaseDate, previous.eventDate);
+  const platform = firstValue(data.platform, data.channel, data.venue, previous.platform, previous.channel, previous.venue);
+  const listenerCount = firstValue(data.expectedListeners, data.estimatedListeners, data.audienceSize, data.listeners, previous.expectedListeners, previous.estimatedListeners, previous.audienceSize);
+  const joinUrl = firstValue(data.joinUrl, data.listenerLink, data.shortLink, previous.joinUrl, previous.listenerLink, previous.shortLink, eventCode ? `${window.location.origin}/join/${eventCode}` : '');
+
+  return {
+    ...previous,
+    ...data,
+    vertical: firstValue(data.vertical, previous.vertical, 'codepod'),
+    productName: firstValue(data.productName, previous.productName, 'codePod'),
+    eventCode,
+    code: eventCode,
+    podcastName,
+    artistName: podcastName,
+    episodeTitle,
+    episodeName: episodeTitle,
+    podcastLogo: logo,
+    podcastImage: logo,
+    artistLogo: logo,
+    publishDate,
+    releaseDate: publishDate,
+    eventDate: publishDate,
+    expectedListeners: listenerCount,
+    estimatedListeners: listenerCount,
+    audienceSize: listenerCount,
+    hostName: firstValue(data.hostName, data.host, data.presenter, previous.hostName, previous.host),
+    platform,
+    venue: platform,
+    joinUrl,
+    listenerLink: joinUrl,
+    shortLink: joinUrl,
+    language: firstValue(data.language, data.lang, previous.language),
+    metadata: {
+      ...(previous.metadata || {}),
+      ...(data.metadata || {}),
+      createdAt: firstValue(data.createdAt, previous.createdAt),
+      logoFileName: firstValue(data.logoFileName, previous.logoFileName),
     },
   };
+}
 
-  const t = copy[lang] || copy.en;
-// --- GUIDE STATE ---
-const [showGuide, setShowGuide] = useState(false);
-const [guideStep, setGuideStep] = useState(0);
+function makeConversion(joins, uniqueScans) {
+  const unique = Number(uniqueScans || 0);
+  if (!unique) return '0%';
+  return `${Math.min(100, (Number(joins || 0) / unique) * 100).toFixed(1)}%`;
+}
 
-const guideSteps = useMemo(() => {
-  return [
-    {
-      id: 'status',
-      title: '1. Event Status',
-      body: 'Set the event to LIVE when you are ready to activate.',
-    },
-    {
-      id: 'overview',
-      title: '2. Event Overview',
-      body: 'Confirm venue, city, date, and event code.',
-    },
-    {
-      id: 'metrics',
-      title: '3. Live Metrics',
-      body: 'These reflect real audience behavior in the moment.',
-    },
-    {
-      id: 'qr',
-      title: '4. Event QR',
-      body: 'This is the access point. Show it at the right moment.',
-    },
-    {
-      id: 'actions',
-      title: '5. Control Actions',
-      body: 'Control what appears on screen in real time.',
-    },
-    {
-      id: 'reward',
-      title: '6. Reward Control',
-      body: 'Define what the audience receives.',
-    },
-  ];
-}, []);
+function csvEscape(value) {
+  return `"${String(value ?? '').replace(/"/g, '""')}"`;
+}
 
-const closeGuide = useCallback(() => {
-  if (eventData?.eventCode) {
-    localStorage.setItem(`codenxt_seen_guide_${eventData.eventCode}`, 'true');
-  }
-  setShowGuide(false);
-  setGuideStep(0);
-}, [eventData?.eventCode]);
-
-const nextGuideStep = useCallback(() => {
-  setGuideStep((prev) => {
-    if (prev >= guideSteps.length - 1) {
-      if (eventData?.eventCode) {
-        localStorage.setItem(`codenxt_seen_guide_${eventData.eventCode}`, 'true');
-      }
-      setShowGuide(false);
-      return 0;
-    }
-    return prev + 1;
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
   });
-}, [eventData?.eventCode, guideSteps.length]);
+}
 
-const previousGuideStep = useCallback(() => {
-  setGuideStep((prev) => Math.max(prev - 1, 0));
-}, []);
-useEffect(() => {
-  if (!eventData?.eventCode) return;
+export default function Dashboard({ lang: appLang, setLang }) {
+  const location = useLocation();
+  const [lang, setLangState] = useState(appLang || getLang());
+  const text = useMemo(() => {
+    const appText = getAppCopy(lang);
+    return {
+      ...dashboardCopy.en,
+      ...(appText.dashboard || {}),
+      ...(dashboardCopy[lang] || {}),
+      app: appText,
+    };
+  }, [lang]);
 
-  const seen = localStorage.getItem(`codenxt_seen_guide_${eventData.eventCode}`);
-  if (!seen) {
-    setGuideStep(0);
-    setShowGuide(true);
-  }
-}, [eventData?.eventCode]);
+  const [eventData, setEventData] = useState(() => {
+    const stored = STORAGE_KEYS.map(readJsonStorage).find((item) => item?.eventCode || item?.code) || {};
+    return normalizeEpisodeData(stored);
+  });
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  const [imageStatus, setImageStatus] = useState('');
+  const [activeTier, setActiveTier] = useState('gold');
+  const [tierCount, setTierCount] = useState(3);
+  const [tierSplit, setTierSplit] = useState(DEFAULT_TIER_SPLIT);
+  const [bonusSaving, setBonusSaving] = useState(false);
+  const [bonusMessage, setBonusMessage] = useState('');
+  const [bonusDrafts, setBonusDrafts] = useState(() => {
+    return BONUS_TIERS.reduce((acc, tier) => {
+      acc[tier] = {
+        title: '',
+        description: '',
+        type: 'url',
+        url: '',
+        fileName: '',
+        file: null,
+        status: 'empty',
+        storage: '',
+      };
+      return acc;
+    }, {});
+  });
+  const [report, setReport] = useState({
+    totalScans: 0,
+    uniqueScans: 0,
+    joins: 0,
+    rows: [],
+    source: 'local',
+  });
+  const [reportMessage, setReportMessage] = useState('');
+
+  const handleLanguageChange = useCallback((nextLang) => {
+    const savedLang = persistLang(nextLang);
+    setLangState(savedLang);
+    if (setLang) setLang(savedLang);
+  }, [setLang]);
+
+  const joinUrl = useMemo(() => {
+    const code = eventData.eventCode || eventData.code;
+    if (!code) return '';
+    const base = eventData.joinUrl || eventData.listenerLink || eventData.shortLink || `${window.location.origin}/join/${code}`;
+    const url = new URL(base, window.location.origin);
+    url.searchParams.set('lang', lang);
+    return url.toString();
+  }, [eventData.code, eventData.eventCode, eventData.joinUrl, eventData.listenerLink, eventData.shortLink, lang]);
+
+  const loadCheckoutData = useCallback(async () => {
+    const params = new URLSearchParams(location.search);
+    const queryCode = params.get('event') || params.get('code');
+    const stateData = location.state || {};
+    const stored = STORAGE_KEYS.map(readJsonStorage).find((item) => item?.eventCode || item?.code) || {};
+    const activeCode = queryCode || stateData.eventCode || stateData.code || stored.eventCode || stored.code || eventData.eventCode;
+
+    let backendData = {};
+    if (activeCode) {
+      try {
+        const res = await fetch(`${API_BASE}/event/${encodeURIComponent(activeCode)}?vertical=codepod`);
+        if (res.ok) backendData = await res.json();
+      } catch (error) {
+        console.warn('Checkout event refresh failed:', error);
+      }
+    }
+
+    setEventData((previous) => {
+      const merged = normalizeEpisodeData(
+        {
+          ...stored,
+          ...stateData,
+          ...backendData,
+          eventCode: backendData.code || backendData.eventCode || activeCode,
+        },
+        previous
+      );
+      if (merged.eventCode) {
+        localStorage.setItem('codenxt_event', JSON.stringify(merged));
+        localStorage.setItem('codepod_latest_event', JSON.stringify(merged));
+        localStorage.setItem('codenxt_active_event_code', merged.eventCode);
+      }
+      return merged;
+    });
+  }, [eventData.eventCode, location.search, location.state]);
+
+  const loadReport = useCallback(async () => {
+    if (!eventData.eventCode) return;
+    setReportMessage('');
+    try {
+      const res = await fetch(`${API_BASE}/report/${encodeURIComponent(eventData.eventCode)}?vertical=codepod`);
+      if (!res.ok) throw new Error(`Report failed: ${res.status}`);
+      const data = await res.json();
+      const legacyJoinKey = 'inner' + 'CircleJoinCount';
+      const legacyRowsKey = 'inner' + 'Circle';
+      const totalScans = Number(data?.metrics?.scans || data?.metrics?.totalScans || data?.totalScans || 0);
+      const uniqueScans = Number(data?.metrics?.uniqueScans || data?.uniqueScans || 0);
+      const joins = Number(data?.metrics?.joins || data?.metrics?.[legacyJoinKey] || data?.[legacyJoinKey] || data?.joins || 0);
+      const rows = (data?.scans || data?.[legacyRowsKey] || data?.rows || []).map((entry, index) => ({
+        eventCode: eventData.eventCode,
+        scanId: entry.scanId || entry.id || `scan-${index + 1}`,
+        phone: entry.phone || '',
+        timestamp: entry.timestamp || entry.createdAt || '',
+        tier: entry.tier || entry.rewardTier || '',
+        source: entry.source || entry.type || 'qr',
+      }));
+      setReport({ totalScans, uniqueScans, joins, rows, source: 'backend' });
+      setReportMessage(`Rapport hentet: ${totalScans} skanninger, ${joins} InSide-joins.`);
+    } catch (error) {
+      console.warn('Report unavailable:', error);
+      setReportMessage(text.reportUnavailable);
+      const localRows = readJsonStorage(`codepod_report_rows_${eventData.eventCode}`);
+      setReport((previous) => ({
+        ...previous,
+        rows: Array.isArray(localRows) ? localRows : previous.rows,
+        source: 'local',
+      }));
+    }
+  }, [eventData.eventCode, text.reportUnavailable]);
+
+  useEffect(() => {
+    document.title = `${text.title} - codePod`;
+  }, [text.title]);
+
+  useEffect(() => {
+    if (appLang && appLang !== lang) setLangState(appLang);
+  }, [appLang, lang]);
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const currentLang = params.get('lang') || 'en';
-    setLangState(currentLang);
-  }, [location.search]);
+    const urlLang = params.get('lang');
+    if (urlLang) handleLanguageChange(urlLang);
+  }, [handleLanguageChange, location.search]);
 
   useEffect(() => {
-    const stateData = location.state;
+    loadCheckoutData();
+  }, [loadCheckoutData]);
 
-    if (stateData) {
-      setEventData((prev) => ({
-        ...prev,
-        artistName: stateData.artistName || prev.artistName,
-        venue: stateData.venue || prev.venue,
-        city: stateData.city || prev.city,
-        eventDate: stateData.eventDate || prev.eventDate,
-eventCode: stateData.eventCode || stateData.code || prev.eventCode,
-code: stateData.code || stateData.eventCode || prev.code,
-        shortLink: `https://codetone.codenxt.global/join/${stateData.eventCode || prev.eventCode}?lang=${lang}`,
-        artistLogo: stateData.artistLogo || prev.artistLogo,
-        customerName: stateData.customerName || prev.customerName,
-        email: stateData.email || prev.email,
-        phone: stateData.phone || prev.phone,
-        audienceSize: stateData.audienceSize || prev.audienceSize,
-        selectedTypes: stateData.selectedTypes || prev.selectedTypes,
-        comment: stateData.comment || prev.comment,
-comment: stateData.comment || prev.comment,
-screenVideoUrl: stateData.screenVideoUrl || prev.screenVideoUrl,
-      }));
-      return;
-    }
-
-    const raw = localStorage.getItem('codenxt_event');
-    if (!raw) return;
-
-    try {
-      const saved = JSON.parse(raw);
-
-      setEventData((prev) => ({
-        ...prev,
-        artistName: saved?.artistName || prev.artistName,
-        venue: saved?.venue || prev.venue,
-        city: saved?.city || prev.city,
-        eventDate: saved?.eventDate || prev.eventDate,
-eventCode: saved?.eventCode || saved?.code || prev.eventCode,
-code: saved?.code || saved?.eventCode || prev.code,
-        shortLink: `https://codetone.codenxt.global/join/${saved?.eventCode || prev.eventCode}?lang=${lang}`,
-        artistLogo: saved?.artistLogo || prev.artistLogo,
-        customerName: saved?.customerName || prev.customerName,
-        email: saved?.email || prev.email,
-        phone: saved?.phone || prev.phone,
-        audienceSize: saved?.audienceSize || prev.audienceSize,
-        selectedTypes: saved?.selectedTypes || prev.selectedTypes,
-        comment: saved?.comment || prev.comment,
-      }));
-    } catch (error) {
-      console.error('Could not read saved event data:', error);
-    }
-  }, [location.state, lang]);
-
-useEffect(() => {
-  if (!eventData?.eventCode) return;
-
-  let cancelled = false;
-
-  const loadLiveStats = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/event/${eventData.eventCode}`);
-      const data = await res.json();
-
-      console.log('TIMING FETCH EVENT CODE:', eventData.eventCode);
-      console.log('TIMING FETCH RESPONSE:', data);
-
-      if (!res.ok || cancelled) return;
-
-      setLiveStats({
-        rawScans: Number(data?.rawScans || 0),
-        uniqueScans: Number(data?.uniqueScans || 0),
-        joins: Number(data?.innerCircleJoinCount || 0),
-      });
-setEventData((prev) => ({
-  ...prev,
-  screenVideoUrl: data?.screenVideoUrl || prev.screenVideoUrl,
-  artistLogo: data?.artistLogo || prev.artistLogo,
-  eventCode: data?.code || prev.eventCode,
-  code: data?.code || prev.code,
-}));
-    } catch (error) {
-      console.error('Live stats fetch failed:', error);
-    }
-  };
-
-  loadLiveStats();
-// const interval = setInterval(loadLiveStats, 3000);
-  return () => {
-  cancelled = true;
-};
-}, [eventData?.eventCode]);
   useEffect(() => {
-  if (!qrRef.current || !eventData.eventCode) return;
+    if (!joinUrl) return;
+    QRCode.toDataURL(joinUrl, {
+      errorCorrectionLevel: 'H',
+      margin: 1,
+      width: 420,
+      color: { dark: '#06111f', light: '#ffffff' },
+    })
+      .then(setQrDataUrl)
+      .catch((error) => console.error('QR render failed:', error));
+  }, [joinUrl]);
 
-  const joinUrl = `https://codetone.codenxt.global/join/${eventData.eventCode}?lang=${lang}`;
+  useEffect(() => {
+    if (!eventData.eventCode) return;
 
-    const qrOptions = {
-      width: 220,
-      height: 220,
-      type: 'svg',
-      data: joinUrl,
-      margin: 2,
-      qrOptions: {
-        typeNumber: 0,
-        mode: 'Byte',
-        errorCorrectionLevel: 'H',
-      },
-      dotsOptions: {
-        type: 'rounded',
-        color: '#000000',
-      },
-      backgroundOptions: {
-        color: '#ffffff',
-      },
-      cornersSquareOptions: {
-        type: 'extra-rounded',
-        color: '#000000',
-      },
-      cornersDotOptions: {
-        type: 'dot',
-        color: '#000000',
-      },
-    };
+    loadReport();
 
-    if (!qrInstanceRef.current) {
-      qrInstanceRef.current = new QRCodeStyling(qrOptions);
-      qrRef.current.innerHTML = '';
-      qrInstanceRef.current.append(qrRef.current);
-    } else {
-      qrInstanceRef.current.update(qrOptions);
-    }
-  }, [lang, eventData.eventCode]);
-const stats = useMemo(() => {
-  const rawScans = Number(liveStats.rawScans || 0);
-  const uniqueScans = Number(liveStats.uniqueScans || 0);
-  const joinCount = Number(liveStats.joins || 0);
+    const reportTimer = window.setInterval(() => {
+      loadReport();
+    }, 20000);
 
-  const audienceNumber = Number(eventData.audienceSize || 0);
-  const scanRateValue =
-    audienceNumber > 0
-      ? `${((uniqueScans / audienceNumber) * 100).toFixed(1)}%`
-      : '—';
+    return () => window.clearInterval(reportTimer);
+  }, [eventData.eventCode, loadReport]);
 
-  return [
-    {
-      label: t.tickets,
-      value: eventData.audienceSize || '—',
-      note: t.estimated,
-    },
-    {
-      label: t.totalScans,
-      value: rawScans.toLocaleString(),
-      note: t.scanCount,
-    },
-    {
-      label: t.scanRate,
-      value: scanRateValue,
-      note: t.scanRatio,
-    },
-    {
-      label: t.joins,
-      value: joinCount.toLocaleString(),
-      note: t.joinCount,
-    },
-  ];
-}, [eventData.audienceSize, eventData.eventCode, t, statsTick]);
-    useEffect(() => {
-  const savedStatus = localStorage.getItem(statusStorageKey);
-
-  if (savedStatus) {
-    setEventStatus(savedStatus);
-  }
-}, [statusStorageKey]);
-
-useEffect(() => {
-  localStorage.setItem(statusStorageKey, eventStatus);
-}, [statusStorageKey, eventStatus]);
-useEffect(() => {
-  const loadEventTiming = async () => {
-    if (!eventData?.eventCode) return;
-
-    try {
-      const res = await fetch(`${API_BASE}/event/${eventData.eventCode}`);
-      const data = await res.json();
-      
-console.log('TIMING FETCH EVENT CODE:', eventData.eventCode);
-console.log('TIMING FETCH RESPONSE:', data);
-
-      if (data?.unlockAt) {
-        setUnlockAt(new Date(data.unlockAt).getTime());
-      }
-
-      if (data?.serverTime) {
-        setServerTime(new Date(data.serverTime).getTime());
-      } else {
-        setServerTime(Date.now());
-      }
-    } catch (error) {
-      console.error('Could not load event timing:', error);
-    }
+  const updateBonusDraft = (tier, patch) => {
+    setBonusDrafts((previous) => {
+      const next = { ...previous, [tier]: { ...previous[tier], ...patch } };
+      return next;
+    });
   };
 
-  loadEventTiming();
-}, [eventData?.eventCode]);
-useEffect(() => {
-  const interval = setInterval(() => {
-    setLocalTime(Date.now());
-  }, 1000);
+  const saveBonus = useCallback(async () => {
+    const draft = bonusDrafts[activeTier];
+    if (!eventData.eventCode || (!draft.url && !draft.file)) return;
+    setBonusSaving(true);
+    setBonusMessage('');
 
-  return () => clearInterval(interval);
-}, []);
-useEffect(() => {
-if (eventStatus !== 'ready' && eventStatus !== 'live') return;
-  const interval = setInterval(() => {
-    setStatsTick((t) => t + 1);
-  }, 2000);
+    let bonusUrl = draft.url;
+    try {
+      if (draft.file && draft.type !== 'url') {
+        const formData = new FormData();
+        formData.append('file', draft.file);
+        formData.append('eventCode', eventData.eventCode);
+        const uploadRes = await fetch(`${API_BASE}/upload-reward-file`, {
+          method: 'POST',
+          body: formData,
+        });
+        if (!uploadRes.ok) throw new Error(`File upload failed: ${uploadRes.status}`);
+        const uploadData = await uploadRes.json();
+        bonusUrl = uploadData.url || uploadData.fileUrl || '';
+        if (!bonusUrl) throw new Error('Missing upload URL');
+      }
 
-  return () => clearInterval(interval);
-}, [eventStatus]);
-
-const statusLabel =
-  eventStatus === 'draft'
-    ? t.draft
-    : eventStatus === 'ready'
-    ? t.ready
-    : eventStatus === 'live'
-    ? t.live
-    : t.closed;
-
-const canGoDraft = eventStatus === 'ready';
-const canGoReady = eventStatus === 'draft' || eventStatus === 'closed';
-const canGoLive = eventStatus === 'ready';
-const canGoClosed = eventStatus === 'live';
-const isTimeUnlocked = unlockAt && serverTime >= unlockAt;
-const unlockStatusText = isTimeUnlocked
-  ? 'Ready to unlock'
-  : unlockAt
-  ? `Locked until ${new Date(unlockAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-  : 'Unlock time not set';
-
-const localTimeText = new Date(localTime).toLocaleTimeString([], {
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-});
-const handleSetEventStatus = (nextStatus) => {
-  if (nextStatus === 'draft' && canGoDraft) {
-    setEventStatus('draft');
-    return;
-  }
-
-  if (nextStatus === 'ready' && canGoReady) {
-    setEventStatus('ready');
-    return;
-  }
-
-  if (nextStatus === 'live' && canGoLive) {
-    setEventStatus('live');
-    setEventData((prev) => ({
-      ...prev,
-      unlockAt: new Date().toISOString(),
-    }));
-    return;
-  }
-
-  if (nextStatus === 'closed' && canGoClosed) {
-    setEventStatus('closed');
-    setEventData((prev) => ({
-      ...prev,
-      endAt: new Date().toISOString(),
-    }));
-  }
-};
-const handleUploadReward = async () => {
-  if (!selectedRewardType || !selectedAccessMode) {
-  return;
-}
-  console.log('API_BASE:', API_BASE);
-  console.log('Uploading reward for eventCode:', eventData.eventCode);
-
-  try {
-  const eventRes = await fetch(`${API_BASE}/event/${eventData.eventCode}`);
-  const eventText = await eventRes.text();
-
-  console.log('EVENT STATUS:', eventRes.status);
-  console.log('EVENT RAW RESPONSE:', eventText);
-
-} catch (error) {
-  console.error('Event fetch failed:', error);
-}
-let rewardUrl = '';
-
-if (selectedRewardType === 'url') {
-  rewardUrl = 'https://soundcloud.com/';
-} else {
-  if (!selectedFile) {
-    console.warn('No file selected for reward upload');
-    return;
-  }
-
-  if (selectedRewardType !== 'image') {
-    console.warn('Demo upload currently supports image rewards only');
-    return;
-  }
-
-  rewardUrl = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const img = new Image();
-
-      img.onload = () => {
-        const maxWidth = 1200;
-        const scale = Math.min(1, maxWidth / img.width);
-
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(img.width * scale);
-        canvas.height = Math.round(img.height * scale);
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Could not create canvas context'));
-          return;
-        }
-
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        const compressed = canvas.toDataURL('image/jpeg', 0.72);
-        resolve(compressed);
+      const reward = {
+        vertical: 'codepod',
+        eventCode: eventData.eventCode,
+        tier: activeTier,
+        title: draft.title,
+        description: draft.description,
+        type: draft.type,
+        url: bonusUrl,
+        fileName: draft.fileName,
+        podcastName: eventData.podcastName,
+        episodeTitle: eventData.episodeTitle,
+        podcastLogo: eventData.podcastLogo,
+        createdAt: new Date().toISOString(),
       };
 
-      img.onerror = () => reject(new Error('Failed to load selected image'));
-      img.src = reader.result;
-    };
+      let eventId = eventData.id;
+      if (!eventId) {
+        try {
+          const eventRes = await fetch(`${API_BASE}/event/${encodeURIComponent(eventData.eventCode)}?vertical=codepod`);
+          if (eventRes.ok) {
+            const eventInfo = await eventRes.json();
+            eventId = eventInfo.id;
+          }
+        } catch {
+          eventId = null;
+        }
+      }
 
-    reader.onerror = () => reject(new Error('Failed to read selected file'));
-    reader.readAsDataURL(selectedFile);
-  });
-}
-  const demoReward = {
-    type: selectedRewardType,
-    title: 'Exclusive after-show drop',
-    description: 'Demo reward tied to the event dashboard.',
-    url: rewardUrl,
-    eventCode: eventData.eventCode,
-    artistName: eventData.artistName,
-artistLogo: '',
-    createdAt: new Date().toISOString(),
-    unlockAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-    downloadAllowed: false,
-    accessMode: selectedAccessMode,
-    expiresAt: null,
-  };
+      const bonusRes = await fetch(`${API_BASE}/reward`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId, reward }),
+      });
+      if (!bonusRes.ok) throw new Error(`Reward save failed: ${bonusRes.status}`);
 
-  try {
-const eventRes = await fetch(`${API_BASE}/event/${eventData.eventCode}`);
-const eventInfo = await eventRes.json();
+      updateBonusDraft(activeTier, { ...draft, url: bonusUrl, file: null, status: 'saved', storage: 'backend' });
+      setBonusMessage(`${text.saved}: ${text[activeTier]}`);
+    } catch (error) {
+      console.warn('Bonus backend save failed, using localStorage fallback:', error);
+      updateBonusDraft(activeTier, { ...draft, file: null, status: 'saved', storage: 'local' });
+      setBonusMessage(text.localFallback);
+    } finally {
+      setBonusSaving(false);
+    }
+  }, [activeTier, bonusDrafts, eventData, text]);
 
-console.log('EVENT LOOKUP RESPONSE:', eventInfo);
-    if (!eventRes.ok || !eventInfo?.id) {
-      console.error('Could not resolve backend event from code:', eventInfo);
+  const downloadBadgeImage = useCallback(async () => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1600;
+      canvas.height = 900;
+      const ctx = canvas.getContext('2d');
+      const base = await loadImage(badgeBase);
+      ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
+
+      if (qrDataUrl) {
+        const qr = await loadImage(qrDataUrl);
+        const qrLeft = canvas.width * 0.3875;
+        const qrTop = canvas.height * 0.319;
+        const qrSize = canvas.width * 0.225;
+        const quiet = qrSize * 0.035;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(qrLeft, qrTop, qrSize, qrSize);
+        ctx.drawImage(qr, qrLeft + quiet, qrTop + quiet, qrSize - quiet * 2, qrSize - quiet * 2);
+      }
+
+      if (eventData.eventCode) {
+        ctx.save();
+        ctx.font = '300 18px Arial, Helvetica, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.86)';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
+        ctx.shadowBlur = 8;
+        ctx.fillText(String(eventData.eventCode).toUpperCase(), canvas.width - 34, 28);
+        ctx.restore();
+      }
+
+      const link = document.createElement('a');
+      link.download = `${eventData.eventCode || 'codepod'}-badge.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      setImageStatus(text.imageReady);
+    } catch (error) {
+      console.error('Badge download failed:', error);
+      setImageStatus(text.imageError);
+    }
+  }, [eventData.eventCode, qrDataUrl, text.imageError, text.imageReady]);
+
+  const fetchReport = useCallback(() => {
+    loadReport();
+  }, [loadReport]);
+
+  const exportPdfReport = useCallback(async () => {
+    if (!eventData.eventCode) {
+      setReportMessage(text.reportUnavailable);
       return;
     }
 
-const rewardRes = await fetch(`${API_BASE}/reward`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    eventId: eventInfo.id,
-    reward: demoReward,
-  }),
-});
+    let reportForPdf = report;
 
-const rewardText = await rewardRes.text();
-console.log('REWARD STATUS:', rewardRes.status);
-console.log('REWARD RAW RESPONSE:', rewardText);
+    try {
+      const res = await fetch(`${API_BASE}/report/${encodeURIComponent(eventData.eventCode)}?vertical=codepod`);
+      if (res.ok) {
+        const data = await res.json();
+        const legacyJoinKey = 'inner' + 'CircleJoinCount';
+        const legacyRowsKey = 'inner' + 'Circle';
 
-let rewardData = null;
-try {
-  rewardData = JSON.parse(rewardText);
-} catch (error) {
-  console.error('Reward response was not JSON');
-  return;
-}
+        const totalScans = Number(data?.metrics?.scans || data?.metrics?.totalScans || data?.totalScans || 0);
+        const uniqueScans = Number(data?.metrics?.uniqueScans || data?.uniqueScans || 0);
+        const joins = Number(data?.metrics?.joins || data?.metrics?.[legacyJoinKey] || data?.[legacyJoinKey] || data?.joins || 0);
 
-    if (!rewardRes.ok || !rewardData?.success) {
-      console.error('Reward upload failed:', rewardData);
-      return;
+        const rows = (data?.scans || data?.[legacyRowsKey] || data?.rows || []).map((entry, index) => ({
+          eventCode: eventData.eventCode,
+          scanId: entry.scanId || entry.id || `scan-${index + 1}`,
+          phone: entry.phone || '',
+          timestamp: entry.timestamp || entry.createdAt || '',
+          tier: entry.tier || entry.rewardTier || '',
+          source: entry.source || entry.type || 'qr',
+        }));
+
+        reportForPdf = { totalScans, uniqueScans, joins, rows, source: 'backend' };
+        setReport(reportForPdf);
+      }
+    } catch (error) {
+      console.warn('PDF report fetch failed:', error);
     }
 
-    setRewardUploaded(true);
-    setRewardUnlocked(false);
-  } catch (error) {
-    console.error('Could not upload reward to backend:', error);
+    const esc = (value) => String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+
+    const rows = Array.isArray(reportForPdf.rows) ? reportForPdf.rows : [];
+    const generatedAt = new Date().toLocaleString();
+
+    const logoUrl = eventData.podcastLogo || eventData.artistLogo || eventData.logoUrl || '';
+
+    const html = `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>${esc(text.reportPdfTitle || text.report)} - ${esc(eventData.eventCode)}</title>
+<style>
+  body {
+    margin: 0;
+    padding: 34px;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef3f8;
+    color: #07111f;
   }
-};
-const handleSendReport = async () => {
-  try {
-    const res = await fetch(`${API_BASE}/report/${eventData.eventCode}`);
-    const data = await res.json();
-    console.log('LIVE STATS DATA:', data);
 
-    if (!res.ok) {
-      console.error('Report fetch failed:', data);
-      return;
-    }
-
-    generatePDF(data);
-  } catch (err) {
-    console.error('Report error:', err);
+  .report {
+    max-width: 960px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 22px 70px rgba(0,0,0,0.14);
   }
-};
-const generateCSV = (data) => {
-  const rows = [
-    ['Event Code', data?.event?.eventCode || eventData.eventCode || ''],
-    ['Artist', data?.event?.artistName || eventData.artistName || ''],
-    ['Venue', data?.event?.venue || eventData.venue || ''],
-    ['Date', data?.event?.date || eventData.eventDate || ''],
-    ['Scans', data?.metrics?.scans || 0],
-    ['Unique Scans', data?.metrics?.uniqueScans || 0],
-    ['InnerCircle Joins', data?.metrics?.joins || 0],
-    ['Conversion Rate', `${data?.metrics?.conversionRate || 0}%`],
-  ];
 
-  const csvContent = rows.map((row) => row.join(',')).join('\n');
-
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${data?.event?.eventCode || eventData.eventCode || 'event'}-report.csv`;
-  a.click();
-
-  URL.revokeObjectURL(url);
-};
-
-const handleDownloadCSV = async () => {
-  try {
-    const res = await fetch(`${API_BASE}/report/${eventData.eventCode}`);
-    const data = await res.json();
-
-    if (!res.ok) {
-      console.error('CSV fetch failed:', data);
-      return;
-    }
-
-    generateCSV(data);
-  } catch (err) {
-    console.error('CSV error:', err);
+  .hero {
+    background:
+      radial-gradient(circle at 18% 12%, rgba(0,240,255,.22), transparent 34%),
+      linear-gradient(135deg, #050b18 0%, #071426 58%, #03141b 100%);
+    color: white;
+    padding: 34px 38px 32px;
   }
-};
 
-const generatePDF = (data) => {
-  const audienceValue = Number(eventData.audienceSize || 0);
-  const totalScansValue = Number(data?.metrics?.scans || 0);
-  const uniqueScansValue = Number(data?.metrics?.uniqueScans || 0);
-  const innerCircleValue = Number(data?.metrics?.joins || 0);
+  .brand-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
 
-  const participationValue =
-    audienceValue > 0
-      ? `${((uniqueScansValue / audienceValue) * 100).toFixed(1)}%`
-      : '—';
+  .logo-box {
+    width: 94px;
+    height: 94px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
 
-  const eventLine = [
-    eventData.venue || data?.event?.venue || '',
-    eventData.city || '',
-    eventData.eventDate || data?.event?.date || '',
-  ].filter(Boolean).join(' · ');
-const safeConversion =
-  uniqueScansValue > 0
-    ? Math.min(100, ((innerCircleValue / uniqueScansValue) * 100)).toFixed(1)
-    : '—';
-      const html = `
-    <html>
-    <head>
-      <title>codeTone Report</title>
-      <style>
-        @page {
-          size: A4;
-          margin: 14mm;
+  .logo-box img {
+    max-width: 82px;
+    max-height: 82px;
+    object-fit: contain;
+  }
+
+  .brand {
+    color: #20e7ff;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 10px 0 6px;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+  }
+
+  .episode {
+    margin: 0;
+    color: rgba(255,255,255,.76);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .meta {
+    text-align: right;
+    color: rgba(255,255,255,.72);
+    font-size: 13px;
+    line-height: 1.7;
+    min-width: 220px;
+  }
+
+  .meta strong {
+    color: #fff;
+  }
+
+  .content {
+    padding: 30px 38px 36px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 14px;
+    margin: 0 0 28px;
+  }
+
+  .card {
+    border: 1px solid #dbe5f0;
+    border-radius: 18px;
+    padding: 18px;
+    background: linear-gradient(180deg, #fbfdff 0%, #f4f8fc 100%);
+  }
+
+  .label {
+    font-size: 10px;
+    color: #667386;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: .10em;
+  }
+
+  .value {
+    margin-top: 8px;
+    font-size: 32px;
+    font-weight: 950;
+    color: #07111f;
+  }
+
+  .section-title {
+    margin: 8px 0 12px;
+    font-size: 17px;
+    font-weight: 950;
+    color: #07111f;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    border: 1px solid #e2eaf3;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  th {
+    text-align: left;
+    background: #07111f;
+    color: white;
+    padding: 12px 10px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  td {
+    border-bottom: 1px solid #e8eef6;
+    padding: 11px 10px;
+    color: #172335;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8fbfe;
+  }
+
+  .footer {
+    margin-top: 26px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    color: #7b8797;
+    font-size: 11px;
+    border-top: 1px solid #e8eef6;
+    padding-top: 16px;
+  }
+
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+    }
+    .report {
+      box-shadow: none;
+      border-radius: 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="report">
+    <div class="hero">
+      <div style="text-align:center;">
+        ${
+          logoUrl
+            ? `
+              <div style="
+                display:flex;
+                justify-content:center;
+                margin-bottom: 18px;
+              ">
+                <div class="logo-box" style="
+                  width: 120px;
+                  height: 120px;
+                  margin: 0 auto;
+                ">
+                  <img src="${esc(logoUrl)}" alt="" />
+                </div>
+              </div>
+            `
+            : ''
         }
 
-        * {
-          box-sizing: border-box;
-        }
+        <div style="
+          color: rgba(255,255,255,0.68);
+          font-size: 14px;
+          font-weight: 700;
+          margin-bottom: 12px;
+        ">
+          ${esc(text.collaborationLabel || 'I samarbeid med')}
+        </div>
 
-        html, body {
+        <div style="
+          display:flex;
+          justify-content:center;
+          margin-bottom:18px;
+        ">
+          <img
+            src="https://codepod.codenxt.global/codepod-logo.png"
+            alt="codePod"
+            style="
+              width: 180px;
+              max-width: 60%;
+              height: auto;
+              display: block;
+            "
+          />
+        </div>
+
+        <div class="brand" style="
+          font-size: 18px;
+          letter-spacing: .14em;
+          margin-bottom: 22px;
+        ">
+          ${esc(text.reportPdfTitle || text.report)}
+        </div>
+
+        <h1 style="
+          margin: 0 0 8px;
+          font-size: 42px;
+        ">
+          ${esc(eventData.podcastName || 'codePod')}
+        </h1>
+
+        <p class="episode" style="
+          margin: 0 0 8px;
+          font-size: 18px;
+        ">
+          ${esc(eventData.episodeTitle || '')}
+        </p>
+
+        <p style="
           margin: 0;
-          padding: 0;
-          background: #f5f5f3;
-          color: #111111;
-          font-family: Arial, Helvetica, sans-serif;
-        }
-
-        body {
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
-
-        .page {
-          width: 210mm;
-          min-height: 297mm;
-          margin: 0 auto;
-          background: #f5f5f3;
-          padding: 16mm 14mm 14mm;
-        }
-
-        .logo-wrap {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-bottom: 10mm;
-        }
-
-        .logo-wrap img {
-          width: 78mm;
-          max-width: 100%;
-          height: auto;
-          display: block;
-        }
-
-        .artist {
-          margin: 0;
-          text-align: center;
-          font-size: 24pt;
-          line-height: 1.02;
-          font-weight: 900;
-          letter-spacing: 0.03em;
-          text-transform: uppercase;
-          color: #0f0f10;
-        }
-
-        .event-line {
-          margin-top: 6mm;
-          text-align: center;
-          font-size: 10.5pt;
-          line-height: 1.35;
-          color: #3b3b3d;
+          color: rgba(255,255,255,.72);
+          font-size: 14px;
+          line-height: 1.8;
           font-weight: 600;
-        }
+        ">
+          ${eventData.releaseDate ? `${esc(text.sentDate || 'Sendt dato')}: ${esc(String(eventData.releaseDate).slice(0, 10))}<br/>` : ''}
+          ${esc(text.eventCodeLabel || 'Event code')}: ${esc(eventData.eventCode)}
+        </p>
+      </div>
+    </div>
 
-        .rule {
-          width: 46mm;
-          height: 1px;
-          background: #c6a04a;
-          margin: 7mm auto 8mm;
-        }
+    <div class="content">
+      <div class="cards">
+        <div class="card"><div class="label">${esc(text.scans || "Scans")}</div><div class="value">${reportForPdf.totalScans || 0}</div></div>
+        <div class="card"><div class="label">${esc(text.uniqueScans || "Unique scans")}</div><div class="value">${reportForPdf.uniqueScans || 0}</div></div>
+        <div class="card"><div class="label">${esc(text.insideJoins || "InSide")}</div><div class="value">${reportForPdf.joins || 0}</div></div>
+        <div class="card"><div class="label">${esc(text.conversion || "Conversion")}</div><div class="value">${reportForPdf.totalScans ? Math.round((reportForPdf.joins / reportForPdf.totalScans) * 100) : 0}%</div></div>
+        <div class="card"><div class="label">${esc(text.gold || "Gull")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'gold').length}</div></div>
+        <div class="card"><div class="label">${esc(text.silver || "Sølv")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'silver').length}</div></div>
+        <div class="card"><div class="label">${esc(text.general || "Generell")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'general').length}</div></div>
+      </div>
 
-        .section-title {
-          margin: 0 0 4mm;
-          font-size: 9pt;
-          font-weight: 800;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: #161617;
-        }
+      <div class="section-title">${esc(text.bonusDistribution24h || "Bonusfordeling (24 timer etter release)")}</div>
 
-        .kpi-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 4mm;
-          margin-bottom: 8mm;
-        }
-
-        .kpi-card {
-          background: #0d0d0f;
-          color: #ffffff;
-          border-radius: 4mm;
-          padding: 5mm 5mm 4.5mm;
-          min-height: 34mm;
-          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
-        }
-
-        .kpi-label {
-          font-size: 7.5pt;
-          line-height: 1.2;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: #c8a24b;
-          font-weight: 800;
-          margin-bottom: 4mm;
-        }
-
-        .kpi-value {
-          font-size: 23pt;
-          line-height: 1;
-          font-weight: 900;
-          color: #ffffff;
-          margin-bottom: 3mm;
-        }
-
-        .kpi-note {
-          font-size: 8.4pt;
-          line-height: 1.3;
-          color: rgba(255,255,255,0.82);
-        }
-
-        .summary-box {
-          background: #ffffff;
-          border: 1px solid #dfdfdb;
-          border-radius: 4mm;
-          padding: 6mm;
-          margin-bottom: 8mm;
-        }
-
-        .summary-text {
-          margin: 0;
-          font-size: 11pt;
-          line-height: 1.65;
-          color: #19191a;
-        }
-
-        .summary-text strong {
-          color: #0f0f10;
-        }
-
-        .notes-box {
-          background: #ffffff;
-          border: 1px solid #dfdfdb;
-          border-radius: 4mm;
-          padding: 6mm;
-        }
-
-        .notes-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 6mm;
-        }
-
-        .note-item {
-          border-top: 2px solid #c6a04a;
-          padding-top: 4mm;
-        }
-
-        .note-label {
-          font-size: 8pt;
-          font-weight: 800;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: #67676b;
-          margin-bottom: 2.5mm;
-        }
-
-        .note-value {
-          font-size: 15pt;
-          line-height: 1.1;
-          font-weight: 800;
-          color: #111111;
-          margin-bottom: 2mm;
-        }
-
-        .note-copy {
-          font-size: 9.2pt;
-          line-height: 1.5;
-          color: #333336;
-        }
-
-        .footer {
-          margin-top: 10mm;
-          padding-top: 5mm;
-          border-top: 1px solid #d9c48c;
-          text-align: center;
-          color: #444447;
-        }
-
-        .footer-brand {
-          font-size: 10.5pt;
-          font-weight: 800;
-          margin-bottom: 1.5mm;
-        }
-
-        .footer-copy {
-          font-size: 8.5pt;
-          line-height: 1.4;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="page">
-        <div class="logo-wrap">
-          <img src="/codetone-logo.webp" alt="codeTone logo" />
+      <div class="cards">
+        <div class="card">
+          <div class="label">${esc(text.gold || "Gull")}</div>
+          <div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'gold').length}</div>
         </div>
-
-        <h1 class="artist">${eventData.artistName || data?.event?.artistName || 'Artist / Event Name'}</h1>
-        <div class="rule"></div>
-        <div class="event-line">${eventLine}</div>
-
-        <div style="height: 9mm;"></div>
-
-        <div class="section-title">Event Performance Summary</div>
-
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-label">Audience</div>
-            <div class="kpi-value">${audienceValue || '—'}</div>
-            <div class="kpi-note">Estimated ticketed audience</div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-label">Total Scans</div>
-            <div class="kpi-value">${totalScansValue}</div>
-            <div class="kpi-note">All scan attempts recorded</div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-label">Participation</div>
-            <div class="kpi-value">${participationValue}</div>
-            <div class="kpi-note">Unique participants vs audience</div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-label">InnerCircle</div>
-            <div class="kpi-value">${innerCircleValue}</div>
-            <div class="kpi-note">Joined after access</div>
-          </div>
+        <div class="card">
+          <div class="label">${esc(text.silver || "Sølv")}</div>
+          <div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'silver').length}</div>
         </div>
-
-        <div class="summary-box">
-          <div class="section-title">Summary</div>
-          <p class="summary-text">
-            <strong>${totalScansValue}</strong> scans were recorded during the activation window.
-            <strong>${uniqueScansValue}</strong> unique participants engaged with the drop, corresponding to a
-            participation rate of <strong>${participationValue}</strong> of the estimated audience.
-            <strong>${innerCircleValue}</strong> users joined InnerCircle after access.
-          </p>
-        </div>
-
-        <div class="notes-box">
-          <div class="section-title">Readout</div>
-          <div class="notes-grid">
-            <div class="note-item">
-              <div class="note-label">Audience Response</div>
-              <div class="note-value">${uniqueScansValue}</div>
-              <div class="note-copy">
-                Unique participants represent the clearest picture of actual audience response during the activation.
-              </div>
-            </div>
-
-            <div class="note-item">
-              <div class="note-label">Conversion to InnerCircle</div>
-              <div class="note-value">
-              ${safeConversion}%
-              </div>
-              <div class="note-copy">
-                This shows how many of those who engaged continued into the next step of the experience.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="footer">
-          <div class="footer-brand">codeTone by codeNXT</div>
-          <div class="footer-copy">Turning live moments into measurable participation</div>
+        <div class="card">
+          <div class="label">${esc(text.general || "Generell")}</div>
+          <div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'general').length}</div>
         </div>
       </div>
-    </body>
-    </html>
-  `;
 
-  const win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
-  win.print();
-};
-  const topText = (eventData.artistName || 'Artist / Event Name').toUpperCase();
-  const bottomText = (eventData.venue || 'VENUE').toUpperCase();
-  const roundQrSrc = null;
-  const longestArcText = Math.max(topText.length, bottomText.length);
+      <div class="footer">
+        <div>${esc(text.bonusActive24h || text.bonusDistribution24h || "Bonus aktiv: 24 timer etter release")}</div>
+        <div>codePod by codeNXT</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
 
-  const arcRadius =
-  longestArcText > 34 ? 138 :
-  longestArcText > 28 ? 134 :
-  longestArcText > 22 ? 130 :
-  126;
+    const win = window.open('', '_blank');
+    if (!win) {
+      setReportMessage('Kunne ikke åpne rapportvindu.');
+      return;
+    }
 
-  const badgeFontSize =
-    longestArcText > 34 ? 20 :
-    longestArcText > 28 ? 22 :
-    longestArcText > 22 ? 24 :
-    26;
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
 
-  const topArcPath = `M ${170 - arcRadius} 170 A ${arcRadius} ${arcRadius} 0 0 1 ${170 + arcRadius} 170`;
-  const bottomArcPath = `M ${170 + arcRadius} 170 A ${arcRadius} ${arcRadius} 0 0 1 ${170 - arcRadius} 170`;
-  const goJoin = () => {
-    navigate(`/join/${eventData.eventCode}?lang=${lang}`);
-  };
-const handlePrintQr = () => {
-  const activeEventCode = eventData?.eventCode || eventData?.code;
-  if (!activeEventCode) return;
-
-  navigate(`/print/${encodeURIComponent(activeEventCode)}`, {
-    state: {
-      ...eventData,
-      eventCode: activeEventCode,
-    },
-  });
-};
-
-    if (!eventData) {
-      return null;
+    win.onload = () => {
+      try {
+        win.focus();
+        win.print();
+      } catch (error) {
+        console.warn('Print failed:', error);
       }
+    };
+
+    setReportMessage('PDF-rapport åpnet. Velg Skriv ut eller Lagre som PDF.');
+  }, [eventData, report, text.reportUnavailable]);
+
+
+  const downloadCsv = useCallback(() => {
+    const rows = report.rows.length
+      ? report.rows
+      : [{
+          eventCode: eventData.eventCode,
+          scanId: '',
+          phone: '',
+          timestamp: '',
+          tier: '',
+          source: report.source,
+        }];
+    const csv = [
+      ['eventCode', 'scanId', 'phone', 'timestamp', 'tier', 'source'].map(csvEscape).join(','),
+      ...rows.map((row) => [
+        row.eventCode || eventData.eventCode,
+        row.scanId,
+        row.phone,
+        row.timestamp,
+        row.tier,
+        row.source,
+      ].map(csvEscape).join(',')),
+    ].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${eventData.eventCode || 'codepod'}-report.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [eventData.eventCode, report.rows, report.source]);
+
+  const activeDraft = bonusDrafts[activeTier];
+  const canSaveBonus = Boolean(activeDraft?.url || activeDraft?.file);
+  const conversionRate = makeConversion(report.joins, report.uniqueScans);
+  const infoCards = [
+    [text.publishDate, eventData.publishDate],
+    [text.expectedListeners, eventData.expectedListeners],
+    [text.host, eventData.hostName],
+    [text.episodeCode, eventData.eventCode],
+    [text.platform, eventData.platform],
+    [text.listenerLink, joinUrl],
+  ];
+  const metricCards = [
+    [text.scans, report.totalScans.toLocaleString()],
+    [text.uniqueScans, report.uniqueScans.toLocaleString()],
+    [text.insideJoins, report.joins.toLocaleString()],
+    [text.conversionRate, conversionRate],
+  ];
+
   return (
     <>
       <style>{`
         * { box-sizing: border-box; }
-
         body {
           margin: 0;
-          background: #070707;
+          background: #030711;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
         }
-
         .dashboard-page {
           min-height: 100vh;
-          color: #ffffff;
+          color: #fff;
           background:
-            radial-gradient(circle at top left, rgba(0,240,255,0.12), transparent 24%),
-            radial-gradient(circle at bottom right, rgba(57,120,255,0.14), transparent 24%),
-            #070707;
+            radial-gradient(circle at 50% -8%, rgba(0,240,255,0.18), transparent 30%),
+            linear-gradient(180deg, #07101d 0%, #02050d 46%, #000 100%);
+        }
+        .dashboard-shell {
+          width: min(1188px, 100%);
+          margin: 0 auto;
+          padding: 18px 18px 48px;
+        }
+        .logo {
+          height: 96px;
+          object-fit: contain;
+          filter: drop-shadow(0 18px 36px rgba(0,240,255,0.2));
+        }
+        .panel {
+          background: linear-gradient(180deg, rgba(13,25,45,0.94), rgba(6,12,24,0.96));
+          border: 1px solid rgba(143,247,255,0.16);
+          border-radius: 12px;
+          box-shadow: 0 22px 70px rgba(0,0,0,0.28);
+          padding: 16px;
+        }
+        .summary {
           position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          min-height: 302px;
+          padding: 24px 172px 46px;
+          margin-bottom: 12px;
           overflow: hidden;
         }
-
-        .dashboard-glow {
+        .summary::before {
+          content: "";
           position: absolute;
-          border-radius: 999px;
-          pointer-events: none;
-          filter: blur(90px);
-          opacity: 0.9;
+          inset: 0;
+          background:
+            radial-gradient(circle at 50% 6%, rgba(0,240,255,0.2), transparent 31%),
+            radial-gradient(circle at 15% 100%, rgba(57,120,255,0.12), transparent 30%);
         }
-
-        .dashboard-glow.one {
-          width: 360px;
-          height: 360px;
-          left: -100px;
-          top: -100px;
-          background: rgba(0,240,255,0.12);
-        }
-
-        .dashboard-glow.two {
-          width: 420px;
-          height: 420px;
-          right: -140px;
-          bottom: -160px;
-          background: rgba(57,120,255,0.16);
-        }
-
-        .dashboard-shell {
-          max-width: 1380px;
-          margin: 0 auto;
-          padding: 28px 22px 72px;
+        .summary > * {
           position: relative;
           z-index: 1;
         }
-
-        .dashboard-top {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          margin-bottom: 28px;
-          position: relative;
-        }
-
-        .dashboard-logo {
-          height: 148px;
+        .pod-logo {
           width: auto;
+          max-width: 230px;
+          max-height: 96px;
           object-fit: contain;
-          filter: drop-shadow(0 20px 40px rgba(0,240,255,0.15));
-          margin-bottom: 14px;
-        }
-
-        .dashboard-kicker {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 12px;
-          border-radius: 999px;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.08);
-          color: #9ddcff;
-          font-size: 12px;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          margin-bottom: 16px;
-        }
-
-        .dashboard-title {
-          margin: 0 0 12px;
-          font-size: 56px;
-          line-height: 0.98;
-          letter-spacing: -0.045em;
-        }
-
-        .dashboard-subtitle {
-          margin: 0;
-          max-width: 760px;
-          color: rgba(255,255,255,0.70);
-          font-size: 18px;
-          line-height: 1.6;
-        }
-
-        .summary-card {
-          display: grid;
-          grid-template-columns: 1.2fr 0.8fr;
-          gap: 20px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 28px;
-          padding: 22px;
-          backdrop-filter: blur(14px);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.30);
-          margin-bottom: 24px;
-        }
-
-        .summary-left {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .summary-right {
-          display: flex;
-          align-items: flex-start;
-          justify-content: flex-end;
-        }
-
-        .status-pill {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 9px 14px;
-          border-radius: 999px;
-          font-size: 13px;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          border: 1px solid rgba(255,255,255,0.10);
-        }
-
-        .status-pill.draft { background: rgba(255,255,255,0.07); color: #d7d7d7; }
-        .status-pill.ready { background: rgba(255,179,107,0.12); color: #ffcc8f; }
-        .status-pill.live { background: rgba(121,255,176,0.12); color: #79ffb0; }
-        .status-pill.closed { background: rgba(255,141,141,0.12); color: #ff8d8d; }
-
-        .event-name {
-          margin: 0;
-          font-size: 34px;
-          line-height: 1.05;
-          letter-spacing: -0.03em;
-        }
-
-        .event-meta-grid {
-          display: grid;
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 12px;
-        }
-
-        .event-meta-box {
-          padding: 14px;
-          border-radius: 18px;
-          background: rgba(0,0,0,0.22);
-          border: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .event-meta-label {
-          color: rgba(255,255,255,0.55);
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 8px;
-        }
-
-        .event-meta-value {
-          color: #ffffff;
-          font-size: 15px;
-          line-height: 1.4;
-          word-break: break-word;
-        }
-
-        .status-switcher {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-          justify-content: flex-end;
-        }
-
-.status-button {
-  height: 42px;
-  padding: 0 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.04);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.status-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  border-color: rgba(255,255,255,0.06);
-  background: rgba(255,255,255,0.02);
-}
-        .status-button.active {
-          background: #00f0ff;
-          color: #000;
-          border-color: transparent;
-        }
-.status-button.active {
-          background: #00f0ff;
-          color: #000;
-          border-color: transparent;
-        }
-
-        .status-button:disabled {
-          opacity: 0.35;
-          cursor: not-allowed;
-        }
-                  .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 16px;
-          margin-bottom: 24px;
-        }
-
-        .stat-card {
-          padding: 18px;
-          border-radius: 22px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          box-shadow: 0 16px 36px rgba(0,0,0,0.24);
-        }
-
-        .stat-label {
-          color: rgba(255,255,255,0.58);
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 12px;
-        }
-
-        .stat-value {
-          font-size: 34px;
-          line-height: 1;
-          letter-spacing: -0.04em;
-          margin-bottom: 10px;
-        }
-
-        .stat-note {
-          color: rgba(255,255,255,0.64);
-          font-size: 14px;
-          line-height: 1.5;
-        }
-
-        .main-grid {
-          display: grid;
-          grid-template-columns: 0.88fr 1.12fr;
-          gap: 24px;
-          align-items: start;
-        }
-
-        .panel {
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 28px;
-          padding: 22px;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.30);
-          backdrop-filter: blur(14px);
-        }
-
-        .panel-title {
           margin: 0 0 14px;
-          font-size: 24px;
-          line-height: 1.1;
-          letter-spacing: -0.02em;
+          filter: drop-shadow(0 12px 28px rgba(0,0,0,0.28));
+        }
+        .pod-logo.placeholder {
+          min-width: 118px;
+          max-width: 220px;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: rgba(255,255,255,0.5);
+          font-size: 10px;
+          line-height: 1.2;
           text-align: center;
-        }
-
-        .panel-text {
-          margin: 0 0 18px;
-          color: rgba(255,255,255,0.68);
-          font-size: 15px;
-          line-height: 1.6;
-        }
-
-        .qr-panel {
-          text-align: center;
-        }
-
-        .qr-frame {
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 10px 0 4px;
-        }
-
-        .qr-badge-wrap {
-          position: relative;
-          width: 340px;
-          height: 340px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .qr-badge-svg {
-          width: 340px;
-          height: 340px;
-          display: block;
-          filter:
-            drop-shadow(0 18px 40px rgba(0,0,0,0.34))
-            drop-shadow(0 0 24px rgba(0,240,255,0.08));
-        }
-
-        .qr-badge-top-text,
-        .qr-badge-bottom-text {
-          fill: rgba(255,255,255,0.92);
-          font-size: 15px;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-        }
-
-        .qr-badge-inner-area {
-          position: absolute;
-          width: 236px;
-          height: 236px;
-          border-radius: 999px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #ffffff;
-          box-shadow:
-            inset 0 0 0 10px rgba(255,255,255,1),
-            inset 0 0 0 11px rgba(230,230,230,1);
-          overflow: hidden;
-        }
-
-        .qr-render {
-          width: 176px;
-          height: 176px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .qr-render svg,
-        .qr-render canvas {
-          max-width: 100%;
-          max-height: 100%;
-          display: block;
-        }
-
-        .artist-logo-wrap {
-          margin-top: 18px;
-          padding: 16px;
-          border-radius: 20px;
-          background: rgba(0,0,0,0.22);
-          border: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .artist-logo-label {
-          color: rgba(255,255,255,0.54);
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 10px;
-        }
-
-        .artist-logo-box {
-          min-height: 118px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 18px;
+          border: 1px dashed rgba(255,255,255,0.16);
+          border-radius: 12px;
           background: rgba(255,255,255,0.04);
-          border: 1px dashed rgba(255,255,255,0.14);
-          overflow: hidden;
+          padding: 0 14px;
         }
-
-        .artist-logo-image {
-          max-width: 240px;
-          max-height: 90px;
-          width: auto;
-          height: auto;
-          object-fit: contain;
-          display: block;
-        }
-
-        .artist-logo-placeholder {
-          color: rgba(255,255,255,0.46);
-          font-size: 14px;
-          line-height: 1.5;
-          padding: 18px;
-        }
-
-        .short-link-box,
-        .customer-box,
-        .event-type-box {
-          margin-top: 18px;
-          padding: 14px 16px;
-          border-radius: 18px;
-          background: rgba(0,0,0,0.22);
-          border: 1px solid rgba(255,255,255,0.06);
-          text-align: left;
-        }
-
-        .short-link-label,
-        .customer-label,
-        .event-type-label {
-          color: rgba(255,255,255,0.55);
-          font-size: 12px;
+        .podcast-name {
+          margin: 0;
+          color: #20e7ff;
+          font-size: clamp(54px, 6vw, 78px);
+          line-height: 0.98;
+          font-weight: 900;
+          letter-spacing: 0.035em;
+          text-align: center;
           text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 8px;
+          text-shadow: 0 0 26px rgba(0,240,255,0.22);
         }
-
-        .short-link-value,
-        .customer-value,
-        .event-type-value {
-          color: #8ff7ff;
-          font-size: 14px;
-          line-height: 1.5;
-          word-break: break-word;
-        }
-
-        .customer-value,
-        .event-type-value {
+        .episode-name {
+          margin: 10px 0 0;
           color: #ffffff;
+          font-size: clamp(24px, 2.55vw, 32px);
+          font-weight: 800;
+          line-height: 1.18;
+          text-align: center;
         }
-
-        .action-section + .action-section {
-          margin-top: 20px;
-        }
-
-        .action-section-label {
-          color: rgba(255,255,255,0.55);
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 12px;
-        }
-
-        .actions-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-        }
-
-.action-button {
-  min-height: 64px;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.04);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 6px;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.action-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  border-color: rgba(255,255,255,0.04);
-  background: rgba(255,255,255,0.02);
-  box-shadow: none;
-}
-
-.action-button:disabled .action-title,
-.action-button:disabled .action-note {
-  opacity: 0.6;
-}
-
-        .action-button.primary {
-          background: linear-gradient(135deg, #00f0ff 0%, #3978ff 100%);
-          color: #000;
-          border-color: transparent;
-          font-weight: 700;
-        }
-
-        .action-button.live {
-          border-color: rgba(121,255,176,0.24);
-          background: rgba(121,255,176,0.08);
-        }
-
-        .action-button.warn {
-          border-color: rgba(255,179,107,0.24);
-          background: rgba(255,179,107,0.08);
-        }
-
-        .action-title {
-          display: block;
-          font-size: 15px;
-          font-weight: 700;
-          margin-bottom: 6px;
-        }
-
-        .action-note {
-          display: block;
-          font-size: 13px;
-          line-height: 1.45;
-          opacity: 0.82;
-        }
-
-        .join-button {
-          width: 100%;
-          min-height: 56px;
-          border-radius: 18px;
-          border: none;
-          background: linear-gradient(135deg, #00f0ff 0%, #3978ff 100%);
-          color: #000;
-          font-size: 17px;
+        .refresh-removed {
+          position: absolute;
+          right: 26px;
+          top: 62%;
+          min-height: 28px;
+          padding: 6px 9px;
+          border-radius: 8px;
+          border: 1px solid rgba(143,247,255,0.24);
+          background: rgba(0,240,255,0.08);
+          color: #fff;
+          font-size: 10px;
           font-weight: 800;
           cursor: pointer;
-          margin-top: 18px;
+          transform: translateY(-50%);
         }
-.join-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-          .system-note {
-          margin-top: 20px;
-          padding: 16px;
-          border-radius: 18px;
-          background: rgba(0,0,0,0.22);
-          border: 1px solid rgba(255,255,255,0.06);
+        .grid {
+          display: grid;
+          gap: 10px;
         }
-
-        .system-note-title {
+        .info-grid {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+          margin-bottom: 12px;
+        }
+        .metrics-panel {
+          margin-bottom: 12px;
+          padding: 15px;
+        }
+        .metrics-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        .mini-card {
+          min-height: 74px;
+          padding: 10px;
+          border-radius: 9px;
+          background: rgba(0,0,0,0.28);
+          border: 1px solid rgba(255,255,255,0.075);
+        }
+        .label {
+          color: rgba(255,255,255,0.55);
+          font-size: 9px;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          margin-bottom: 7px;
+        }
+        .value {
+          color: #fff;
+          font-size: 12px;
+          line-height: 1.35;
+          word-break: break-word;
+        }
+        .metric-value {
+          color: #8ff7ff;
+          font-size: 28px;
+          line-height: 1;
+          font-weight: 850;
+        }
+        .main-grid {
+          display: grid;
+          grid-template-columns: minmax(360px, 0.92fr) minmax(0, 1.08fr);
+          gap: 12px;
+          align-items: start;
+        }
+        .panel-title {
           margin: 0 0 8px;
-          font-size: 15px;
-          font-weight: 700;
+          font-size: 18px;
+          line-height: 1.15;
         }
-
-        .system-note-text {
+        .presentation-panel {
+          text-align: center;
+        }
+        .presentation-panel .panel-title {
+          margin-bottom: 14px;
+        }
+        .panel-text {
           margin: 0;
-          color: rgba(255,255,255,0.66);
+          color: rgba(255,255,255,0.68);
+          font-size: 12px;
+          line-height: 1.45;
+        }
+        .slide {
+          position: relative;
+          aspect-ratio: 16 / 9;
+          overflow: hidden;
+          border-radius: 9px;
+          border: 1px solid rgba(143,247,255,0.18);
+          background: #020914;
+        }
+        .presentation-panel .slide {
+          width: 100%;
+          margin: 0 auto;
+        }
+        .slide-bg {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0.98;
+        }
+        .qr-box {
+          position: absolute;
+          left: 38.75%;
+          top: 31.9%;
+          width: 22.5%;
+          height: 40.1%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .qr-img {
+          width: 93%;
+          height: 93%;
+          object-fit: contain;
+          border-radius: 4px;
+          background: #fff;
+          padding: 2px;
+        }
+        .presentation-panel .button-row {
+          justify-content: center;
+        }
+        .button-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 12px;
+        }
+        .primary-button,
+        .ghost-button {
+          min-height: 40px;
+          padding: 10px 13px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-weight: 800;
+          cursor: pointer;
+        }
+        .primary-button {
+          border: none;
+          background: linear-gradient(135deg, #00f0ff 0%, #3978ff 100%);
+          color: #020914;
+        }
+        .ghost-button {
+          border: 1px solid rgba(255,255,255,0.12);
+          background: rgba(255,255,255,0.05);
+          color: #fff;
+        }
+        .primary-button:disabled,
+        .ghost-button:disabled {
+          opacity: 0.45;
+          cursor: not-allowed;
+        }
+        .status {
+          min-height: 16px;
+          margin-top: 8px;
+          color: #8ff7ff;
+          font-size: 11px;
+          line-height: 1.45;
+        }
+        .bonus-list {
+          display: grid;
+          gap: 8px;
+          margin: 12px 0;
+        }
+        .bonus-row {
+          display: grid;
+          grid-template-columns: 28px 74px minmax(110px, 1fr) 72px minmax(120px, 1fr) 70px 74px;
+          gap: 8px;
+          align-items: center;
+          min-height: 50px;
+          padding: 8px;
+          border-radius: 9px;
+          background: rgba(0,0,0,0.24);
+          border: 1px solid rgba(255,255,255,0.075);
+        }
+        .bonus-row.active {
+          border-color: rgba(0,240,255,0.45);
+          background: rgba(0,240,255,0.08);
+        }
+        .bonus-icon {
+          width: 24px;
+          height: 24px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          color: #8ff7ff;
+          background: rgba(0,240,255,0.1);
           font-size: 14px;
-          line-height: 1.6;
+          font-weight: 900;
         }
-
-        @media (max-width: 1100px) {
-          .summary-card,
-          .main-grid {
+        .bonus-cell {
+          min-width: 0;
+          color: rgba(255,255,255,0.78);
+          font-size: 11px;
+          line-height: 1.25;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .bonus-tier {
+          color: #fff;
+          font-weight: 900;
+        }
+        .bonus-status-text {
+          color: #8ff7ff;
+          font-weight: 800;
+        }
+        .edit-button {
+          min-height: 30px;
+          padding: 7px 10px;
+          border-radius: 7px;
+          border: 1px solid rgba(143,247,255,0.2);
+          background: rgba(255,255,255,0.055);
+          color: #fff;
+          font-size: 11px;
+          font-weight: 850;
+          cursor: pointer;
+        }
+        .form-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          padding-top: 12px;
+          border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .wide {
+          grid-column: 1 / -1;
+        }
+        label {
+          display: grid;
+          gap: 6px;
+        }
+        input,
+        textarea,
+        select {
+          width: 100%;
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 8px;
+          background: rgba(255,255,255,0.06);
+          color: #fff;
+          padding: 10px 11px;
+          font: inherit;
+          font-size: 12px;
+          outline: none;
+        }
+        textarea {
+          min-height: 70px;
+          resize: vertical;
+        }
+        option {
+          background: #07101d;
+          color: #fff;
+        }
+        .report-panel {
+          margin-top: 12px;
+          display: grid;
+          grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+          align-items: center;
+          gap: 12px;
+        }
+        .report-actions .button-row {
+          margin-top: 10px;
+        }
+        .report-summary {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 8px;
+        }
+        .csv-columns {
+          grid-column: 1 / -1;
+          margin-top: 2px;
+          color: rgba(255,255,255,0.48);
+          font-size: 10px;
+          line-height: 1.4;
+        }
+        .warning {
+          margin-bottom: 12px;
+          border-color: rgba(255,190,100,0.22);
+          background: rgba(255,190,100,0.075);
+          color: #ffd89a;
+        }
+        @media (max-width: 980px) {
+          .main-grid,
+          .report-panel {
             grid-template-columns: 1fr;
           }
-
-          .summary-right {
-            justify-content: flex-start;
-          }
-
-          .status-switcher {
-            justify-content: flex-start;
-          }
-
-          .stats-grid {
+          .info-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
           }
-
-          .event-meta-grid {
+          .metrics-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+          .bonus-row {
+            grid-template-columns: 28px 70px minmax(96px, 1fr) 68px;
+          }
+          .bonus-row .bonus-cell:nth-child(5),
+          .bonus-row .bonus-cell:nth-child(6) {
+            display: none;
           }
         }
-
-        @media (max-width: 760px) {
+        @media (max-width: 640px) {
           .dashboard-shell {
-            padding: 20px 14px 52px;
+            padding: 18px 12px 40px;
           }
-
-          .dashboard-logo {
-            height: 104px;
-            margin-bottom: 10px;
+          .logo {
+            height: 82px;
           }
-
-          .dashboard-title {
-            font-size: 38px;
+          .summary {
+            min-height: 238px;
+            padding: 56px 14px 46px;
           }
-
-          .dashboard-subtitle {
-            font-size: 16px;
+          .pod-logo {
+            max-height: 64px;
           }
-
-          .summary-card,
-          .panel,
-          .stat-card {
-            border-radius: 22px;
-            padding: 18px;
+          .podcast-name {
+            font-size: clamp(34px, 10vw, 56px);
           }
-
-          .stats-grid,
-          .actions-grid,
-          .event-meta-grid {
+          .episode-name {
+            font-size: clamp(19px, 5.6vw, 24px);
+          }
+          .refresh-removed {
+            right: 14px;
+            top: auto;
+            bottom: 14px;
+            transform: none;
+          }
+          .info-grid,
+          .metrics-grid,
+          .form-grid,
+          .report-summary {
             grid-template-columns: 1fr;
           }
-
-          .qr-badge-wrap,
-          .qr-badge-svg {
-            width: 280px;
-            height: 280px;
+          .bonus-row {
+            grid-template-columns: 28px minmax(58px, 0.5fr) minmax(0, 1fr) 64px;
           }
-
-          .qr-badge-top-text,
-          .qr-badge-bottom-text {
-            font-size: 12px;
-            letter-spacing: 0.1em;
-          }
-
-          .qr-badge-inner-area {
-            width: 196px;
-            height: 196px;
-          }
-
-          .qr-render {
-            width: 146px;
-            height: 146px;
-          }
-
-          .action-button {
-            min-height: 58px;
-          }
-
-          .event-name {
-            font-size: 28px;
-          }
-
-          .stat-value {
-            font-size: 30px;
+          .panel {
+            padding: 12px;
           }
         }
-      `}</style>
 
-      <div className="dashboard-page">
-        <div className="dashboard-glow one" />
-        <div className="dashboard-glow two" />
-
-        <div className="dashboard-shell">
-          <div className="dashboard-top">
-
-            <img
-              src="/codetone-logo.webp"
-              alt="codeTone logo"
-              className="dashboard-logo"
-            />
-            <div className="dashboard-kicker">{t.kicker}</div>
-            <h1 className="dashboard-title">{t.title}</h1>
-            <p className="dashboard-subtitle">{t.subtitle}</p>
-          </div>
-          <button
-  onClick={() => setShowMode(prev => !prev)}
-  style={{
-    position: 'fixed',
-    top: 20,
-    right: 20,
-    zIndex: 20000,
-    padding: '10px 14px',
-    borderRadius: 12,
-    background: showMode ? '#00f0ff' : 'rgba(255,255,255,0.1)',
-    color: showMode ? '#000' : '#fff',
-    fontWeight: 800,
-    border: 'none',
-    cursor: 'pointer'
-  }}
->
-  {showMode ? 'EXIT SHOW MODE' : 'SHOW MODE'}
-</button>
-
-          <div className="summary-card">
-            <div className="summary-left">
-              <div className={`status-pill ${eventStatus}`}>{statusLabel}</div>
-              <h2 className="event-name">{eventData.artistName}</h2>
-              <div
-  style={{
-    marginTop: 10,
-    marginBottom: 14,
-    display: 'inline-flex',
-    flexDirection: 'column',
-    gap: 4,
-  }}
->
-  <div
-    style={{
-      color: 'rgba(255,255,255,0.5)',
-      fontSize: 11,
-      textTransform: 'uppercase',
-      letterSpacing: '0.08em',
-    }}
-  >
-    Local Time
-  </div>
-  <div
-    style={{
-      color: '#ffffff',
-      fontSize: 16,
-      fontWeight: 700,
-      letterSpacing: '0.04em',
-    }}
-  >
-    {localTimeText}
-  </div>
-</div>
-
-<div
-  className="event-meta-grid"
-  style={
-    showMode
-      ? { display: 'none' }
-      : (
-          showGuide && guideSteps[guideStep]?.id === 'overview'
-            ? {
-                position: 'relative',
-                zIndex: 10000,
-                boxShadow: '0 0 0 2px rgba(86,224,255,0.95), 0 0 24px rgba(86,224,255,0.35)',
-                borderRadius: '24px',
-              }
-            : undefined
-        )
-  }
->
-
-                  <div className="event-meta-box">
-                  <div className="event-meta-label">{t.venue}</div>
-                  <div className="event-meta-value">{eventData.venue}</div>
-                </div>
-                <div className="event-meta-box">
-                  <div className="event-meta-label">{t.city}</div>
-                  <div className="event-meta-value">{eventData.city}</div>
-                </div>
-                <div className="event-meta-box">
-                  <div className="event-meta-label">{t.date}</div>
-                  <div className="event-meta-value">{eventData.eventDate}</div>
-                </div>
-                <div className="event-meta-box">
-                  <div className="event-meta-label">{t.eventCode}</div>
-                  <div className="event-meta-value">{eventData.eventCode}</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="summary-right">
-<div
-  className="status-switcher"
-  style={
-    showGuide && guideSteps[guideStep]?.id === 'status'
-      ? {
-          position: 'relative',
-          zIndex: 10000,
-          boxShadow: '0 0 0 2px rgba(86,224,255,0.95), 0 0 24px rgba(86,224,255,0.35)',
-          borderRadius: '24px',
-        }
-      : undefined
-  }
->
-    <button
-    className={`status-button ${eventStatus === 'draft' ? 'active' : ''}`}
-    onClick={() => handleSetEventStatus('draft')}
-    type="button"
-    disabled={!canGoDraft && eventStatus !== 'draft'}
-  >
-    {t.draft}
-  </button>
-
-  <button
-    className={`status-button ${eventStatus === 'ready' ? 'active' : ''}`}
-    onClick={() => handleSetEventStatus('ready')}
-    type="button"
-    disabled={!canGoReady && eventStatus !== 'ready'}
-  >
-    {t.ready}
-  </button>
-
-  <button
-    className={`status-button ${eventStatus === 'live' ? 'active' : ''}`}
-    onClick={() => handleSetEventStatus('live')}
-    type="button"
-    disabled={!canGoLive && eventStatus !== 'live'}
-  >
-    {t.live}
-  </button>
-
-  <button
-    className={`status-button ${eventStatus === 'closed' ? 'active' : ''}`}
-    onClick={() => handleSetEventStatus('closed')}
-    type="button"
-    disabled={!canGoClosed && eventStatus !== 'closed'}
-  >
-    {t.closed}
-  </button>
-</div>
-            </div>
-          </div>
-
-<div
-  className="stats-grid"
-  style={
-    showGuide && guideSteps[guideStep]?.id === 'metrics'
-      ? {
-          position: 'relative',
-          zIndex: 10000,
-          boxShadow: '0 0 0 2px rgba(86,224,255,0.95), 0 0 24px rgba(86,224,255,0.35)',
-          borderRadius: '24px',
-        }
-      : undefined
-  }
->
-              {stats.map((item) => (
-              <div key={item.label} className="stat-card">
-                <div className="stat-label">{item.label}</div>
-                <div className="stat-value">{item.value}</div>
-                <div className="stat-note">{item.note}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="main-grid">
-<div
-  className="panel qr-panel"
-  style={
-    showGuide && guideSteps[guideStep]?.id === 'qr'
-      ? {
-          position: 'relative',
-          zIndex: 10000,
-          boxShadow: '0 0 0 2px rgba(86,224,255,0.95), 0 0 24px rgba(86,224,255,0.35)',
-          borderRadius: '24px',
-        }
-      : undefined
-  }
->
-                <h2 className="panel-title">{t.qrTitle}</h2>
-
-              <div className="qr-frame">
-                <div className="qr-badge-wrap">
-                  <svg
-                    className="qr-badge-svg"
-                    viewBox="0 0 340 340"
-                    aria-hidden="true"
-                  >
-<defs>
-  <path id="topArc" d={topArcPath} />
-  <path id="bottomArc" d={bottomArcPath} />
-</defs>
-                    <circle cx="170" cy="170" r="160" fill="#15253a" />
-                    <circle cx="170" cy="170" r="150" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="2" />
-                    <circle cx="170" cy="170" r="136" fill="#1b3550" />
-                    <circle cx="170" cy="170" r="118" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
-
-                    <text className="qr-badge-top-text" style={{ fontSize: `${badgeFontSize}px` }}>
-                      <textPath href="#topArc" startOffset="50%" textAnchor="middle">
-                        {topText}
-                      </textPath>
-                    </text>
-
-                    <text className="qr-badge-bottom-text" style={{ fontSize: `${badgeFontSize}px` }}>
-                      <textPath href="#bottomArc" startOffset="50%" textAnchor="middle">
-                        {bottomText}
-                      </textPath>
-                    </text>
-                  </svg>
-
-                  <div className="qr-badge-inner-area">
-                    {roundQrSrc ? (
-                      <img
-                        src={roundQrSrc}
-                        alt="Round QR"
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          display: 'block',
-                          borderRadius: '50%',
-                          background: '#ffffff'
-                        }}
-                      />
-                    ) : (
-<div
-  style={{
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  }}
->
-  <div
-    style={{
-      width: '100%',
-      height: '100%',
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}
-  >
-    <img
-      src={roundQrImage}
-      alt="Round QR"
-      style={{
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        display: 'block',
-        borderRadius: '50%',
-        background: '#ffffff',
-      }}
-    />
-    <div
-      ref={qrRef}
-      style={{
-        position: 'absolute',
-        width: '72%',
-        height: '72%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        borderRadius: '12px',
-        background: '#ffffff',
-      }}
-    />
-  </div>
-</div>
-)}
-                  </div>
-                </div>
-              </div>
-
-<button
-  type="button"
-  className="join-button"
-  onClick={goJoin}
-  disabled={eventStatus === 'draft' || eventStatus === 'closed'}
->
-  {t.openJoin}
-</button>
-
-<div className="artist-logo-wrap">
-  <div className="artist-logo-box">
-    {eventData.artistLogo ? (
-      <img
-        src={eventData.artistLogo}
-        alt="Artist logo"
-        className="artist-logo-image"
-      />
-    ) : (
-      <div className="artist-logo-placeholder">{t.noLogo}</div>
-    )}
-  </div>
-</div>
-
-<div className="short-link-box">
-  <div className="short-link-label">{t.qrTarget}</div>
-  <div className="short-link-value">{`https://codetone.codenxt.global/join/${eventData.eventCode}?lang=${lang}`}</div>
-</div>
-
-<div className="event-type-box">
-  <div className="event-type-label">{t.arrangementType}</div>
-  <div className="event-type-value">
-    {eventData.selectedTypes && eventData.selectedTypes.length > 0
-      ? eventData.selectedTypes.join(', ')
-      : t.noArrangementType}
-  </div>
-</div>
-
-<div className="customer-box">
-  <div className="customer-label">{t.customer}</div>
-  <div className="customer-value">
-    {eventData.customerName || t.notAvailable}
-    <br />
-    {eventData.email || t.noEmail}
-    <br />
-    {eventData.phone || t.noPhone}
-  </div>
-</div>
-</div>
-<div
-  className="panel"
-  style={
-    showGuide && guideSteps[guideStep]?.id === 'actions'
-      ? {
-          position: 'relative',
-          zIndex: 10000,
-          boxShadow: '0 0 0 2px rgba(86,224,255,0.95), 0 0 24px rgba(86,224,255,0.35)',
-          borderRadius: '24px',
-        }
-      : undefined
-  }
->
-                <h2 className="panel-title">{t.controlActions}</h2>
-              <p className="panel-text">{t.grouped}</p>
-
-              <div className="action-section">
-                <div className="action-section-label">{t.eventControl}</div>
-
-                <div className="actions-grid">
-<button
-  type="button"
-  className={`action-button ${screenLive ? 'live' : ''}`}
-onClick={() => {
-  const saved = (() => {
-    try {
-      return JSON.parse(localStorage.getItem('codenxt_event') || '{}');
-    } catch {
-      return {};
-    }
-  })();
-
-const rawVideoUrl = eventData?.screenVideoUrl || saved?.screenVideoUrl;
-
-const videoUrl = rawVideoUrl
-  ? rawVideoUrl.startsWith('http')
-    ? rawVideoUrl
-    : `${API_BASE}${rawVideoUrl}`
-  : '';
-  if (!videoUrl) {
-    alert('No screen video ready');
-    return;
-  }
-
-  const screenWin = window.open('', 'codeNxtScreenWindow', 'width=1280,height=900');
-
-  if (!screenWin) {
-    alert('Popup blocked');
-    return;
-  }
-
-  screenWin.document.write(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>codeNXT Screen</title>
-        <meta charset="utf-8" />
-        <style>
-          html, body {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
+          .summary {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            position: relative !important;
+            padding: 18px 28px 32px !important;
+            min-height: 260px !important;
           }
 
-          body {
+          .summary-brand {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin-bottom: 12px !important;
+          }
+
+          .summary .logo {
+            width: 180px !important;
+            height: 180px !important;
+            object-fit: contain !important;
+            display: block !important;
+          }
+
+          .summary-tagline {
+            margin-top: 4px !important;
+            color: rgba(255,255,255,0.62) !important;
+            font-size: 18px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.08em !important;
+            text-transform: none !important;
+          }
+
+          .summary-text {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+          }
+
+          .podcast-name {
+            margin: 0 !important;
+            color: #1fe8ff !important;
+            font-size: clamp(34px, 5.6vw, 58px) !important;
+            line-height: 0.96 !important;
+            font-weight: 950 !important;
+            letter-spacing: 0.045em !important;
+            text-transform: uppercase !important;
+            text-align: center !important;
+            text-shadow: 0 0 28px rgba(31,232,255,0.28) !important;
+          }
+
+          .episode-name {
+            margin: 10px 0 0 !important;
+            color: #fff !important;
+            font-size: clamp(18px, 2.2vw, 24px) !important;
+            line-height: 1.15 !important;
+            font-weight: 850 !important;
+            text-align: center !important;
+          }
+
+
+          .summary-flags > * {
+            margin: 0 auto !important;
+          }
+
+          .summary-flags .language-switcher,
+          .summary-flags .lang-switcher,
+          .summary-flags .flag-selector {
+            position: static !important;
+            left: auto !important;
+            right: auto !important;
+            top: auto !important;
+            transform: none !important;
+          }
+
+          .bonus-panel {
+            overflow: hidden !important;
+          }
+
+          .bonus-header {
+            display: flex !important;
+            align-items: flex-end !important;
+            justify-content: space-between !important;
+            gap: 16px !important;
+            margin-bottom: 14px !important;
+          }
+
+          .tier-count {
+            width: min(260px, 100%) !important;
+          }
+
+          .tier-count select {
+            width: 100% !important;
+          }
+
+          .bonus-list {
+            display: grid !important;
+            gap: 10px !important;
+            margin: 0 0 16px !important;
+            width: 100% !important;
+          }
+
+          .bonus-row {
+            display: grid !important;
+            grid-template-columns: 92px minmax(0, 1.1fr) 72px minmax(0, 1fr) 70px 82px !important;
+            gap: 12px !important;
+            align-items: center !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 12px !important;
+            border-radius: 14px !important;
+            background: rgba(255,255,255,0.035) !important;
+            border: 1px solid rgba(255,255,255,0.09) !important;
+            overflow: hidden !important;
+          }
+
+          .bonus-row.active {
+            border-color: rgba(0,240,255,0.5) !important;
+            background: rgba(0,240,255,0.08) !important;
+          }
+
+          .tier-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            min-width: 0 !important;
+            color: #fff !important;
+            font-weight: 900 !important;
+          }
+
+          .tier-badge span {
+            width: 26px !important;
+            height: 26px !important;
+            border-radius: 999px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: rgba(0,240,255,0.14) !important;
+            color: #8ff7ff !important;
+            flex: 0 0 auto !important;
+          }
+
+          .tier-gold span {
+            color: #ffd95c !important;
+            background: rgba(255,217,92,0.16) !important;
+          }
+
+          .tier-silver span {
+            color: #d7dde6 !important;
+            background: rgba(215,221,230,0.13) !important;
+          }
+
+          .bonus-main,
+          .bonus-meta,
+          .bonus-file {
+            min-width: 0 !important;
+            overflow: hidden !important;
+          }
+
+          .bonus-main strong,
+          .bonus-meta span,
+          .bonus-file span {
+            display: block !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+          }
+
+          .bonus-label {
+            display: block !important;
+            margin-bottom: 4px !important;
+            color: rgba(255,255,255,0.48) !important;
+            font-size: 10px !important;
+            font-weight: 900 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.08em !important;
+          }
+
+          .bonus-state {
+            color: #8ff7ff !important;
+            font-size: 12px !important;
+            font-weight: 900 !important;
+            text-align: center !important;
+          }
+
+          .bonus-editor {
+            border-top: 1px solid rgba(255,255,255,0.09) !important;
+            padding-top: 16px !important;
+          }
+
+          @media (max-width: 980px) {
+            .bonus-header {
+              align-items: stretch !important;
+              flex-direction: column !important;
+            }
+
+            .tier-count {
+              width: 100% !important;
+            }
+
+            .bonus-row {
+              grid-template-columns: 90px minmax(0, 1fr) 78px !important;
+            }
+
+            .bonus-meta,
+            .bonus-file,
+            .bonus-state {
+              display: none !important;
+            }
+          }
+
+          .left-stack {
+            display: grid;
+            gap: 0;
+            min-width: 0;
+          }
+
+          .report-panel {
+            margin-top: 14px;
+          }
+
+          .compact-report {
+            padding: 16px !important;
+          }
+
+          .report-copy {
+            margin: 8px 0 14px;
+            color: rgba(255,255,255,0.72);
+            font-size: 13px;
+            line-height: 1.5;
+          }
+
+          .report-buttons {
+            justify-content: flex-start;
+            margin-top: 8px;
+          }
+
+          .csv-note {
+            margin: 12px 0 0;
+            color: rgba(255,255,255,0.48);
+            font-size: 11px;
+            line-height: 1.4;
+          }
+
+          .compact-report {
+            display: block !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 18px !important;
+          }
+
+          .compact-report .panel-title {
+            margin: 0 0 10px !important;
+            display: block !important;
+          }
+
+          .compact-report .report-copy {
+            display: block !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 0 16px !important;
+            color: rgba(255,255,255,0.72) !important;
+            font-size: 13px !important;
+            line-height: 1.45 !important;
+            white-space: normal !important;
+          }
+
+          .compact-report .report-buttons {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            gap: 10px !important;
+            margin: 0 0 12px !important;
+          }
+
+          .compact-report .csv-note {
+            display: block !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            color: rgba(255,255,255,0.48) !important;
+            font-size: 11px !important;
+            line-height: 1.35 !important;
+            white-space: normal !important;
+          }
+
+          .compact-report .status {
+            margin-top: 8px !important;
+          }
+
+          .bonus-panel .bonus-header {
+            margin-bottom: 8px !important;
+          }
+
+          .bonus-panel .bonus-editor {
+            border-top: none !important;
+            padding-top: 0 !important;
+          }
+
+          .bonus-panel .tier-count {
+            margin-top: 0 !important;
+          }
+
+          .dashboard-page {
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: flex-start !important;
+          }
+
+          .dashboard-shell {
+            width: min(1120px, calc(100vw - 24px)) !important;
+            margin: 0 auto !important;
+          }
+
+          .presentation-hint {
+            margin: 10px auto 0;
+            max-width: none;
+            white-space: nowrap;
+            text-align: center;
+            color: rgba(255,255,255,0.62);
+            font-size: 11px;
+            line-height: 1.3;
+          }
+
+          .presentation-panel {
+            padding-bottom: 4px !important;
+          }
+
+          .podcast-title-row {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 26px !important;
+            width: 100% !important;
+          }
+
+          .podcast-mic {
+            font-size: clamp(42px, 6vw, 66px) !important;
+            line-height: 1 !important;
+            filter: drop-shadow(0 0 12px rgba(0,230,255,0.45)) !important;
+          }
+
+          .summary .language-switcher,
+          .summary-flags .language-switcher,
+          .summary-flags button {
+            position: relative !important;
+            z-index: 60 !important;
+            pointer-events: auto !important;
+          }
+
+          .podcast-title-row,
+          .podcast-mic,
+          .summary-text {
+            pointer-events: auto !important;
+          }
+
+          .summary-flags,
+          .summary-flags .language-switcher,
+
+
+          .summary-flags,
+          .summary-flags .language-switcher,
+
+          .summary {
+            position: relative !important;
+          }
+
+          /* FINAL FIX: language flags in hero */
+
+          .summary-brand {
+            position: relative !important;
+            z-index: 1 !important;
+          }
+
+          .summary-text,
+          .podcast-title-row,
+          .podcast-name,
+          .episode-name,
+          .podcast-mic {
+            position: relative !important;
+            z-index: 1 !important;
+          }
+
+          /* CLEAN LANGUAGE SWITCHER FIX */
+          .summary-flags {
             display: flex;
-            align-items: center;
             justify-content: center;
-            color: white;
-          }
-
-          .screen-root {
+            align-items: center;
+            margin: 16px 0 24px;
             position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
+            z-index: 1000;
           }
 
-          .countdown-wrap {
+          .summary-flags .language-switcher {
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            gap: 20px;
+            align-items: center;
+            gap: 8px;
+          }
+
+          .summary-flags .flag-button {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(0,0,0,0.25);
+            cursor: pointer;
+            position: relative;
+            z-index: 1001;
+          }
+
+          .summary-flags .flag-button.is-active {
+            box-shadow: 0 0 12px rgba(0,230,255,0.6);
+            border-color: rgba(0,230,255,0.8);
+          }
+
+
+          .summary {
+            isolation: isolate !important;
+          }
+
+          .summary-flags {
+            position: relative !important;
+            z-index: 999999 !important;
+            pointer-events: auto !important;
+          }
+
+          .summary-flags * {
+            pointer-events: auto !important;
+          }
+
+          .presentation-event-code {
+            position: absolute !important;
+            top: 12px !important;
+            right: 14px !important;
+            color: rgba(255,255,255,0.82) !important;
+            font-size: 10px !important;
+            font-weight: 300 !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            font-family: Arial, Helvetica, sans-serif !important;
+            text-shadow: 0 0 6px rgba(0,0,0,0.55) !important;
+            pointer-events: none !important;
+            z-index: 20 !important;
+          }
+
+          .bonus-scan-count {
+            margin: 2px 0 14px;
+            color: rgba(255,255,255,0.74);
+            font-size: 13px;
+            font-weight: 700;
+          }
+
+          .bonus-scan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 4px 0 14px;
+          }
+
+          .bonus-scan-card {
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 10px 12px;
             text-align: center;
           }
 
-          .countdown-number {
-            font-size: 180px;
-            font-weight: 700;
-            line-height: 1;
+          .bonus-scan-card span {
+            display: block;
+            color: rgba(255,255,255,0.58);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
           }
 
-          .video-wrap {
-            position: absolute;
-            inset: 0;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            background: #000;
+          .bonus-scan-card strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 15px;
+            line-height: 1.15;
+            font-weight: 400;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
           }
 
-          .video-wrap video {
-            position: absolute;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: contain;
-            object-position: center center;
-            background: #000;
+          .bonus-scan-card.tier-gold strong {
+            color: #ffd95c;
           }
-.screen-instruction {
-  position: absolute;
-  top: 28px;
-  left: 28px;
-  right: 28px;
-  z-index: 10;
-  padding: 22px 26px;
-  border-radius: 22px;
-  border: 1px solid rgba(86,224,255,0.35);
-  background: rgba(0,0,0,0.72);
-  box-shadow: 0 0 30px rgba(86,224,255,0.22);
-  text-align: center;
-}
 
-.screen-instruction-title {
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-}
+          .bonus-scan-card.tier-silver strong {
+            color: #d7dde8;
+          }
 
-.screen-instruction-text {
-  margin-top: 8px;
-  font-size: 16px;
-  opacity: 0.78;
-}
+          .bonus-scan-card.tier-general strong {
+            color: #1fe8ff;
+          }
 
-.fullscreen-button {
-  margin-top: 14px;
-  padding: 12px 22px;
-  border-radius: 999px;
-  border: none;
-  background: linear-gradient(90deg, #56e0ff 0%, #3b82f6 100%);
-  color: #041018;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-}
-          </style>
-      </head>
-      <body>
-        <div class="screen-root">
-<div id="screenInstruction" class="screen-instruction">
-  <div class="screen-instruction-title">THIS IS THE SCREEN WINDOW</div>
-  <div class="screen-instruction-text">Drag this window to the projector or external display.</div>
-  <button id="fullscreenButton" class="fullscreen-button">GO FULLSCREEN</button>
-</div>
-          <div id="countdownWrap" class="countdown-wrap">
-            <div id="countdownNumber" class="countdown-number">10</div>
-          </div>
+          .main-grid {
+            display: grid !important;
+            align-items: stretch !important;
+          }
 
-          <div id="videoWrap" class="video-wrap">
-            <video id="screenVideo" playsinline preload="auto"></video>
-          </div>
-        </div>
-      </body>
-    </html>
-  `);
-  screenWin.document.close();
+          .left-stack {
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+          }
 
-  const countdownWrap = screenWin.document.getElementById('countdownWrap');
-  const countdownNumber = screenWin.document.getElementById('countdownNumber');
-  const videoWrap = screenWin.document.getElementById('videoWrap');
-  const video = screenWin.document.getElementById('screenVideo');
-const screenInstruction = screenWin.document.getElementById('screenInstruction');
-const fullscreenButton = screenWin.document.getElementById('fullscreenButton');
+          .left-stack .presentation-panel {
+            flex: 0 0 auto !important;
+          }
 
-if (fullscreenButton) {
-  fullscreenButton.addEventListener('click', async () => {
-    try {
-      await screenWin.document.documentElement.requestFullscreen();
-      if (screenInstruction) screenInstruction.style.display = 'none';
-    } catch (err) {
-      console.error('FULLSCREEN ERROR:', err);
-    }
-  });
-}
-  let countdown = 10;
+          .left-stack .compact-report {
+            flex: 1 1 auto !important;
+          }
 
-  const timer = setInterval(async () => {
-    if (!screenWin || screenWin.closed) {
-      clearInterval(timer);
-      return;
-    }
+          .bonus-panel {
+            height: 100% !important;
+            box-sizing: border-box !important;
+          }
 
-    if (countdown > 0) {
-      countdownNumber.textContent = String(countdown);
-      countdown -= 1;
-      return;
-    }
+          .compact-report {
+            height: 100% !important;
+            box-sizing: border-box !important;
+          }
 
-    if (countdown === 0) {
-      countdownNumber.textContent = 'SCAN';
-      countdown = -1;
-      return;
-    }
+          .compact-report {
+            min-height: 180px !important;
+          }
 
-    clearInterval(timer);
+          .bonus-panel {
+            min-height: 100% !important;
+            box-sizing: border-box !important;
+          }
 
-    countdownWrap.style.display = 'none';
-    videoWrap.style.display = 'flex';
+          .left-stack > .compact-report,
+          .bonus-panel {
+            height: 100% !important;
+          }
+      `}</style>
 
-    video.src = videoUrl;
-    video.controls = false;
-    video.muted = true;
-    video.autoplay = true;
-    video.loop = true;
-    video.playsInline = true;
+      <main className="dashboard-page">
+        <div className="dashboard-shell">
+          {!eventData.eventCode ? <section className="panel warning">{text.missingEpisode}</section> : null}
 
-try {
-  await video.play();
-  setScreenLive(true);
-} catch (err) {
-  console.error('VIDEO PLAY ERROR:', err);
-  setScreenLive(true);
-}
-  }, 1000);
-}}
-  disabled={eventStatus !== 'live'}
-  style={
-    showMode && eventStatus === 'live' && !screenLive
-      ? {
-          transform: 'scale(1.06)',
-          boxShadow: '0 0 0 2px rgba(86,224,255,0.95), 0 0 24px rgba(86,224,255,0.45)',
-          border: '1px solid rgba(86,224,255,0.95)',
-        }
-      : undefined
-  }
->
-                        <span className="action-title">{t.sendToScreen}</span>
-                    <span className="action-note">{t.sendToScreenNote}</span>
-                  </button>
-
-<button
-  type="button"
-  className={`action-button ${screenLive ? 'warn' : ''}`}
-onClick={() => {
-  console.log("STOP SCREEN CLICKED");
-
-  const screenWin = window.open("", "codeNxtScreenWindow");
-  if (screenWin && !screenWin.closed) {
-    screenWin.close();
-  }
-
-  setScreenLive(false);
-
-  setEventData((prev) => ({
-    ...prev,
-    screenVideoUrl: "",
-  }));
-
-const savedRaw = localStorage.getItem("codenxt_event");
-if (savedRaw) {
-  const saved = JSON.parse(savedRaw);
-  saved.screenVideoUrl = "";
-  localStorage.setItem("codenxt_event", JSON.stringify(saved));
-}
-}}
-  style={
-    showMode && screenLive
-      ? {
-          transform: 'scale(1.06)',
-          boxShadow: '0 0 0 2px rgba(255,170,120,0.95), 0 0 24px rgba(255,170,120,0.35)',
-          border: '1px solid rgba(255,170,120,0.95)',
-        }
-      : undefined
-  }
->
-                      <span className="action-title">{t.stopScreen}</span>
-                    <span className="action-note">{t.stopScreenNote}</span>
-                  </button>
-                </div>
-              </div>
-
-<div
-  className="action-section"
-  style={showMode ? { display: 'none' } : undefined}
->
-  <div className="action-section-label">{t.utility}</div>
-  <div className="actions-grid">
-    <button type="button" className="action-button" onClick={handlePrintQr}>
-      <span className="action-title">{t.printQr}</span>
-      <span className="action-note">{t.printQrNote}</span>
-    </button>
-
-    <button type="button" className="action-button" onClick={handleSendReport}>
-      <span className="action-title">{t.sendReport}</span>
-      <span className="action-note">{t.sendReportNote}</span>
-    </button>
-  </div>
-</div>
-<button type="button" className="action-button" onClick={handleDownloadCSV}>
-  <span className="action-title">DOWNLOAD CSV</span>
-  <span className="action-note">Download scans and InnerCircle data</span>
-</button>
-<div
-  className="system-note"
-  style={{
-    ...(showMode ? { display: 'none' } : {}),
-    ...(showGuide && guideSteps[guideStep]?.id === 'reward'
-      ? {
-          position: 'relative',
-          zIndex: 10000,
-          boxShadow: '0 0 0 2px rgba(86,224,255,0.95), 0 0 24px rgba(86,224,255,0.35)',
-          borderRadius: '24px',
-        }
-      : {})
-  }}
->
-<h3 className="system-note-title">Reward Control</h3>
-<p className="system-note-text">
-  Define what the audience gets — and when they get it.
-</p>
-
-<div
-  style={{
-    marginTop: 14,
-    display: 'grid',
-    gridTemplateColumns: 'minmax(0, 1.25fr) minmax(220px, 0.75fr)',
-    gap: 16,
-    alignItems: 'start',
-  }}
->
-  <div>
-    <div style={{ fontSize: 11, opacity: 0.5, letterSpacing: 1, marginBottom: 8 }}>
-      FILE TYPE
-    </div>
-
-    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-      {['image', 'pdf', 'audio', 'video'].map((type) => (
-        <button
-          key={type}
-          type="button"
-          onClick={() => setSelectedRewardType(type)}
-          style={{
-            padding: '8px 12px',
-            borderRadius: 999,
-            border: selectedRewardType === type
-              ? '1px solid #00f0ff'
-              : '1px solid rgba(255,255,255,0.15)',
-            background: selectedRewardType === type
-              ? 'linear-gradient(180deg, #00f0ff 0%, #00c8d8 100%)'
-              : 'rgba(255,255,255,0.04)',
-            boxShadow: selectedRewardType === type
-              ? '0 0 12px rgba(0,240,255,0.6), 0 0 30px rgba(0,240,255,0.25)'
-              : 'none',
-            color: '#fff',
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: 1,
-            cursor: 'pointer'
-          }}
-        >
-          {type.toUpperCase()}
-        </button>
-      ))}
-    </div>
-
-    <div style={{ fontSize: 11, opacity: 0.5, letterSpacing: 1, marginTop: 14, marginBottom: 8 }}>
-      FILE
-    </div>
-
-    <input
-      type="file"
-      accept="image/*,application/pdf,audio/*,video/*"
-      onChange={(e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-          setSelectedFile(file);
-        }
-      }}
-      style={{
-        color: '#fff',
-        fontSize: 11,
-        opacity: 0.8
-      }}
-    />
-
-    <div
-      style={{
-        marginTop: 6,
-        fontSize: 11,
-        color: 'rgba(255,255,255,0.58)',
-        letterSpacing: 0.3,
-      }}
-    >
-      Max file size: 20 MB
-    </div>
-
-    <div style={{ fontSize: 11, opacity: 0.5, letterSpacing: 1, marginTop: 14, marginBottom: 8 }}>
-      ACCESS
-    </div>
-
-    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-      {['moment', 'souvenir'].map((mode) => (
-        <button
-          key={mode}
-          type="button"
-          onClick={() => setSelectedAccessMode(mode)}
-          style={{
-            padding: '8px 12px',
-            borderRadius: 999,
-            border: selectedAccessMode === mode
-              ? '1px solid #00f0ff'
-              : '1px solid rgba(255,255,255,0.15)',
-            background: selectedAccessMode === mode
-              ? 'linear-gradient(180deg, #00f0ff 0%, #00c8d8 100%)'
-              : 'rgba(255,255,255,0.04)',
-            boxShadow: selectedAccessMode === mode
-              ? '0 0 12px rgba(0,240,255,0.6), 0 0 30px rgba(0,240,255,0.25)'
-              : 'none',
-            color: '#fff',
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: 1,
-            cursor: 'pointer'
-          }}
-        >
-          {mode === 'moment' ? 'MOMENT' : 'SOUVENIR'}
-        </button>
-      ))}
-    </div>
-
-    <div style={{ marginTop: 14, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-      <button
-        type="button"
-        onClick={handleUploadReward}
-        disabled={!selectedRewardType || !selectedAccessMode || eventStatus === 'closed'}
-        style={{
-          padding: '10px 14px',
-          borderRadius: 14,
-          border: rewardUploaded
-            ? '1px solid #00f0ff'
-            : '1px solid rgba(255,255,255,0.15)',
-          background: rewardUploaded
-            ? 'linear-gradient(180deg, #00f0ff 0%, #00c8d8 100%)'
-            : 'rgba(255,255,255,0.04)',
-          boxShadow: rewardUploaded
-            ? '0 0 12px rgba(0,240,255,0.6), 0 0 30px rgba(0,240,255,0.25)'
-            : 'none',
-          color: '#fff',
-          fontSize: 12,
-          fontWeight: 800,
-          letterSpacing: 0.6,
-          cursor: (!selectedRewardType || !selectedAccessMode || eventStatus === 'closed')
-            ? 'not-allowed'
-            : 'pointer',
-          opacity: (!selectedRewardType || !selectedAccessMode || eventStatus === 'closed') ? 0.55 : 1,
-        }}
-      >
-        {rewardUploaded ? t.rewardUploaded : t.uploadReward}
-      </button>
-
-
-
-      <div
-        style={{
-          marginTop: 8,
-          fontSize: 11,
-          color: 'rgba(255,255,255,0.6)',
-          letterSpacing: 0.4,
-        }}
-      >
-        {unlockStatusText}
-      </div>
-    </div>
-  </div>
-
-  <div
-    style={{
-      border: '1px solid rgba(255,255,255,0.08)',
-      background: 'rgba(255,255,255,0.03)',
-      borderRadius: 16,
-      padding: '14px 14px 12px',
-      minHeight: 210,
-    }}
-  >
-<div style={{ fontSize: 11, opacity: 0.5, letterSpacing: 1, marginBottom: 10 }}>
-  QUICK GUIDE (SETUP)
-</div>
-
-<div style={{ display: 'grid', gap: 8, fontSize: 12, lineHeight: 1.45, color: '#fff' }}>
-  <div>1. Check that status shows READY at the top</div>
-  <div>2. Select FILE TYPE</div>
-  <div>3. Choose reward file </div>
-  <div>4. Choose access mode (MOMENT / SOUVENIR)</div>
-  <div>5. Save reward</div>
-</div>
-
-
-    {(selectedRewardType || selectedAccessMode) && (
-      <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ fontSize: 11, opacity: 0.5, letterSpacing: 1 }}>
-          TYPE
-        </div>
-
-        <div
-          style={{
-            fontSize: 14,
-            fontWeight: 800,
-            letterSpacing: 1,
-            color: '#ffffff',
-            marginBottom: 8,
-            marginTop: 4,
-          }}
-        >
-          {selectedRewardType ? selectedRewardType.toUpperCase() : '—'}
-        </div>
-
-        <div style={{ fontSize: 11, opacity: 0.5, letterSpacing: 1 }}>
-          ACCESS
-        </div>
-
-        <div
-          style={{
-            fontSize: 14,
-            fontWeight: 800,
-            letterSpacing: 1,
-            color: selectedAccessMode === 'moment' ? '#00f0ff' : '#7ffcff',
-            marginBottom: 8,
-            marginTop: 4,
-          }}
-        >
-          {selectedAccessMode === 'moment'
-            ? 'MOMENT'
-            : selectedAccessMode === 'souvenir'
-              ? 'SOUVENIR'
-              : '—'}
-        </div>
-
-        <div style={{ fontSize: 11, opacity: 0.5, letterSpacing: 1 }}>
-          EXPERIENCE
-        </div>
-
-        <div
-          style={{
-            fontSize: 13,
-            fontWeight: 700,
-            letterSpacing: 1,
-            color: '#ffffff',
-            marginTop: 4,
-          }}
-        >
-          {selectedAccessMode === 'moment'
-            ? 'DIGITAL MOMENT'
-            : selectedAccessMode === 'souvenir'
-              ? 'DIGITAL SOUVENIR'
-              : '—'}
-        </div>
-      </div>
-    )}
-  </div>
-</div>
-</div>
-                            {eventData.comment ? (
-                <div className="system-note">
-                  <h3 className="system-note-title">{t.customerNote}</h3>
-                  <p className="system-note-text">{eventData.comment}</p>
-                </div>
-              ) : null}
+          <section className="panel summary">
+            <div className="summary-brand">
+              <img src="/codepod-logo.png" alt="codePod logo" className="logo" />
+              <div className="summary-tagline">codePod by codeNXT</div>
             </div>
-          </div>
-        </div>
-      </div>
-      {showGuide && guideSteps[guideStep] && (
-  <div
-    style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0, 0, 0, 0.72)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
-    }}
-  >
-    <div
-      style={{
-        width: '100%',
-        maxWidth: '560px',
-        borderRadius: '24px',
-        border: '1px solid rgba(255,255,255,0.12)',
-        background: 'rgba(10, 12, 18, 0.96)',
-        boxShadow: '0 20px 80px rgba(0,0,0,0.45)',
-        padding: '28px',
-        color: '#ffffff',
-      }}
-    >
-      <div
-        style={{
-          fontSize: '12px',
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.55)',
-          marginBottom: '12px',
-        }}
-      >
-        Quick Operator Guide
-      </div>
 
-      <h2
-        style={{
-          margin: '0 0 14px 0',
-          fontSize: '28px',
-          lineHeight: 1.1,
-          fontWeight: 700,
-        }}
-      >
-        {guideSteps[guideStep].title}
-      </h2>
-
-      <p
-        style={{
-          margin: 0,
-          fontSize: '16px',
-          lineHeight: 1.6,
-          color: 'rgba(255,255,255,0.82)',
-        }}
-      >
-        {guideSteps[guideStep].body}
-      </p>
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '12px',
-          marginTop: '24px',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '13px',
-            color: 'rgba(255,255,255,0.55)',
-          }}
-        >
-          Step {guideStep + 1} of {guideSteps.length}
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            gap: '10px',
-            flexWrap: 'wrap',
-            justifyContent: 'flex-end',
-          }}
-        >
-          {guideStep > 0 && (
-            <button
-              type="button"
-              onClick={previousGuideStep}
-              style={{
-                borderRadius: '999px',
-                border: '1px solid rgba(255,255,255,0.16)',
-                background: 'transparent',
-                color: '#ffffff',
-                padding: '10px 16px',
-                cursor: 'pointer',
+            <div
+              className="summary-flags"
+              onClickCapture={(event) => {
+                const button = event.target.closest?.('[data-lang-code]');
+                const code = button?.getAttribute('data-lang-code');
+                if (code) handleLanguageChange(code);
               }}
             >
-              Back
-            </button>
-          )}
+              <LanguageSwitcher lang={lang} onChange={handleLanguageChange} />
+            </div>
 
-          <button
-            type="button"
-            onClick={closeGuide}
-            style={{
-              borderRadius: '999px',
-              border: '1px solid rgba(255,255,255,0.16)',
-              background: 'transparent',
-              color: '#ffffff',
-              padding: '10px 16px',
-              cursor: 'pointer',
-            }}
-          >
-            Skip
-          </button>
+            <div className="summary-text">
+              <div className="podcast-title-row">
+                <span className="podcast-mic" aria-hidden="true">🎙️</span>
+                <h2 className="podcast-name">{eventData.podcastName || text.podcastFallback}</h2>
+                <span className="podcast-mic" aria-hidden="true">🎙️</span>
+              </div>
+              <p className="episode-name">{eventData.episodeTitle || text.episodeFallback}</p>
+            </div>
+          </section>
 
-          <button
-            type="button"
-            onClick={nextGuideStep}
-            style={{
-              borderRadius: '999px',
-              border: 'none',
-              background: 'linear-gradient(90deg, #56e0ff 0%, #3b82f6 100%)',
-              color: '#041018',
-              fontWeight: 700,
-              padding: '10px 18px',
-              cursor: 'pointer',
-            }}
-          >
-            {guideStep === guideSteps.length - 1 ? 'Finish' : 'Next'}
-          </button>
+          <section className="grid info-grid">
+            {infoCards.map(([label, value]) => (
+              <div className="mini-card" key={label}>
+                <div className="label">{label}</div>
+                <div className="value">{value || text.unavailable}</div>
+              </div>
+            ))}
+          </section>
+
+          <section className="panel metrics-panel">
+            <div className="grid metrics-grid">
+              {metricCards.map(([label, value]) => (
+                <div className="mini-card" key={label}>
+                  <div className="label">{label}</div>
+                  <div className="metric-value">{value}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className="main-grid">
+            <div className="left-stack">
+            <section className="panel presentation-panel">
+              <h2 className="panel-title">{text.presentation}</h2>
+              <div className="slide">
+                <img className="slide-bg" src={badgeBase} alt="" aria-hidden="true" />
+                <div className="qr-box">
+                  {qrDataUrl ? <img className="qr-img" src={qrDataUrl} alt={text.listenerLink} /> : null}
+                </div>
+                {eventData.eventCode ? (
+                  <div className="presentation-event-code">{eventData.eventCode}</div>
+                ) : null}
+              </div>
+              <div className="button-row">
+                <button type="button" className="primary-button" onClick={downloadBadgeImage} disabled={!qrDataUrl}>
+                  {text.downloadImage}
+                </button>
+                <p className="presentation-hint">{text.presentationHint}</p>
+              </div>
+              <div className="status">{imageStatus}</div>
+            </section>
+            <section className="panel report-panel compact-report">
+              <h2 className="panel-title">{text.report}</h2>
+              <p className="report-copy">
+                {text.reportHelp} CSV-filen kan brukes til enkel oppfølging av InSide-tilganger, skanninger og bonusrespons.
+              </p>
+
+              <div className="button-row report-buttons">
+                <button type="button" className="ghost-button" onClick={exportPdfReport}>
+                  {text.viewReport}
+                </button>
+                <button type="button" className="primary-button" onClick={downloadCsv}>
+                  {text.downloadCsv}
+                </button>
+              </div>
+
+              <p className="csv-note">{text.reportLifecycle}</p>
+
+            </section>
+            </div>
+
+            <section className="panel bonus-panel">
+              <div className="bonus-header">
+                <h2 className="panel-title">{text.bonus}</h2>
+              </div>
+
+              <div className="bonus-editor">
+
+                <div className="form-grid">
+                  <label>
+                    <span className="label">{text.tier}</span>
+                    <select
+                      value={activeTier}
+                      onChange={(event) => {
+                        setActiveTier(event.target.value);
+                        setBonusMessage('');
+                      }}
+                    >
+                      {BONUS_TIERS.slice(0, tierCount).map((tier) => <option value={tier} key={tier}>{text[tier]}</option>)}
+                    </select>
+                  </label>
+
+                  <label>
+                    <span className="label">{text.type}</span>
+                    <select
+                      value={activeDraft.type}
+                      onChange={(event) => updateBonusDraft(activeTier, { type: event.target.value, file: null, fileName: '', url: '' })}
+                    >
+                      {BONUS_TYPES.map((type) => <option value={type} key={type}>{text[type] || type.toUpperCase()}</option>)}
+                    </select>
+                  </label>
+
+                  <label>
+                    <span className="label">{text.fileOrUrl}</span>
+                    {activeDraft.type === 'url' ? (
+                      <input value={activeDraft.url} placeholder="https://..." onChange={(event) => updateBonusDraft(activeTier, { url: event.target.value })} />
+                    ) : (
+                      <input
+                        key={`${activeTier}-${activeDraft.type}`}
+                        type="file"
+                        aria-label={text.chooseFile}
+                        accept={
+                          activeDraft.type === 'pdf' ? 'application/pdf'
+                            : activeDraft.type === 'image' ? 'image/*'
+                              : activeDraft.type === 'audio' ? 'audio/*'
+                                : activeDraft.type === 'video' ? 'video/*'
+                                  : undefined
+                        }
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          updateBonusDraft(activeTier, { file, fileName: file?.name || '' });
+                        }}
+                      />
+                    )}
+                  </label>
+
+                </div>
+
+                <div className="bonus-scan-grid">
+                  {BONUS_TIERS.map((tier) => (
+                    <div className={`bonus-scan-card tier-${tier}`} key={tier}>
+                      <span>{text[tier]}</span>
+                      <strong>
+                        {tierSplit[tier]}% ca. {Number(eventData.estimatedListeners || eventData.audienceSize || eventData.listeners || 0) > 0
+                          ? Math.round(Number(eventData.estimatedListeners || eventData.audienceSize || eventData.listeners || 0) * Number(tierSplit[tier] || 0) / 100)
+                          : 0}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="button-row">
+                  <button type="button" className="primary-button" onClick={saveBonus} disabled={!canSaveBonus || bonusSaving}>
+                    {bonusSaving ? text.savingBonus : text.saveBonus}
+                  </button>
+                </div>
+
+                <div className="status">{bonusMessage}</div>
+              </div>
+
+              <div className="bonus-list">
+                {BONUS_TIERS.slice(0, tierCount).map((tier) => (
+                  <div className={`bonus-row ${activeTier === tier ? 'active' : ''}`} key={tier}>
+                    <div className={`tier-badge tier-${tier}`}>
+                      <span aria-hidden="true">★</span>
+                      <strong>{text[tier]}</strong>
+                    </div>
+
+                    <div className="bonus-main">
+                      <span className="bonus-label">Status</span>
+                      <strong>{bonusDrafts[tier].status === 'saved' ? text.saved : text.empty}</strong>
+                    </div>
+
+                    <div className="bonus-meta">
+                      <span className="bonus-label">{text.type}</span>
+                      <span>{bonusDrafts[tier].status === 'saved' ? (text[bonusDrafts[tier].type] || bonusDrafts[tier].type.toUpperCase()) : text.empty}</span>
+                    </div>
+
+                    <div className="bonus-file">
+                      <span className="bonus-label">{text.fileOrUrl}</span>
+                      <span>{bonusDrafts[tier].status === 'saved' ? (bonusDrafts[tier].fileName || bonusDrafts[tier].url || text.empty) : text.empty}</span>
+                    </div>
+
+                    <div className="bonus-state">
+                      {activeTier === tier ? text.active || 'Active' : text.edit}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="edit-button"
+                      onClick={() => {
+                        setActiveTier(tier);
+                        setBonusMessage('');
+                      }}
+                    >
+                      {text.edit}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      </main>
     </>
   );
 }
-  
