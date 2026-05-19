@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #0a0a0a;
+  color: #e0e0e0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Neon glow effects */
+.neon-cyan {
+  text-shadow: 0 0 10px #00F0FF,
+               0 0 20px #00F0FF;
+}
+
+.neon-magenta {
+  text-shadow: 0 0 10px #FF00AA,
+               0 0 20px #FF00AA;
+}
+
+.neon-violet {
+  text-shadow: 0 0 10px #8B00FF,
+               0 0 20px #8B00FF;
+}
+
+/* Nice hover effect for neon buttons */
+.btn-neon {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-neon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px currentColor;
+}
+
+/* Make sure buttons are touch-friendly */
+button {
+  min-height: 48px;
+}
