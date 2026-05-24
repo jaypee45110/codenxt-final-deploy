@@ -661,6 +661,33 @@ export default function Dashboard({ lang: appLang, setLang }) {
     }
   }, [eventData.eventCode, adminHeaders]);
 
+  const updateClaimStatus = useCallback(async (claimId, nextStatus) => {
+    if (!claimId || !nextStatus) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/reward-claim/${encodeURIComponent(claimId)}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...adminHeaders },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+
+      if (!res.ok) throw new Error(`Claim status failed: ${res.status}`);
+
+      const data = await res.json();
+      const updatedClaim = data?.claim;
+
+      if (updatedClaim?.id) {
+        setClaims((prev) => prev.map((claim) => claim.id === updatedClaim.id ? updatedClaim : claim));
+        setClaimsMessage(`Claim marked ${nextStatus}.`);
+      } else {
+        await loadClaims();
+      }
+    } catch (error) {
+      console.warn('Could not update claim status:', error);
+      setClaimsMessage('Could not update claim status.');
+    }
+  }, [adminHeaders, loadClaims]);
+
 
   useEffect(() => {
     document.title = `${text.title} - codePerks`;
@@ -2682,6 +2709,77 @@ export default function Dashboard({ lang: appLang, setLang }) {
             line-height: 1;
           }
 
+          .claims-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 16px;
+          }
+
+          .claim-row {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr .7fr .8fr auto;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(0,0,0,.18);
+          }
+
+          .claim-row span {
+            display: block;
+            margin-bottom: 5px;
+            color: rgba(255,255,255,.48);
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: .13em;
+            text-transform: uppercase;
+          }
+
+          .claim-row strong {
+            display: block;
+            color: #fff8e8;
+            font-size: 12px;
+            word-break: break-word;
+          }
+
+          .claim-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-end;
+          }
+
+          .claim-actions .small {
+            min-height: 30px;
+            padding: 7px 9px;
+            font-size: 10px;
+          }
+
+          .claim-status {
+            text-transform: capitalize;
+          }
+
+          .status-pending { color: #f7d88a !important; }
+          .status-approved { color: #6ee7ff !important; }
+          .status-fulfilled { color: #9cffbd !important; }
+          .status-rejected { color: #ff9b9b !important; }
+
+          .fulfilled-mark {
+            color: #9cffbd !important;
+            font-size: 11px !important;
+          }
+
+          @media (max-width: 900px) {
+            .claim-row {
+              grid-template-columns: 1fr 1fr;
+            }
+
+            .claim-actions {
+              justify-content: flex-start;
+            }
+          }
+
           @media (max-width: 720px) {
             .claims-summary-box {
               grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2885,9 +2983,55 @@ export default function Dashboard({ lang: appLang, setLang }) {
                 </div>
               </div>
 
-              <p className="csv-note">
-                Full claim details are kept in the CSV export to keep the dashboard compact.
-              </p>
+              <div className="claims-list">
+                {claims.length ? claims.map((claim) => {
+                  const status = claim.status || 'pending';
+
+                  return (
+                    <div className="claim-row" key={claim.id || claim.certificateId}>
+                      <div>
+                        <span>Certificate</span>
+                        <strong>{claim.certificateId || '—'}</strong>
+                      </div>
+                      <div>
+                        <span>Name</span>
+                        <strong>{claim.claimant?.fullName || '—'}</strong>
+                      </div>
+                      <div>
+                        <span>Type</span>
+                        <strong>{claim.type || '—'}</strong>
+                      </div>
+                      <div>
+                        <span>Status</span>
+                        <strong className={`claim-status status-${status}`}>{status}</strong>
+                      </div>
+                      <div className="claim-actions">
+                        {status === 'pending' ? (
+                          <button type="button" className="gcompany-button small" onClick={() => updateClaimStatus(claim.id, 'approved')}>
+                            Approve
+                          </button>
+                        ) : null}
+
+                        {status === 'approved' ? (
+                          <button type="button" className="primary-button small" onClick={() => updateClaimStatus(claim.id, 'fulfilled')}>
+                            Fulfill
+                          </button>
+                        ) : null}
+
+                        {status !== 'fulfilled' && status !== 'rejected' ? (
+                          <button type="button" className="edit-button small" onClick={() => updateClaimStatus(claim.id, 'rejected')}>
+                            Reject
+                          </button>
+                        ) : null}
+
+                        {status === 'fulfilled' ? <strong className="fulfilled-mark">✓ Fulfilled</strong> : null}
+                      </div>
+                    </div>
+                  );
+                }) : (
+                  <p className="csv-note">No reward claims yet.</p>
+                )}
+              </div>
             </section>
             </div>
 
