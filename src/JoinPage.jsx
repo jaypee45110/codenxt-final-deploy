@@ -28,6 +28,9 @@ const bonusCopy = {
     ownershipDescription: 'Denne verifiserte fordelen er permanent registrert i codePerks-nettverket.',
     ownershipIssued: 'Utstedt',
     claimReward: 'SE / KREV REWARD',
+    availableBenefits: 'TILGJENGELIGE FORDELER',
+    left: 'IGJEN',
+    fullyClaimed: 'FULLT TILDELT',
   },
   en: {
     
@@ -51,6 +54,9 @@ const bonusCopy = {
     ownershipDescription: 'This verified benefit has been permanently registered in the codePerks network.',
     ownershipIssued: 'Issued',
     claimReward: 'VIEW / CLAIM REWARD',
+    availableBenefits: 'AVAILABLE BENEFITS',
+    left: 'LEFT',
+    fullyClaimed: 'FULLY CLAIMED',
   },
   de: {
     
@@ -74,6 +80,9 @@ const bonusCopy = {
     ownershipDescription: 'Dieser verifizierte Vorteil wurde dauerhaft im codePerks-Netzwerk registriert.',
     ownershipIssued: 'Ausgestellt',
     claimReward: 'REWARD ANSEHEN / EINLÖSEN',
+    availableBenefits: 'VERFÜGBARE VORTEILE',
+    left: 'ÜBRIG',
+    fullyClaimed: 'VOLLSTÄNDIG VERGEBEN',
   },
   fr: {
     
@@ -96,6 +105,9 @@ const bonusCopy = {
     ownershipDescription: 'Cet avantage vérifié est enregistré de manière permanente dans le réseau codePerks.',
     ownershipIssued: 'Émis le',
     claimReward: 'VOIR / RÉCLAMER LE REWARD',
+    availableBenefits: 'AVANTAGES DISPONIBLES',
+    left: 'RESTANTS',
+    fullyClaimed: 'ENTIÈREMENT ATTRIBUÉ',
   },
   es: {
     
@@ -119,6 +131,9 @@ const bonusCopy = {
     ownershipDescription: 'Este beneficio verificado ha sido registrado permanentemente en la red codePerks.',
     ownershipIssued: 'Emitido',
     claimReward: 'VER / RECLAMAR REWARD',
+    availableBenefits: 'BENEFICIOS DISPONIBLES',
+    left: 'RESTANTES',
+    fullyClaimed: 'TOTALMENTE ASIGNADO',
   },
 };
 
@@ -171,6 +186,7 @@ export default function JoinPage({ lang, setLang }) {
   const [joined, setJoined] = useState(false);
   const [consent, setConsent] = useState(false);
   const [ownershipCertificate, setOwnershipCertificate] = useState(null);
+  const [benefitInventory, setBenefitInventory] = useState(null);
 
   const titleLine = useMemo(() => {
     if (release.releaseTitle && release.pageName) return `${release.pageName}: ${release.releaseTitle}`;
@@ -222,6 +238,19 @@ export default function JoinPage({ lang, setLang }) {
             setStatus('locked');
             return;
           }
+        }
+
+        try {
+          const inventoryRes = await fetch(`${API_BASE}/benefit-inventory/${encodeURIComponent(eventCode)}?vertical=codeperks`);
+          if (inventoryRes.ok) {
+            const inventoryData = await inventoryRes.json();
+            setBenefitInventory(inventoryData?.benefitInventory || null);
+          } else {
+            setBenefitInventory(null);
+          }
+        } catch (inventoryError) {
+          console.warn('Could not load benefit inventory:', inventoryError);
+          setBenefitInventory(null);
         }
 
         const scanStorageKey = `codenxt_scan_id_${eventCode}`;
@@ -809,6 +838,53 @@ export default function JoinPage({ lang, setLang }) {
         }
 
 
+        body .join-page .availability-box {
+          margin: 16px 0 18px;
+          padding: 14px;
+          border-radius: 18px;
+          border: 1px solid rgba(214, 162, 72, .36);
+          background: rgba(0,0,0,.24);
+        }
+
+        body .join-page .availability-title {
+          margin-bottom: 10px;
+          color: rgba(255, 225, 151, .82);
+          font-size: 10px;
+          font-weight: 900;
+          letter-spacing: .16em;
+          text-transform: uppercase;
+        }
+
+        body .join-page .availability-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        body .join-page .availability-card {
+          padding: 12px;
+          border-radius: 14px;
+          border: 1px solid rgba(255,255,255,.08);
+          background: rgba(255,255,255,.04);
+        }
+
+        body .join-page .availability-card span {
+          display: block;
+          margin-bottom: 6px;
+          color: rgba(255,255,255,.55);
+          font-size: 10px;
+          font-weight: 900;
+          letter-spacing: .13em;
+          text-transform: uppercase;
+        }
+
+        body .join-page .availability-card strong {
+          display: block;
+          color: #fff1bf;
+          font-size: 24px;
+          line-height: 1;
+        }
+
         body .join-page .ownership-label {
           margin-top: 10px !important;
           font-size: 11px !important;
@@ -920,6 +996,30 @@ export default function JoinPage({ lang, setLang }) {
                   <div className="ownership-issued">
                     {b.ownershipIssued} {String(ownershipCertificate.issuedAt || "").slice(0, 10)}
                   </div>
+
+                  {benefitInventory ? (
+                    <div className="availability-box">
+                      <div className="availability-title">{b.availableBenefits}</div>
+                      <div className="availability-grid">
+                        <div className="availability-card">
+                          <span>{b.gold}</span>
+                          <strong>
+                            {Number(benefitInventory.goldRemaining || 0) > 0
+                              ? `${Number(benefitInventory.goldRemaining || 0)} ${b.left}`
+                              : b.fullyClaimed}
+                          </strong>
+                        </div>
+                        <div className="availability-card">
+                          <span>{b.silver}</span>
+                          <strong>
+                            {Number(benefitInventory.silverRemaining || 0) > 0
+                              ? `${Number(benefitInventory.silverRemaining || 0)} ${b.left}`
+                              : b.fullyClaimed}
+                          </strong>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
 
                   <a
                     className="primary-cta full-width certificate-claim-button"
