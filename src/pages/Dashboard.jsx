@@ -2966,20 +2966,20 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
               <div className="claims-summary-box">
                 <div>
-                  <span>Total claims</span>
-                  <strong>{claims.length}</strong>
+                  <span>Issued</span>
+                  <strong>{Number(report.ownershipCertificates || claims.length || 0).toLocaleString()}</strong>
                 </div>
                 <div>
-                  <span>Email</span>
-                  <strong>{claims.filter((claim) => claim.type === 'email').length}</strong>
+                  <span>Claimed</span>
+                  <strong>{claims.length.toLocaleString()}</strong>
                 </div>
                 <div>
-                  <span>Post</span>
-                  <strong>{claims.filter((claim) => claim.type === 'post').length}</strong>
+                  <span>Fulfilled</span>
+                  <strong>{claims.filter((claim) => (claim.status || '').toLowerCase() === 'fulfilled').length.toLocaleString()}</strong>
                 </div>
                 <div>
-                  <span>Pending</span>
-                  <strong>{claims.filter((claim) => (claim.status || 'pending') === 'pending').length}</strong>
+                  <span>Awaiting shipment</span>
+                  <strong>{claims.filter((claim) => claim.type === 'post' && !['fulfilled', 'rejected'].includes((claim.status || 'pending').toLowerCase())).length.toLocaleString()}</strong>
                 </div>
               </div>
 
