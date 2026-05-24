@@ -8,6 +8,7 @@ const DashboardPage = lazy(() => import('./pages/Dashboard'));
 const CampaignCreatedPage = lazy(() => import('./CampaignCreatedPage'));
 const JoinPage = lazy(() => import('./JoinPage'));
 const CertificatePage = lazy(() => import('./CertificatePage'));
+const RedeemPage = lazy(() => import('./RedeemPage'));
 
 function BrandHeader({ lang, setLang }) {
   const text = t(lang);
@@ -80,6 +81,7 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardPage lang={lang} setLang={setLang} />} />
         <Route path="/join/:eventCode" element={<JoinPage lang={lang} setLang={setLang} />} />
         <Route path="/certificate/:eventCode/:certificateId" element={<CertificatePage lang={lang} setLang={setLang} />} />
+        <Route path="/redeem/:token" element={<RedeemPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
