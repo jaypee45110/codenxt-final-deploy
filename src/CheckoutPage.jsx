@@ -567,6 +567,7 @@ export default function CheckoutPage({ lang, setLang }) {
           endAt: endAt.toISOString(),
           maxClaims: Math.max(Number(payload.estimatedCustomers || 0), 5000),
           benefitInventory: payload.benefitInventory,
+          rewardDelivery: payload.rewardDelivery,
           status: 'active',
         }),
       });
