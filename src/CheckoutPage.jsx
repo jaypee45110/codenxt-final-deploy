@@ -560,6 +560,7 @@ export default function CheckoutPage({ lang, setLang }) {
           unlockAt: unlockAt.toISOString(),
           endAt: endAt.toISOString(),
           maxClaims: Math.max(Number(payload.estimatedCustomers || 0), 5000),
+          benefitInventory: payload.benefitInventory,
           status: 'active',
         }),
       });
