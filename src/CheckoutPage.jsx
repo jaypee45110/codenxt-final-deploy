@@ -539,6 +539,12 @@ export default function CheckoutPage({ lang, setLang }) {
         createdAt: new Date().toISOString(),
       };
 
+      console.log('CODEPERKS_EVENT_PAYLOAD', {
+        vertical: 'codeperks',
+        code: releaseCode,
+        benefitInventory: payload.benefitInventory,
+      });
+
       const eventRes = await fetch(`${API_BASE}/event`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
