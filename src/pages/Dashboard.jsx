@@ -2681,13 +2681,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
           .claims-summary-box {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 10px;
-            margin-top: 16px;
+            gap: 8px;
+            margin-top: 18px;
+            width: 100%;
           }
 
           .claims-summary-box div {
-            padding: 12px;
-            border-radius: 16px;
+            min-width: 0;
+            padding: 12px 8px;
+            border-radius: 14px;
             border: 1px solid rgba(255,255,255,.08);
             background: rgba(0,0,0,.18);
           }
