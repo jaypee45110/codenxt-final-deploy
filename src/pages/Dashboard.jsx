@@ -2651,9 +2651,9 @@ export default function Dashboard({ lang: appLang, setLang }) {
             display: block;
             margin-bottom: 4px;
             color: rgba(255,255,255,.48);
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 900;
-            letter-spacing: .14em;
+            letter-spacing: .09em;
             text-transform: uppercase;
           }
 
@@ -2680,15 +2680,16 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
           .claims-summary-box {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
             margin-top: 18px;
             width: 100%;
           }
 
           .claims-summary-box div {
             min-width: 0;
-            padding: 12px 8px;
+            min-height: 72px;
+            padding: 13px 12px;
             border-radius: 14px;
             border: 1px solid rgba(255,255,255,.08);
             background: rgba(0,0,0,.18);
@@ -2707,7 +2708,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           .claims-summary-box strong {
             display: block;
             color: #fff8e8;
-            font-size: 24px;
+            font-size: 22px;
             line-height: 1;
           }
 
