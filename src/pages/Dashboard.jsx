@@ -1357,7 +1357,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
         throw new Error(data?.error || `Send fulfillment list failed: ${res.status}`);
       }
 
-      setClaimsMessage(`Fulfillment list sent to ${data.sentTo}. Total claims: ${data.totalClaims}.`);
+      setClaimsMessage(`Fulfillment list sent successfully. Recipient: ${data.sentTo}. Total claims: ${data.totalClaims}.`);
     } catch (error) {
       console.warn('Could not send fulfillment list:', error);
       setClaimsMessage('Could not send fulfillment list.');
