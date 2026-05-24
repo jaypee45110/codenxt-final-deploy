@@ -821,16 +821,35 @@ export default function Dashboard({ lang: appLang, setLang }) {
     }
   }, [eventData.eventCode, qrDataUrl, text.imageError, text.imageReady]);
 
-  const downloadQrImage = useCallback(() => {
+  const downloadQrImage = useCallback(async () => {
     if (!qrDataUrl) {
       setImageStatus(text.imageError);
       return;
     }
 
     try {
+      const qr = await loadImage(qrDataUrl);
+      const canvas = document.createElement('canvas');
+      const padding = 36;
+      const qrSize = 720;
+      const labelHeight = 90;
+      canvas.width = qrSize + padding * 2;
+      canvas.height = qrSize + padding * 2 + labelHeight;
+
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(qr, padding, padding, qrSize, qrSize);
+
+      ctx.fillStyle = '#111111';
+      ctx.font = '700 34px Arial, Helvetica, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(eventData.eventCode || 'codeperks', canvas.width / 2, qrSize + padding + 48);
+
       const link = document.createElement('a');
       link.download = `${eventData.eventCode || 'codeperks'}-qr.png`;
-      link.href = qrDataUrl;
+      link.href = canvas.toDataURL('image/png');
       link.click();
       setImageStatus(text.imageReady);
     } catch (error) {
@@ -2789,7 +2808,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
             <div className="left-page">
             <section className="panel presentation-panel">
               <h2 className="panel-title">{text.presentation}</h2>
-              <p className="presentation-hint">{text.presentationHint}</p>
+              <div className="slide">
+                <img className="slide-bg" src={badgeBase} alt="" aria-hidden="true" />
+                <div className="qr-box">
+                  {qrDataUrl ? <img className="qr-img" src={qrDataUrl} alt={text.customerLink} /> : null}
+                </div>
+                {eventData.eventCode ? (
+                  <div className="presentation-event-code">{eventData.eventCode || `PK-${String(Math.floor(Math.random() * 90000) + 10000)}`}</div>
+                ) : null}
+              </div>
               <div className="button-row">
                 <button type="button" className="primary-button" onClick={downloadBadgeImage} disabled={!qrDataUrl}>
                   {text.downloadImage}
@@ -2797,6 +2824,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
                 <button type="button" className="gcompany-button" onClick={downloadQrImage} disabled={!qrDataUrl}>
                   {text.downloadQr}
                 </button>
+                <p className="presentation-hint">{text.presentationHint}</p>
               </div>
               <div className="status">{imageStatus}</div>
             </section>
