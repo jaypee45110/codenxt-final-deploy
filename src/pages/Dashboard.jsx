@@ -2450,7 +2450,13 @@ export default function Dashboard({ lang: appLang, setLang }) {
           }
 
           .left-page .compact-report {
-            flex: 1 1 auto !important;
+            flex: 0 0 auto !important;
+          }
+
+          .left-page .claims-panel {
+            height: auto !important;
+            min-height: 270px !important;
+            overflow: visible !important;
           }
 
           .bonus-panel {
@@ -2459,7 +2465,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           }
 
           .compact-report {
-            height: 100% !important;
+            height: auto !important;
             box-sizing: border-box !important;
           }
 
@@ -2472,7 +2478,6 @@ export default function Dashboard({ lang: appLang, setLang }) {
             box-sizing: border-box !important;
           }
 
-          .left-page > .compact-report,
           .bonus-panel {
             height: 100% !important;
           }
