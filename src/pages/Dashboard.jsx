@@ -1342,20 +1342,10 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
   const downloadClaimsCsv = useCallback(() => {
     const csv = [
-      ['eventCode', 'certificateId', 'claimId', 'type', 'status', 'fullName', 'email', 'phone', 'address', 'postalCode', 'country', 'createdAt'].map(csvEscape).join(','),
+      ['name', 'email'].map(csvEscape).join(','),
       ...claims.map((claim) => [
-        claim.eventCode || eventData.eventCode || '',
-        claim.certificateId || '',
-        claim.id || '',
-        claim.type || '',
-        claim.status || '',
         claim.claimant?.fullName || '',
         claim.claimant?.email || '',
-        claim.claimant?.phone || '',
-        claim.claimant?.address || '',
-        claim.claimant?.postalCode || '',
-        claim.claimant?.country || '',
-        claim.createdAt || '',
       ].map(csvEscape).join(',')),
     ].join('\n');
 
@@ -2966,7 +2956,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
                   {claimsLoading ? 'Loading...' : 'Refresh claims'}
                 </button>
                 <button type="button" className="primary-button" onClick={downloadClaimsCsv} disabled={!claims.length}>
-                  Export claims CSV
+                  Download winner list
                 </button>
               </div>
 
