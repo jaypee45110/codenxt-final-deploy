@@ -1714,7 +1714,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
         }
         .status {
           min-height: 16px;
-          margin-top: 8px;
+          margin-top: 20px;
           color: #8a5a2f;
           font-size: 9px;
           line-height: 1.45;
