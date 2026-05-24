@@ -2963,7 +2963,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
                   </button>
                 </div>
 
-                <div className="status">{bonusMessage}</div>
+                {bonusMessage ? <div className="status">{bonusMessage}</div> : null}
               </div>
 
               <div className="bonus-list">
