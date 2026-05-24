@@ -589,8 +589,8 @@ export default function CheckoutPage({ lang, setLang }) {
       localStorage.setItem('codenxt_active_event_code', finalEventCode);
       localStorage.setItem('codeperks_latest_event', JSON.stringify(payload));
 
-      navigate(`/dashboard?event=${finalEventCode}&lang=${lang}`, {
-        state: payload,
+      navigate('/campaign-created', {
+        state: { ...payload, lang },
         replace: true,
       });
     } catch (err) {

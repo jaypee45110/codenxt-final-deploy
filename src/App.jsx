@@ -5,6 +5,7 @@ import { getLang, t } from './i18n';
 
 const CheckoutPage = lazy(() => import('./CheckoutPage'));
 const DashboardPage = lazy(() => import('./pages/Dashboard'));
+const CampaignCreatedPage = lazy(() => import('./CampaignCreatedPage'));
 const JoinPage = lazy(() => import('./JoinPage'));
 const CertificatePage = lazy(() => import('./CertificatePage'));
 
@@ -75,6 +76,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage lang={lang} setLang={setLang} />} />
         <Route path="/checkout" element={<CheckoutPage lang={lang} setLang={setLang} />} />
+        <Route path="/campaign-created" element={<CampaignCreatedPage lang={lang} setLang={setLang} />} />
         <Route path="/dashboard" element={<DashboardPage lang={lang} setLang={setLang} />} />
         <Route path="/join/:eventCode" element={<JoinPage lang={lang} setLang={setLang} />} />
         <Route path="/certificate/:eventCode/:certificateId" element={<CertificatePage lang={lang} setLang={setLang} />} />
