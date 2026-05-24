@@ -1340,25 +1340,29 @@ export default function Dashboard({ lang: appLang, setLang }) {
     URL.revokeObjectURL(url);
   }, [eventData.eventCode, report.rows, report.source]);
 
-  const downloadClaimsCsv = useCallback(() => {
-    const csv = [
-      ['name', 'email'].map(csvEscape).join(','),
-      ...claims.map((claim) => [
-        claim.claimant?.fullName || '',
-        claim.claimant?.email || '',
-      ].map(csvEscape).join(',')),
-    ].join('\n');
+  const sendFulfillmentList = useCallback(async () => {
+    if (!eventData.eventCode) return;
 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    setClaimsMessage('Sending fulfillment list...');
 
-    link.href = url;
-    link.download = `${eventData.eventCode || 'codeperks'}-reward-claims.csv`;
-    link.click();
+    try {
+      const res = await fetch(`${API_BASE}/send-fulfillment-list/${encodeURIComponent(eventData.eventCode)}`, {
+        method: 'POST',
+        headers: adminHeaders,
+      });
 
-    URL.revokeObjectURL(url);
-  }, [claims, eventData.eventCode]);
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.error || `Send fulfillment list failed: ${res.status}`);
+      }
+
+      setClaimsMessage(`Fulfillment list sent to ${data.sentTo}. Total claims: ${data.totalClaims}.`);
+    } catch (error) {
+      console.warn('Could not send fulfillment list:', error);
+      setClaimsMessage('Could not send fulfillment list.');
+    }
+  }, [adminHeaders, eventData.eventCode]);
 
 
   const activeDraft = bonusDrafts[activeTier];
@@ -2955,8 +2959,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
                 <button type="button" className="gcompany-button" onClick={loadClaims} disabled={claimsLoading}>
                   {claimsLoading ? 'Loading...' : 'Refresh claims'}
                 </button>
-                <button type="button" className="primary-button" onClick={downloadClaimsCsv} disabled={!claims.length}>
-                  Download winner list
+                <button type="button" className="primary-button" onClick={sendFulfillmentList} disabled={!eventData.eventCode}>
+                  Send fulfillment list
                 </button>
               </div>
 
