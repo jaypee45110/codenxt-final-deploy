@@ -44,6 +44,7 @@ const dashboardCopy = {
     presentation: 'Presentasjon',
     insideMessage: 'Bli med i InSide',
     downloadImage: 'Last ned bilde',
+    downloadQr: 'Last ned QR-kode',
     presentationHint: 'Del i relevante kanaler når kampanjen er klar.',
     imageReady: 'Bilde klart.',
     imageError: 'Kunne ikke lage bilde. Prøv igjen.',
@@ -120,6 +121,7 @@ const dashboardCopy = {
     presentation: 'Presentation',
     insideMessage: 'Join InSide',
     downloadImage: 'Download image',
+    downloadQr: 'Download QR code',
     presentationHint: 'Share it in relevant channels when the campaign is ready.',
     imageReady: 'Image ready.',
     imageError: 'Could not create image. Try again.',
@@ -192,6 +194,7 @@ const dashboardCopy = {
     presentation: 'Praesentation',
     insideMessage: 'InSide beitreten',
     downloadImage: 'Bild herunterladen',
+    downloadQr: 'QR-Code herunterladen',
     presentationHint: 'Teilen Sie es in relevanten Kanälen, sobald die Kampagne bereit ist.',
     imageReady: 'Bild bereit.',
     imageError: 'Bild konnte nicht erstellt werden. Bitte erneut versuchen.',
@@ -264,6 +267,7 @@ const dashboardCopy = {
     presentation: 'Presentation',
     insideMessage: 'Rejoindre InSide',
     downloadImage: 'Telecharger image',
+    downloadQr: 'Telecharger le QR code',
     presentationHint: 'Partagez-la sur les réseaux sociaux et dans vos canaux de campagne.',
     imageReady: 'Image prete.',
     imageError: 'Impossible de creer l image. Reessayez.',
@@ -336,6 +340,7 @@ const dashboardCopy = {
     presentation: 'Presentacion',
     insideMessage: 'Unirse a InSide',
     downloadImage: 'Descargar imagen',
+    downloadQr: 'Descargar código QR',
     presentationHint: 'Compártela en redes sociales y otros canales de campaña.',
     imageReady: 'Imagen lista.',
     imageError: 'No se pudo crear la imagen. Intentalo de nuevo.',
@@ -812,6 +817,24 @@ export default function Dashboard({ lang: appLang, setLang }) {
       setImageStatus(text.imageReady);
     } catch (error) {
       console.error('Badge download failed:', error);
+      setImageStatus(text.imageError);
+    }
+  }, [eventData.eventCode, qrDataUrl, text.imageError, text.imageReady]);
+
+  const downloadQrImage = useCallback(() => {
+    if (!qrDataUrl) {
+      setImageStatus(text.imageError);
+      return;
+    }
+
+    try {
+      const link = document.createElement('a');
+      link.download = `${eventData.eventCode || 'codeperks'}-qr.png`;
+      link.href = qrDataUrl;
+      link.click();
+      setImageStatus(text.imageReady);
+    } catch (error) {
+      console.error('QR download failed:', error);
       setImageStatus(text.imageError);
     }
   }, [eventData.eventCode, qrDataUrl, text.imageError, text.imageReady]);
@@ -2766,20 +2789,14 @@ export default function Dashboard({ lang: appLang, setLang }) {
             <div className="left-page">
             <section className="panel presentation-panel">
               <h2 className="panel-title">{text.presentation}</h2>
-              <div className="slide">
-                <img className="slide-bg" src={badgeBase} alt="" aria-hidden="true" />
-                <div className="qr-box">
-                  {qrDataUrl ? <img className="qr-img" src={qrDataUrl} alt={text.customerLink} /> : null}
-                </div>
-                {eventData.eventCode ? (
-                  <div className="presentation-event-code">{eventData.eventCode || `PK-${String(Math.floor(Math.random() * 90000) + 10000)}`}</div>
-                ) : null}
-              </div>
+              <p className="presentation-hint">{text.presentationHint}</p>
               <div className="button-row">
                 <button type="button" className="primary-button" onClick={downloadBadgeImage} disabled={!qrDataUrl}>
                   {text.downloadImage}
                 </button>
-                <p className="presentation-hint">{text.presentationHint}</p>
+                <button type="button" className="gcompany-button" onClick={downloadQrImage} disabled={!qrDataUrl}>
+                  {text.downloadQr}
+                </button>
               </div>
               <div className="status">{imageStatus}</div>
             </section>
