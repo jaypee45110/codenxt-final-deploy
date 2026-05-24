@@ -24,7 +24,7 @@ export default function RedeemPage() {
       }
 
       setData(json);
-      setStatus(json.redeemed ? 'redeemed' : 'valid');
+      setStatus(json.redeemed ? 'alreadyRedeemed' : 'valid');
     } catch (error) {
       console.warn('Redemption lookup failed:', error);
       setStatus('invalid');
@@ -51,8 +51,8 @@ export default function RedeemPage() {
           redeemed: true,
           redeemedAt: json?.redeemedAt || prev?.redeemedAt || null,
         }));
-        setStatus('redeemed');
-        setMessage('This reward has already been redeemed.');
+        setStatus('alreadyRedeemed');
+        setMessage('This reward has already been redeemed. Do not release this reward again.');
         return;
       }
 
@@ -86,9 +86,10 @@ export default function RedeemPage() {
   const title =
     status === 'loading' ? 'Checking reward'
       : status === 'invalid' ? 'Invalid code'
-        : status === 'redeemed' ? 'Reward redeemed'
-          : status === 'redeeming' ? 'Redeeming reward'
-            : 'Verified benefit';
+        : status === 'alreadyRedeemed' ? 'Already redeemed'
+          : status === 'redeemed' ? 'Reward redeemed'
+            : status === 'redeeming' ? 'Redeeming reward'
+              : 'Ready to redeem';
 
   return (
     <main className="redeem-page">
@@ -132,7 +133,11 @@ export default function RedeemPage() {
         ) : null}
 
         {status === 'redeemed' ? (
-          <div className="redeem-confirmed">✓ This code cannot be used again.</div>
+          <div className="redeem-confirmed">✓ Reward released. This code cannot be used again.</div>
+        ) : null}
+
+        {status === 'alreadyRedeemed' ? (
+          <div className="redeem-blocked">⚠ Already redeemed. Do not release this reward again.</div>
         ) : null}
       </section>
 
@@ -252,6 +257,27 @@ export default function RedeemPage() {
 
         .state-redeemed h1 {
           color: #9cffbd;
+        }
+
+        .state-alreadyRedeemed {
+          border-color: rgba(255,70,70,.52);
+          box-shadow: 0 28px 100px rgba(255,0,0,.16);
+        }
+
+        .state-alreadyRedeemed h1 {
+          color: #ff7b7b;
+        }
+
+        .redeem-blocked {
+          margin-top: 20px;
+          padding: 14px;
+          border-radius: 16px;
+          border: 1px solid rgba(255,70,70,.45);
+          background: rgba(255,70,70,.12);
+          color: #ff9b9b;
+          font-size: 13px;
+          font-weight: 900;
+          line-height: 1.4;
         }
       `}</style>
     </main>
