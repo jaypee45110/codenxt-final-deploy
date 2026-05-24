@@ -1687,6 +1687,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
           flex-wrap: wrap;
           gap: 8px;
           margin-top: 12px;
+        }\n        .bonus-editor > .button-row {
+          margin-bottom: 18px;
         }
         .primary-button,
         .gcompany-button {
