@@ -576,9 +576,14 @@ export default function CheckoutPage({ lang, setLang }) {
 
       const eventData = rawEventResponse ? JSON.parse(rawEventResponse) : {};
       const finalEventCode = eventData?.event?.code || eventData?.code || releaseCode;
+      const dashboardAccessKey = eventData?.dashboardAccessKey || eventData?.event?.dashboardAccessKey || '';
       payload.eventCode = finalEventCode;
       payload.code = finalEventCode;
+      payload.dashboardAccessKey = dashboardAccessKey;
       payload.shortLink = `${window.location.origin}/join/${finalEventCode}`;
+      if (dashboardAccessKey) {
+        sessionStorage.setItem('codeperks_admin_key', dashboardAccessKey);
+      }
 
       localStorage.setItem('codenxt_event', JSON.stringify(payload));
       localStorage.setItem('codenxt_active_event_code', finalEventCode);
