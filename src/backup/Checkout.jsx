@@ -115,15 +115,15 @@ const text = copy[lang];
       setLogoTooLarge(false);
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setLogoPreview(typeof reader.result === 'string' ? reader.result : '');
+    const member = new FileMember();
+    member.onload = () => {
+      setLogoPreview(typeof member.result === 'string' ? member.result : '');
       setFormData((prev) => ({
         ...prev,
         logoFileName: file.name,
       }));
     };
-    reader.readAsDataURL(file);
+    member.readAsDataURL(file);
   };
 
   const requiredFieldsMissing = useMemo(() => {

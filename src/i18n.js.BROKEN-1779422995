@@ -1,0 +1,164 @@
+export const LANGUAGES = [
+  { code: 'no', flag: '🇳🇴', label: 'Norsk' },
+  { code: 'en', flag: '🇬🇧', label: 'English' },
+  { code: 'de', flag: '🇩🇪', label: 'Deutsch' },
+  { code: 'fr', flag: '🇫🇷', label: 'Français' },
+  { code: 'es', flag: '🇪🇸', label: 'Español' },
+];
+
+export const DEFAULT_LANG = 'no';
+
+export function getLang() {
+  const saved = localStorage.getItem('codeperks_lang');
+  return LANGUAGES.some((language) => language.code === saved) ? saved : DEFAULT_LANG;
+}
+
+export function setLang(code) {
+  const next = LANGUAGES.some((language) => language.code === code) ? code : DEFAULT_LANG;
+  localStorage.setItem('codeperks_lang', next);
+  return next;
+}
+
+const customership = {
+  no: 'InSide',
+  en: 'InSide',
+  de: 'InSide',
+  fr: 'InSide',
+  es: 'InSide',
+};
+
+export const copy = {
+  no: {
+    customership: customership.no,
+    nav: { home: 'Start', checkout: 'Checkout', dashboard: 'Dashboard' },
+  en: {
+    customership: customership.en,
+    nav: { home: 'Home', checkout: 'Checkout', dashboard: 'Dashboard' },
+  de: {
+    customership: customership.de,
+    nav: { home: 'Start', checkout: 'Checkout', dashboard: 'Dashboard' },
+  fr: {
+    customership: customership.fr,
+    nav: { home: 'Accueil', checkout: 'Checkout', dashboard: 'Dashboard' },
+    landing: {
+      title: 'Du moment client à la relation durable.',
+      subtitle: 'codePerks transforme achats, visites, adhésions et campagnes en avantages numériques que les clients veulent vraiment utiliser.',
+      intro: 'Le client reçoit des avantages pertinents avec un simple scan. L’entreprise construit une relation directe — sans application, sans friction et sans algorithmes entre les deux.',
+      cta: 'CRÉER UN PERK',
+      cardsKicker: 'Comment codePerks transforme l’intérêt client en valeur durable.',
+      sections: [
+        {
+          title: 'Avantages numériques',
+          text: 'Partagez coupons, accès VIP, contenus bonus, invitations, téléchargements ou autres avantages liés au moment client.',
+        },
+        {
+          title: 'Contact direct',
+          text: 'Les clients qui souhaitent rester connectés peuvent rejoindre InSide et recevoir des mises à jour pertinentes directement.',
+        },
+        {
+          title: 'Relation propre',
+          text: 'Construisez une base client que l’entreprise contrôle elle-même — sans dépendre des marketplaces, réseaux sociaux ou algorithmes.',
+        },
+      ],
+
+    },
+    checkout: {
+      title: "Configurer l'expérience de l'épisode",
+      subtitle: 'Ajoutez les informations de base du kampanje et de l’épisode. Le contenu bonus, l’accès et le suivi se configurent dans le dashboard.',
+      perkDetails: 'Détails de l’épisode',
+      contact: 'Contact',
+      terms: 'Conditions',
+      continue: "CRÉER L'ACCÈS",
+      creating: 'Création de l’épisode...',
+      accept: 'J’accepte les conditions',
+      termsText: 'codePerks sert à gérer l’accès par QR et lien, le contenu bonus, la réponse des lecteurs et le suivi via codeNXT.',
+      fields: { kampanjeName: 'Nom du kampanje', companyName: 'Hôte / présentateur', perkTitle: 'Titre de l’épisode', perkDate: 'Date de campaign', perkTime: 'Heure de campaign', bonusActive: 'Bonus actif', bonusActive24h: '24 heures après campaign', platform: 'Plateforme / chaîne', customers: 'Nombre de lecteurs attendu', contactName: 'Personne de contact', email: 'E-mail', phone: 'Téléphone', comments: 'Notes', logo: 'Image/logo' },
+      placeholders: { kampanjeName: 'Nom du kampanje', companyName: 'Animateur ou producteur', perkTitle: 'Épisode 12 : ...', platform: 'Spotify, Apple Bedrift / kampanjes, YouTube...', customers: '2500', contactName: 'Nom complet', email: 'nom@kampanje.fr', phone: '+33 6 00 00 00 00', comments: 'Liens, demandes ou détails' },
+      chooseFile: 'Choisir JPG ou PNG',
+      noFile: 'Aucun fichier choisi',
+      selectedFile: 'Fichier choisi',
+      submitError: 'Impossible de créer l’épisode. Réessayez.',
+    },
+    dashboard: {
+      title: 'Perk Dashboard',
+      subtitle: 'Gérez les détails de la campaign, le contenu bonus, les liens lecteurs et le reporting.',
+      kampanje: 'Bedrift / kampanje',
+      perk: 'Épisode',
+      platform: 'Plateforme',
+      perkDate: 'Date de campaign',
+      customers: 'Lecteurs',
+      accesses: 'Accès',
+      joins: 'Membres InSide',
+      scanRate: 'Taux d’accès',
+      details: 'Détails de l’épisode',
+      bonus: 'Contenu bonus',
+      uploadBonus: 'Téléverser le contenu bonus',
+      saveBonus: 'Enregistrer le bonus',
+      bonusSaved: 'Bonus enregistré',
+      bonusType: 'Type de bonus',
+      bonusTier: 'Niveau d’accès',
+      bonusAccess: 'Accès',
+      bonusUrl: 'Lien privé',
+      file: 'Fichier',
+      text: 'Texte',
+      url: 'Lien',
+      audio: 'Audio',
+      video: 'Vidéo',
+      image: 'Image',
+      pdf: 'PDF',
+      general: 'Tous les lecteurs',
+      silver: 'Lecteurs sélectionnés',
+      gold: 'Lecteurs VIP',
+      evergreen: 'Toujours disponible',
+      moment: 'Moment d’écoute',
+      linkAccess: 'QR / lien lecteur',
+      copyCustomerLink: 'Copier le lien lecteur',
+      openJoin: 'Ouvrir le lien lecteur',
+      report: 'Rapport',
+      makeReport: 'Créer un rapport',
+      downloadCsv: 'Télécharger PGV',
+      reportLifecycle: 'Le bonus est actif pendant 24 heures apres campaign. Le rapport et le PGV restent disponibles pendant 7 jours.',
+      sendFollowUp: 'Envoyer le suivi SMS/WhatsApp',
+      followUpReady: 'Suivi prêt',
+      followUpSending: 'Envoi...',
+      reportReady: 'Rapport chargé',
+      reportError: 'Impossible de charger le rapport.',
+      csvError: 'Impossible de télécharger le PGV.',
+      noPerk: 'Aucun épisode trouvé. Créez d’abord un épisode.',
+      refresh: 'Actualiser les chiffres',
+      customer: 'Contact',
+      comments: 'Notes',
+      videoTitle: 'Vidéo kampanje',
+      videoExplanation: 'Créez une courte vidéo avec le logo codePerks, les informations de l’épisode et le QR code. La vidéo peut être téléchargée et ajoutée à la fin d’un épisode kampanje ou YouTube existant.',
+      createPageVideo: 'CRÉER LA VIDÉO PAGE',
+      videoReady: 'Vidéo prête au téléchargement',
+      videoNote: 'Lorsque la fenêtre s’ouvre, une surface visuelle fermée apparaît d’abord. Une fois totalement ouverte, le QR code s’affiche.',
+      videoPreviewText: 'Le QR s’ouvre vers la fin',
+    },
+    join: {
+      title: 'Votre contenu bonus est prêt.',
+      question: 'Voulez-vous rester connecté ?',
+      yes: 'OUI, REJOINDRE InSide',
+      no: 'NON MERCI',
+      phone: 'Numéro mobile',
+      confirm: 'Confirmer InSide',
+      joined: 'Vous êtes InSide.',
+      joinedText: 'Les mises à jour peuvent arriver par SMS/WhatsApp.',
+      exit: 'Merci pour votre écoute.',
+      bonusLocked: 'Ce bonus sera disponible lorsque l perk sera publie le {date} a {time}.',
+      privacy: 'En rejoignant, vous acceptez de recevoir des messages liés à ce kampanje et à de futurs contenus pertinents. Vous pouvez arrêter à tout moment.',
+      missing: 'Le contenu bonus n’est pas encore disponible.',
+      openLink: 'Ouvrir le contenu bonus',
+      openPdf: 'Ouvrir le PDF',
+      download: 'Télécharger',
+      loading: 'Préparation du contenu bonus...',
+    },
+  },
+  es: {
+    customership: customership.es,
+    nav: { home: 'Inicio', checkout: 'Checkout', dashboard: 'Dashboard' },
+};
+
+export function t(lang) {
+  return copy[lang] || copy[DEFAULT_LANG];
+}

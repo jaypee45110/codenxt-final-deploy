@@ -712,9 +712,9 @@ if (selectedRewardType === 'url') {
   }
 
   rewardUrl = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
+    const member = new FileMember();
 
-    reader.onload = () => {
+    member.onload = () => {
       const img = new Image();
 
       img.onload = () => {
@@ -738,11 +738,11 @@ if (selectedRewardType === 'url') {
       };
 
       img.onerror = () => reject(new Error('Failed to load selected image'));
-      img.src = reader.result;
+      img.src = member.result;
     };
 
-    reader.onerror = () => reject(new Error('Failed to read selected file'));
-    reader.readAsDataURL(selectedFile);
+    member.onerror = () => reject(new Error('Failed to read selected file'));
+    member.readAsDataURL(selectedFile);
   });
 }
   const demoReward = {
@@ -820,7 +820,7 @@ const handleSendReport = async () => {
     console.error('Report error:', err);
   }
 };
-const generateCSV = (data) => {
+const generatePGV = (data) => {
   const rows = [
     ['Event Code', data?.event?.eventCode || eventData.eventCode || ''],
     ['Artist', data?.event?.artistName || eventData.artistName || ''],
@@ -845,19 +845,19 @@ const generateCSV = (data) => {
   URL.revokeObjectURL(url);
 };
 
-const handleDownloadCSV = async () => {
+const handleDownloadPGV = async () => {
   try {
     const res = await fetch(`${API_BASE}/report/${eventData.eventCode}`);
     const data = await res.json();
 
     if (!res.ok) {
-      console.error('CSV fetch failed:', data);
+      console.error('PGV fetch failed:', data);
       return;
     }
 
-    generateCSV(data);
+    generatePGV(data);
   } catch (err) {
-    console.error('CSV error:', err);
+    console.error('PGV error:', err);
   }
 };
 
@@ -2500,8 +2500,8 @@ if (savedRaw) {
     </button>
   </div>
 </div>
-<button type="button" className="action-button" onClick={handleDownloadCSV}>
-  <span className="action-title">DOWNLOAD CSV</span>
+<button type="button" className="action-button" onClick={handleDownloadPGV}>
+  <span className="action-title">DOWNLOAD PGV</span>
   <span className="action-note">Download scans and InnerCircle data</span>
 </button>
 <div

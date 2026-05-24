@@ -745,14 +745,14 @@ const handleSendReport = async () => {
       return;
     }
 
-    generateCSV(data.innerCircle);
+    generatePGV(data.innerCircle);
     generatePDF(data);
   } catch (err) {
     console.error('Report error:', err);
   }
 };
 
-const generateCSV = (numbers) => {
+const generatePGV = (numbers) => {
   const rows = ['Phone Number', ...numbers];
   const csvContent = rows.join('\n');
 

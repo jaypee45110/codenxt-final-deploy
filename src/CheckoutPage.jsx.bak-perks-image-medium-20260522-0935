@@ -1,0 +1,508 @@
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import { t } from './i18n';
+
+const API_BASE = 'https://codenxt-backend-production.up.railway.app';
+
+const emptyForm = {
+  stackName: '',
+  companyName: '',
+  releaseTitle: '',
+  releaseDate: '',
+  releaseTime: '06:00',
+  platform: '',
+  customers: '',
+  contactName: '',
+  email: '',
+  phone: '',
+  comments: '',
+  logoFileName: '',
+  stackLogo: '',
+  bonusWindow: '24h',
+};
+
+function generateReleaseCode() {
+  return `PK-${Math.floor(10000 + Math.random() * 90000)}`;
+}
+
+export default function CheckoutPage({ lang, setLang }) {
+  const navigate = useNavigate();
+  const text = t(lang);
+  const c = text.checkout;
+  const pageTextByLang = {
+    no: {
+      title: 'Sett opp din perk',
+      subtitle: 'Koble bok, publikasjon, forfatter og forlag direkte til medlemen.',
+      fields: {
+        stackName: 'Perk / fordel',
+        logo: 'Bokforside',
+        companyName: 'Bedrift',
+        releaseTitle: 'Perk-type',
+        platform: 'Bedrift',
+        releaseDate: 'Startdato',
+        releaseTime: 'Starttidspunkt',
+        bonusActive: 'Perk aktiv',
+        bonusActive24h: '24 timer etter start',
+        customers: 'Antall medleme / opplag',
+        contactName: 'Kontaktperson',
+        email: 'E-post',
+        phone: 'Telefon',
+        comments: 'Perk-innhold / notater',
+      },
+      placeholders: {
+        stackName: 'Eksempel: VIP-fordel, kundeklubb, åpningstilbud',
+        companyName: 'Bedriftens navn',
+        releaseTitle: 'VIP, lojalitet, kupong, invitasjon, lansering ...',
+        platform: 'Bedrift, butikk, klubb eller kampanje ...',
+        customers: '5000',
+        contactName: 'Fullt navn',
+        email: 'navn@forlag.no',
+        phone: '+47 ...',
+        comments: 'Beskriv bonusinnholdet medlemen får tilgang til.',
+      },
+      termsText: 'codePerks brukes til QR- og lenkebasert tilgang, bonusinnhold, medlemrespons og oppfølging via codeNXT.',
+      accept: 'Jeg godtar vilkårene for codePerks.',
+      continue: 'OPPRETT EN PERK',
+      creating: 'OPPRETTER BOKOPPLEVELSE...',
+      submitError: 'Kunne ikke opprette fordelsopplevelsen. Prøv igjen.',
+    },
+    en: {
+      title: 'Set up the perk experience',
+      subtitle: 'Connect a customer moment, perk and company directly to the customer.',
+      fields: {
+        stackName: 'Perk / offer',
+        logo: 'Perk cover',
+        companyName: 'Company',
+        releaseTitle: 'Perk type',
+        platform: 'Company',
+        releaseDate: 'Start date',
+        releaseTime: 'Start time',
+        bonusActive: 'Perk active',
+        bonusActive24h: '24 hours after start',
+        customers: 'Expected customers',
+        contactName: 'Contact person',
+        email: 'Email',
+        phone: 'Phone',
+        comments: 'Perk content / notes',
+      },
+      placeholders: {
+        stackName: 'Example: VIP perk, loyalty reward, opening offer',
+        companyName: 'Company name',
+        releaseTitle: 'VIP, loyalty, coupon, invitation, launch ...',
+        platform: 'Company name or self-published ...',
+        customers: '5000',
+        contactName: 'Full name',
+        email: 'name@company.com',
+        phone: '+44 ...',
+        comments: 'Describe the perk, offer or reward customers will receive.',
+      },
+      termsText: 'codePerks is used for QR and link-based access, digital perks, customer response and direct follow-up via codeNXT.',
+      accept: 'I accept the codePerks terms.',
+      continue: 'CREATE A PERK',
+      creating: 'CREATING BOOK EXPERIENCE...',
+      submitError: 'Could not create the perk experience. Please try again.',
+    },
+  };
+
+
+  pageTextByLang.de = {
+    ...pageTextByLang.en,
+    title: 'Bucherlebnis einrichten',
+    subtitle: 'Verbinde Buch, Publikation, Autor und Verlag direkt mit dem Medlem.',
+    fields: {
+      ...pageTextByLang.en.fields,
+      stackName: 'Buch / Publikation',
+      logo: 'Buchcover',
+      companyName: 'Autor',
+      releaseTitle: 'Thema',
+      platform: 'Verlag',
+      releaseDate: 'Veröffentlichungsdatum',
+      releaseTime: 'Zugangszeit',
+      bonusActive24h: '24 Stunden nach Veröffentlichung',
+      customers: 'Medlem / Auflage',
+      comments: 'Bonusinhalt / Notizen',
+    },
+    placeholders: {
+      ...pageTextByLang.en.placeholders,
+      stackName: 'Beispiel: Buchtitel',
+      companyName: 'Name des Autors',
+      releaseTitle: 'Krimi, Geschichte, Führung, Kinder ...',
+      platform: 'Verlagsname oder Eigenverlag ...',
+      comments: 'Beschreibe das Bonusmaterial für die Medlem.',
+    },
+    accept: 'Ich akzeptiere die Bedingungen für die codePerks-Einrichtung.',
+    continue: 'BUCHERLEBNIS ERSTELLEN',
+    creating: 'BUCHERLEBNIS WIRD ERSTELLT...',
+    submitError: 'Das Bucherlebnis konnte nicht erstellt werden. Bitte versuche es erneut.',
+  };
+
+  pageTextByLang.fr = {
+    ...pageTextByLang.en,
+    title: 'Configurer l’expérience livre',
+    subtitle: 'Reliez un livre, une campaign, un auteur et un éditeur directement au lecteur.',
+    fields: {
+      ...pageTextByLang.en.fields,
+      stackName: 'Livre / campaign',
+      logo: 'Couverture du livre',
+      companyName: 'Auteur',
+      releaseTitle: 'Sujet',
+      platform: 'Éditeur',
+      releaseDate: 'Date de campaign',
+      releaseTime: 'Heure d’accès',
+      bonusActive24h: '24 heures après campaign',
+      customers: 'Lecteurs / tirage',
+      comments: 'Contenu bonus / notes',
+    },
+    placeholders: {
+      ...pageTextByLang.en.placeholders,
+      stackName: 'Exemple : titre du livre',
+      companyName: 'Nom de l’auteur',
+      releaseTitle: 'Polar, histoire, management, jeunesse ...',
+      platform: 'Nom de l’éditeur ou autoédition ...',
+      comments: 'Décrivez le bonus auquel les lecteurs auront accès.',
+    },
+    accept: 'J’accepte les conditions de configuration de codePerks.',
+    continue: 'CRÉER L’EXPÉRIENCE LIVRE',
+    creating: 'CRÉATION DE L’EXPÉRIENCE LIVRE...',
+    submitError: 'Impossible de créer l’expérience livre. Veuillez réessayer.',
+  };
+
+  pageTextByLang.es = {
+    ...pageTextByLang.en,
+    title: 'Configurar la experiencia del libro',
+    subtitle: 'Conecta un libro, publicación, autor y editorial directamente con el lector.',
+    fields: {
+      ...pageTextByLang.en.fields,
+      stackName: 'Libro / publicación',
+      logo: 'Portada del libro',
+      companyName: 'Autor',
+      releaseTitle: 'Tema',
+      platform: 'Editorial',
+      releaseDate: 'Fecha de publicación',
+      releaseTime: 'Hora de acceso',
+      bonusActive24h: '24 horas después de la publicación',
+      customers: 'Lectores / tirada',
+      comments: 'Contenido extra / notas',
+    },
+    placeholders: {
+      ...pageTextByLang.en.placeholders,
+      stackName: 'Ejemplo: título del libro',
+      companyName: 'Nombre del autor',
+      releaseTitle: 'Crimen, historia, liderazgo, infantil ...',
+      platform: 'Nombre de la editorial o autopublicación ...',
+      comments: 'Describe el contenido extra que recibirán los lectores.',
+    },
+    accept: 'Acepto las condiciones de configuración de codePerks.',
+    continue: 'CREAR EXPERIENCIA DEL LIBRO',
+    creating: 'CREANDO EXPERIENCIA DEL LIBRO...',
+    submitError: 'No se pudo crear la experiencia del libro. Inténtalo de nuevo.',
+  };
+
+  const pageText = pageTextByLang[lang] || pageTextByLang.en;
+  const [formData, setFormData] = useState(emptyForm);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [triedSubmit, setTriedSubmit] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [logoError, setLogoError] = useState('');
+
+  useEffect(() => {
+    document.title = 'Checkout - codePerks';
+  }, []);
+
+  const missingRequired = useMemo(() => {
+    return (
+      !formData.stackName.trim() ||
+      !formData.companyName.trim() ||
+      !formData.releaseTitle.trim() ||
+      !formData.releaseDate.trim() ||
+      !formData.releaseTime.trim() ||
+      !formData.platform.trim() ||
+      !formData.customers.trim() ||
+      Number(formData.customers) <= 0 ||
+      !formData.contactName.trim() ||
+      !formData.email.trim() ||
+      !formData.phone.trim() ||
+      !formData.comments.trim() ||
+      !formData.stackLogo
+    );
+  }, [formData]);
+
+  const canContinue = !missingRequired && termsAccepted && !submitting;
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleLogoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    setLogoError('');
+
+    if (!file) return;
+
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      setLogoError('Bruk PNG eller JPG.');
+      return;
+    }
+
+    if (file.size > 900 * 1024) {
+      setLogoError('Logoen er for stor. Bruk helst under 900 KB.');
+      return;
+    }
+
+    try {
+      const tempCode = generateReleaseCode();
+      const form = new FormData();
+      form.append('eventCode', tempCode);
+      form.append('file', file);
+
+      const response = await fetch(`${API_BASE}/upload-reward-file`, {
+        method: 'POST',
+        body: form,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data?.url) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        stackLogo: data.url,
+        logoFileName: file.name,
+      }));
+    } catch (error) {
+      console.error('LOGO UPLOAD FAILED:', error);
+      setLogoError('Kunne ikke laste opp logoen.');
+    }
+  };
+
+  const fieldError = (field) => triedSubmit && !String(formData[field] || '').trim();
+
+  const handleContinue = async () => {
+    setTriedSubmit(true);
+    setError('');
+    if (!canContinue) return;
+
+    setSubmitting(true);
+    let releaseCode = generateReleaseCode();
+
+    try {
+      const artistLogo = formData.stackLogo.trim();
+      const releaseDate = formData.releaseDate || new Date().toISOString().slice(0, 10);
+      const releaseTime = formData.releaseTime || '06:00';
+      const unlockAt = new Date(`${releaseDate}T${releaseTime}:00`);
+      const endAt = new Date(unlockAt.getTime() + 24 * 60 * 60 * 1000);
+
+      const payload = {
+        vertical: 'codeperks',
+        productName: 'codePerks',
+        engine: 'codeNXT',
+        eventCode: releaseCode,
+        code: releaseCode,
+        customerName: formData.contactName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        artistName: formData.stackName.trim(),
+        stackName: formData.stackName.trim(),
+        companyName: formData.companyName.trim(),
+        releaseTitle: formData.releaseTitle.trim(),
+        venue: formData.platform.trim() || 'Customer channel',
+        platform: formData.platform.trim(),
+        eventDate: releaseDate,
+        releaseDate,
+        releaseTime,
+        city: '',
+        audienceSize: formData.customers.trim(),
+        estimatedCustomers: formData.customers.trim(),
+        comment: formData.comments.trim(),
+        logoFileName: formData.logoFileName,
+        stackLogo: artistLogo,
+        artistLogo,
+        logoTooLarge: false,
+        selectedTypes: ['codePerks release'],
+        termsAccepted,
+        shortLink: `${window.location.origin}/join/${releaseCode}`,
+        bonusWindow: '24h',
+        createdAt: new Date().toISOString(),
+      };
+
+      const eventRes = await fetch(`${API_BASE}/event`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vertical: 'codeperks',
+          code: releaseCode,
+          name: payload.stackName,
+          stackName: payload.stackName,
+          companyName: payload.companyName,
+          releaseTitle: payload.releaseTitle,
+          artistLogo: payload.artistLogo || '',
+          venue: payload.platform || 'Customer channel',
+          platform: payload.platform,
+          city: '',
+          badgeConfig: { template: 'codeperks' },
+          startAt: unlockAt.toISOString(),
+          releaseDate,
+          releaseTime,
+          unlockAt: unlockAt.toISOString(),
+          endAt: endAt.toISOString(),
+          maxClaims: Math.max(Number(payload.estimatedCustomers || 0), 5000),
+          status: 'active',
+        }),
+      });
+
+      const rawEventResponse = await eventRes.text();
+      if (!eventRes.ok) throw new Error(rawEventResponse || `Create release failed: ${eventRes.status}`);
+
+      const eventData = rawEventResponse ? JSON.parse(rawEventResponse) : {};
+      const finalEventCode = eventData?.event?.code || eventData?.code || releaseCode;
+      payload.eventCode = finalEventCode;
+      payload.code = finalEventCode;
+      payload.shortLink = `${window.location.origin}/join/${finalEventCode}`;
+
+      localStorage.setItem('codenxt_event', JSON.stringify(payload));
+      localStorage.setItem('codenxt_active_event_code', finalEventCode);
+      localStorage.setItem('codeperks_latest_event', JSON.stringify(payload));
+
+      navigate(`/dashboard?event=${finalEventCode}&lang=${lang}`, {
+        state: payload,
+        replace: true,
+      });
+    } catch (err) {
+      console.error('OPPRETT EN PERK RELEASE FAILED:', err);
+      setError(pageText.submitError);
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <main className="page-shell checkout-page">
+      <header className="landing-header">
+        <img src="/codePerks-logo.png?v=3" alt="codePerks logo" className="landing-logo" />
+        <div className="landing-powered">{text.common.powered}</div>
+        <LanguageSwitcher lang={lang} onChange={setLang} />
+      </header>
+
+      <section className="page-intro checkout-intro">
+        <h1>{pageText.title}</h1>
+        <p>{pageText.subtitle}</p>
+      </section>
+
+      <section className="panel checkout-card">
+        <div className="input-grid checkout-grid">
+          <label>
+            {pageText.fields.stackName} *
+            <input name="stackName" value={formData.stackName} onChange={handleChange} placeholder={pageText.placeholders.stackName} />
+            {fieldError('stackName') && <small>{text.common.required}</small>}
+          </label>
+
+          <label>
+            {pageText.fields.logo} (PNG/JPG) *
+            <input
+              type="file"
+              accept="image/png,image/jpeg"
+              onChange={handleLogoUpload}
+            />
+            {formData.logoFileName && <small>{formData.logoFileName}</small>}
+            {logoError && <small>{logoError}</small>}
+            {triedSubmit && !formData.stackLogo && <small>{text.common.required}</small>}
+          </label>
+          <label>
+            {pageText.fields.companyName} *
+            <input name="companyName" value={formData.companyName} onChange={handleChange} placeholder={pageText.placeholders.companyName} />
+            {fieldError('companyName') && <small>{text.common.required}</small>}
+          </label>
+          <label>
+            {pageText.fields.releaseTitle} *
+            <input name="releaseTitle" value={formData.releaseTitle} onChange={handleChange} placeholder={pageText.placeholders.releaseTitle} />
+            {fieldError('releaseTitle') && <small>{text.common.required}</small>}
+          </label>
+          <label>
+            {pageText.fields.platform} *
+            <input name="platform" value={formData.platform} onChange={handleChange} placeholder={pageText.placeholders.platform} />
+            {fieldError('platform') && <small>{text.common.required}</small>}
+          </label>
+          <label>
+            {pageText.fields.releaseDate} *
+            <input type="date" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
+            {fieldError('releaseDate') && <small>{text.common.required}</small>}
+          </label>
+
+          <label>
+            {pageText.fields.releaseTime} *
+            <input type="time" name="releaseTime" value={formData.releaseTime} onChange={handleChange} />
+            {fieldError('releaseTime') && <small>{text.common.required}</small>}
+          </label>
+
+          <label>
+            {pageText.fields.bonusActive} *
+            <input type="text" value={pageText.fields.bonusActive24h} readOnly />
+          </label>
+          <label>
+            {pageText.fields.customers} *
+            <input name="customers" value={formData.customers} onChange={handleChange} placeholder={pageText.placeholders.customers} inputMode="numeric" />
+            {triedSubmit && (!formData.customers.trim() || Number(formData.customers) <= 0) && <small>{text.common.required}</small>}
+          </label>
+          <label>
+            {pageText.fields.contactName} *
+            <input name="contactName" value={formData.contactName} onChange={handleChange} placeholder={pageText.placeholders.contactName} />
+            {fieldError('contactName') && <small>{text.common.required}</small>}
+          </label>
+          <label>
+            {pageText.fields.email} *
+            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={pageText.placeholders.email} />
+            {fieldError('email') && <small>{text.common.required}</small>}
+          </label>
+          <label>
+            {pageText.fields.phone} *
+            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder={pageText.placeholders.phone} />
+            {fieldError('phone') && <small>{text.common.required}</small>}
+          </label>
+          <label className="wide">
+            {pageText.fields.comments} *
+            <textarea name="comments" value={formData.comments} onChange={handleChange} placeholder={pageText.placeholders.comments} />
+            {fieldError('comments') && <small>{text.common.required}</small>}
+          </label>
+        </div>
+
+        <div className="terms-box checkout-terms">
+          <p>{pageText.termsText}</p>
+          <label className="check-row">
+            <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} />
+            {pageText.accept}
+          </label>
+          {triedSubmit && !termsAccepted && <small>{text.common.required}</small>}
+        </div>
+
+        {error && <div className="error-box">{error}</div>}
+
+        <p className="checkout-required-note">
+          {{
+            no: 'Alle felt må fylles ut før du kan fortsette.',
+            en: 'All fields must be completed before you can continue.',
+            de: 'Alle Felder müssen ausgefüllt werden, bevor du fortfahren kannst.',
+            fr: 'Tous les champs doivent être remplis avant de continuer.',
+            es: 'Todos los campos deben completarse antes de continuar.',
+          }[lang] || 'All fields must be completed before you can continue.'}
+        </p>
+
+        <button type="button" className="primary-cta checkout-submit" disabled={!canContinue} onClick={handleContinue}>
+          {submitting ? pageText.creating : pageText.continue}
+        </button>
+      </section>
+          <style>{`
+        .checkout-required-note {
+          margin: 18px 0 10px;
+          color: rgba(255,255,255,0.68);
+          font-size: 13px;
+          line-height: 1.45;
+          text-align: center;
+        }
+      `}</style>
+    </main>
+  );
+}

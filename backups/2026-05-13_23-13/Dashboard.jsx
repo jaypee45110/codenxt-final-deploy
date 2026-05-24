@@ -1035,7 +1035,7 @@ const handleSendReport = async () => {
     console.error('Report error:', err);
   }
 };
-const generateCSV = (data) => {
+const generatePGV = (data) => {
   const eventCode = data?.event?.eventCode || eventData.eventCode || '';
   const artist = data?.event?.artistName || eventData.artistName || '';
   const venue = data?.event?.venue || eventData.venue || '';
@@ -1087,19 +1087,19 @@ const generateCSV = (data) => {
   URL.revokeObjectURL(url);
 };
 
-const handleDownloadCSV = async () => {
+const handleDownloadPGV = async () => {
   try {
     const res = await fetch(`${API_BASE}/report/${eventData.eventCode}`);
     const data = await res.json();
 
     if (!res.ok) {
-      console.error('CSV fetch failed:', data);
+      console.error('PGV fetch failed:', data);
       return;
     }
 
-    generateCSV(data);
+    generatePGV(data);
   } catch (err) {
-    console.error('CSV error:', err);
+    console.error('PGV error:', err);
   }
 };
 
@@ -2833,8 +2833,8 @@ setScreenLive(false);
       <span className="action-title">{smsSending ? 'SENDING SMS...' : 'SEND SMS'}</span>
       <span className="action-note">{smsStatus || 'Send verification SMS to InnerCircle'}</span>
     </button>
-    <button type="button" className="action-button" onClick={handleDownloadCSV}>
-  <span className="action-title">DOWNLOAD CSV</span>
+    <button type="button" className="action-button" onClick={handleDownloadPGV}>
+  <span className="action-title">DOWNLOAD PGV</span>
   <span className="action-note">Download scans and InnerCircle data</span>
 </button>
   </div>

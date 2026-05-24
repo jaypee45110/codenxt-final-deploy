@@ -98,7 +98,12 @@ a {
   width: min(192px, 58vw);
   height: auto;
   display: block;
-  filter: drop-shadow(0 18px 48px rgba(0, 0, 0, 0.42));
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  filter: none;
+  mix-blend-mode: normal;
 }
 
 .landing-powered {
@@ -936,3 +941,2129 @@ small {
     flex-direction: column;
   }
 }
+
+/* codePerks light landing profile */
+body {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(0, 207, 255, 0.14), transparent 28rem),
+    radial-gradient(circle at 88% 10%, rgba(120, 99, 255, 0.10), transparent 26rem),
+    linear-gradient(180deg, #ffffff 0%, #eef6ff 100%) !important;
+  color: #0b1f44 !important;
+}
+
+.landing-page {
+  color: #0b1f44;
+}
+
+.landing-powered,
+.brand-lockup,
+.hero-intro,
+.cards-kicker {
+  color: rgba(11, 31, 68, 0.62) !important;
+}
+
+.landing-hero .hero-copy h1 {
+  color: #7a5230 !important;
+}
+
+.landing-hero .hero-subtitle,
+.info-panel p {
+  color: rgba(11, 31, 68, 0.72) !important;
+}
+
+.primary-cta {
+  background: linear-gradient(135deg, #00cfff, #3f7cff) !important;
+  color: #ffffff !important;
+  box-shadow: 0 18px 38px rgba(0, 120, 255, 0.22) !important;
+}
+
+.info-panel {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border: 1px solid rgba(10, 42, 107, 0.10) !important;
+  box-shadow: 0 18px 50px rgba(10, 42, 107, 0.10) !important;
+}
+
+.info-panel h2 {
+  color: #7a5230 !important;
+}
+
+.flag-button {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(10, 42, 107, 0.14) !important;
+}
+
+/* codePerks landing logo plate */
+.landing-logo {
+  background: #f7fbff !important;
+  border-radius: 22px !important;
+  padding: 14px 18px !important;
+  box-shadow: 0 18px 48px rgba(10, 42, 107, 0.10) !important;
+}
+
+/* codePerks light logo sizing */
+.landing-logo {
+  width: min(252px, 50.4vw) !important;
+  height: auto !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* codePerks checkout logo matches landing */
+.checkout-page .landing-logo {
+  width: min(252px, 50.4vw) !important;
+  height: auto !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* codePerks light checkout profile */
+.checkout-page {
+  color: #0b1f44 !important;
+}
+
+.checkout-intro h1 {
+  color: #7a5230 !important;
+}
+
+.checkout-intro p {
+  color: rgba(11, 31, 68, 0.64) !important;
+}
+
+.checkout-card {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border: 1px solid rgba(10, 42, 107, 0.10) !important;
+  box-shadow: 0 24px 70px rgba(10, 42, 107, 0.12) !important;
+}
+
+.checkout-page label {
+  color: #7a5230 !important;
+}
+
+.checkout-page input,
+.checkout-page textarea,
+.checkout-page select {
+  background: #ffffff !important;
+  color: #0b1f44 !important;
+  border: 1px solid rgba(10, 42, 107, 0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8) !important;
+}
+
+.checkout-page input::placeholder,
+.checkout-page textarea::placeholder {
+  color: rgba(11, 31, 68, 0.42) !important;
+}
+
+.checkout-page small {
+  color: rgba(11, 31, 68, 0.62) !important;
+}
+
+.checkout-page .primary-cta {
+  background: linear-gradient(135deg, #00cfff, #3f7cff) !important;
+  color: #ffffff !important;
+}
+
+/* codePerks checkout final visual fixes */
+.checkout-page .landing-logo {
+  width: min(252px, 50.4vw) !important;
+  height: auto !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+.checkout-page .privacy-box,
+.checkout-page .terms-box,
+.checkout-page .terms-panel {
+  background: #eaf6ff !important;
+  border: 1px solid rgba(10, 42, 107, 0.12) !important;
+  color: #0b1f44 !important;
+}
+
+/* codePerks light checkbox */
+.checkout-page input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1px solid rgba(10, 42, 107, 0.22) !important;
+  border-radius: 3px;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 2px rgba(10, 42, 107, 0.05);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.checkout-page input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #00cfff, #3f7cff) !important;
+  border-color: #3f7cff !important;
+}
+
+.checkout-page input[type="checkbox"]:checked::after {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 8px;
+  margin: 2px 0 0 5px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* codePerks dashboard logo matches landing/checkout */
+.dashboard-page .landing-logo,
+.dashboard-page .logo {
+  width: min(252px, 50.4vw) !important;
+  height: auto !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* codePerks light dashboard profile */
+.dashboard-page {
+  color: #0b1f44 !important;
+}
+
+.dashboard-page .panel,
+.dashboard-page .metric-card,
+.dashboard-page .side-panel,
+.dashboard-page .phone-flow {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border: 1px solid rgba(10, 42, 107, 0.10) !important;
+  box-shadow: 0 24px 70px rgba(10, 42, 107, 0.10) !important;
+  color: #0b1f44 !important;
+}
+
+.dashboard-page .panel h2,
+.dashboard-page .metric-card strong,
+.dashboard-page .detail-list dt,
+.dashboard-page label {
+  color: #7a5230 !important;
+}
+
+.dashboard-page .detail-list dd,
+.dashboard-page .muted,
+.dashboard-page p {
+  color: rgba(11, 31, 68, 0.68) !important;
+}
+
+.dashboard-page input,
+.dashboard-page textarea,
+.dashboard-page select {
+  background: #ffffff !important;
+  color: #0b1f44 !important;
+  border: 1px solid rgba(10, 42, 107, 0.18) !important;
+}
+
+.dashboard-page input::placeholder,
+.dashboard-page textarea::placeholder {
+  color: rgba(11, 31, 68, 0.42) !important;
+}
+
+.dashboard-page button,
+.dashboard-page .primary-cta {
+  background: linear-gradient(135deg, #00cfff, #3f7cff) !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: 0 18px 38px rgba(0, 120, 255, 0.18) !important;
+}
+
+/* codePerks dashboard header refinements */
+.dashboard-page .landing-header {
+  background: transparent !important;
+}
+
+.dashboard-page .landing-logo {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* codePerks by codeNXT */
+.dashboard-page .landing-powered,
+.dashboard-page .brand-lockup,
+.dashboard-page .brand-lockup span {
+  color: #7a5230 !important;
+  font-weight: 700 !important;
+}
+
+/* Replace podcast microphones with writing icons */
+.dashboard-page .page-intro::before,
+.dashboard-page .page-intro::after {
+  content: '✍️' !important;
+  font-size: 3rem !important;
+  line-height: 1;
+  display: inline-block;
+  margin: 0 22px;
+  filter: drop-shadow(0 6px 16px rgba(0, 207, 255, 0.18));
+}
+
+/* Hide any hardcoded microphone emojis inside the heading */
+.dashboard-page .page-intro h1 {
+  color: #7a5230 !important;
+}
+
+.dashboard-page .page-intro {
+  text-align: center;
+}
+
+/* codePerks dashboard header refinements */
+.dashboard-page .landing-header {
+  background: transparent !important;
+}
+
+.dashboard-page .landing-logo {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* codePerks by codeNXT */
+.dashboard-page .landing-powered,
+.dashboard-page .brand-lockup,
+.dashboard-page .brand-lockup span {
+  color: #7a5230 !important;
+  font-weight: 700 !important;
+}
+
+/* Replace podcast microphones with writing icons */
+.dashboard-page .page-intro::before,
+.dashboard-page .page-intro::after {
+  content: '✍️' !important;
+  font-size: 3rem !important;
+  line-height: 1;
+  display: inline-block;
+  margin: 0 22px;
+  filter: drop-shadow(0 6px 16px rgba(0, 207, 255, 0.18));
+}
+
+/* Hide any hardcoded microphone emojis inside the heading */
+.dashboard-page .page-intro h1 {
+  color: #7a5230 !important;
+}
+
+.dashboard-page .page-intro {
+  text-align: center;
+}
+
+/* codePerks dashboard header direct fixes */
+.dashboard-page .summary-tagline {
+  color: #7a5230 !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-page .page-mic {
+  color: #7a5230 !important;
+  filter: drop-shadow(0 6px 14px rgba(0, 207, 255, 0.18)) !important;
+}
+
+.dashboard-page .summary-card,
+.dashboard-page .summary-panel {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0, 207, 255, 0.10), transparent 24rem),
+    linear-gradient(180deg, #f7fbff 0%, #eef6ff 100%) !important;
+}
+
+/* codePerks dashboard page background */
+.dashboard-page {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(0, 207, 255, 0.12), transparent 28rem),
+    radial-gradient(circle at 88% 10%, rgba(120, 99, 255, 0.08), transparent 26rem),
+    linear-gradient(180deg, #f7fbff 0%, #eef6ff 100%) !important;
+  color: #7a5230 !important;
+}
+
+/* Ensure all main text uses royal blue tones */
+.dashboard-page h1,
+.dashboard-page h2,
+.dashboard-page h3,
+.dashboard-page label,
+.dashboard-page strong,
+.dashboard-page .summary-title,
+.dashboard-page .summary-tagline,
+.dashboard-page .landing-powered {
+  color: #7a5230 !important;
+}
+
+.dashboard-page p,
+.dashboard-page span,
+.dashboard-page dd,
+.dashboard-page .muted {
+  color: rgba(10, 42, 107, 0.78) !important;
+}
+
+/* codePerks royal blue borders on all dashboard panels */
+.dashboard-page .panel,
+.dashboard-page .metric-card,
+.dashboard-page .side-panel,
+.dashboard-page .phone-flow,
+.dashboard-page .summary-card,
+.dashboard-page .summary-panel {
+  border: 2px solid #7a5230 !important;
+}
+
+/* codePerks dashboard readability fixes */
+.dashboard-page .metric-card {
+  background: #ffffff !important;
+  border: 2px solid #7a5230 !important;
+  color: #7a5230 !important;
+}
+
+.dashboard-page .metric-card span {
+  color: rgba(10, 42, 107, 0.72) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.dashboard-page .metric-card strong {
+  color: #7a5230 !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-page .metrics-row {
+  gap: 10px !important;
+}
+
+/* codePerks metrics readability */
+.dashboard-page .metrics-panel {
+  background: #f7fbff !important;
+  border: 2px solid #7a5230 !important;
+}
+
+.dashboard-page .metrics-grid > div {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(10, 42, 107, 0.35) !important;
+  border-radius: 10px !important;
+  padding: 14px 16px !important;
+}
+
+.dashboard-page .metrics-grid span,
+.dashboard-page .metrics-grid .label {
+  color: #7a5230 !important;
+  opacity: 1 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-page .metric-value {
+  color: #7a5230 !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+}
+
+/* codePerks metadata cards royal blue text */
+.dashboard-page .metrics-grid > div,
+.dashboard-page .metrics-grid > div * {
+  color: #7a5230 !important;
+}
+
+.dashboard-page .metrics-grid > div {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(10, 42, 107, 0.35) !important;
+}
+
+.dashboard-page .metrics-grid > div span {
+  color: #7a5230 !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
+.dashboard-page .metric-value {
+  color: #7a5230 !important;
+  font-weight: 900 !important;
+}
+
+/* codePerks report panel text in royal blue */
+.dashboard-page .report-panel,
+.dashboard-page .report-panel h2,
+.dashboard-page .report-panel h3,
+.dashboard-page .report-panel p,
+.dashboard-page .report-panel span,
+.dashboard-page .report-panel div,
+.dashboard-page .report-panel dt,
+.dashboard-page .report-panel dd,
+.dashboard-page .report-panel label,
+.dashboard-page .report-panel strong {
+  color: #7a5230 !important;
+}
+
+/* Keep buttons unchanged */
+.dashboard-page .report-panel button,
+.dashboard-page .report-panel .primary-cta {
+  color: #ffffff !important;
+}
+
+/* codePerks light join page */
+.join-page.bonus-page {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(0, 207, 255, 0.14), transparent 28rem),
+    radial-gradient(circle at 88% 10%, rgba(120, 99, 255, 0.08), transparent 26rem),
+    linear-gradient(180deg, #ffffff 0%, #eef6ff 100%) !important;
+  color: #7a5230 !important;
+}
+
+.join-page .bonus-card,
+.join-page .bonus-content,
+.join-page .inside-box {
+  background: rgba(255, 255, 255, 0.90) !important;
+  border: 1.5px solid rgba(10, 42, 107, 0.18) !important;
+  box-shadow: 0 22px 60px rgba(10, 42, 107, 0.10) !important;
+  color: #7a5230 !important;
+}
+
+.join-page .bonus-claim .line-one,
+.join-page .bonus-claim .line-two,
+.join-page .bonus-claim .line-three,
+.join-page .bonus-content-title,
+.join-page .inside-box h2 {
+  color: #7a5230 !important;
+  text-shadow: none !important;
+}
+
+.join-page .bonus-claim .line-three,
+.join-page .inside-box h2 {
+  color: #00cfff !important;
+}
+
+.join-page .inside-box p,
+.join-page .bonus-content p,
+.join-page label,
+.join-page small {
+  color: rgba(10, 42, 107, 0.72) !important;
+}
+
+.join-page .phone-flow input {
+  background: #ffffff !important;
+  color: #7a5230 !important;
+  border: 1px solid rgba(10, 42, 107, 0.22) !important;
+}
+
+.join-page .phone-flow input::placeholder {
+  color: rgba(10, 42, 107, 0.42) !important;
+}
+
+.join-page input[type="checkbox"] {
+  accent-color: #00cfff !important;
+}
+
+.join-page button {
+  background: linear-gradient(135deg, #00cfff, #3f7cff) !important;
+  color: #ffffff !important;
+}
+
+/* codePerks join text fix */
+.join-page.bonus-page,
+.join-page.bonus-page h1,
+.join-page.bonus-page h2,
+.join-page.bonus-page h3,
+.join-page.bonus-page p,
+.join-page.bonus-page span,
+.join-page.bonus-page small,
+.join-page.bonus-page label,
+.join-page.bonus-page div {
+  color: #7a5230 !important;
+  text-shadow: none !important;
+}
+
+.join-page .bonus-claim .line-three,
+.join-page .inside-box h2 {
+  color: #22bff5 !important;
+}
+
+.join-page button,
+.join-page button * {
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   codePerks landing redesign
+   Premium pages • Private access • Gated resources
+   ========================================================= */
+
+:root {
+  color-scheme: light;
+  background: #f6fbff;
+  color: #7a5230;
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(0, 207, 255, 0.12), transparent 30rem),
+    radial-gradient(circle at 85% 10%, rgba(63, 124, 255, 0.08), transparent 28rem),
+    linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
+  color: #7a5230;
+}
+
+.landing-page {
+  width: min(860px, calc(100% - 28px));
+}
+
+.brand-lockup,
+.landing-powered {
+  color: rgba(10, 42, 107, 0.62);
+}
+
+.brand-logo {
+  filter: none;
+}
+
+.flag-button {
+  border: 1px solid rgba(10, 42, 107, 0.10);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.flag-button.is-active {
+  border-color: rgba(0, 207, 255, 0.75);
+  box-shadow:
+    0 0 0 1px rgba(0, 207, 255, 0.12),
+    0 0 24px rgba(0, 207, 255, 0.12);
+}
+
+.landing-hero {
+  padding: 42px 0 28px;
+}
+
+.landing-hero .hero-copy h1 {
+  max-width: 720px;
+  color: #7a5230;
+  font-size: clamp(38px, 4.6vw, 54px);
+  line-height: 1.04;
+  font-weight: 820;
+  letter-spacing: -0.02em;
+}
+
+.landing-hero .hero-subtitle {
+  max-width: 620px;
+  color: rgba(10, 42, 107, 0.82);
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.6;
+}
+
+.hero-intro {
+  max-width: 620px;
+  color: rgba(10, 42, 107, 0.64);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.cards-kicker {
+  max-width: 620px;
+  margin: 10px auto 18px;
+  color: rgba(10, 42, 107, 0.56);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.primary-cta {
+  min-height: 48px;
+  padding: 0 28px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #00cfff, #3f7cff);
+  color: #ffffff;
+  box-shadow:
+    0 16px 40px rgba(63, 124, 255, 0.18),
+    0 4px 14px rgba(0, 207, 255, 0.12);
+}
+
+.primary-cta:hover {
+  transform: translateY(-1px);
+}
+
+.landing-sections {
+  gap: 18px;
+}
+
+.info-panel {
+  background: rgba(255, 255, 255, 0.90);
+  border: 1px solid rgba(10, 42, 107, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(10, 42, 107, 0.06);
+  backdrop-filter: blur(8px);
+}
+
+.info-panel h2 {
+  color: #7a5230;
+}
+
+.info-panel p {
+  color: rgba(10, 42, 107, 0.68);
+}
+
+@media (max-width: 720px) {
+  .landing-hero {
+    padding-top: 28px;
+  }
+
+  .landing-hero .hero-copy h1 {
+    font-size: clamp(30px, 9vw, 42px);
+  }
+
+  .primary-cta {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+/* codePerks dashboard final color pass */
+.dashboard-page {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(246, 214, 165, 0.52), transparent 36%),
+    linear-gradient(180deg, #fffaf1 0%, #f4e4ca 46%, #dfbd8b 100%) !important;
+  color: #7a5230 !important;
+}
+
+.dashboard-page .panel,
+.dashboard-page .metric-card,
+.dashboard-page .side-panel,
+.dashboard-page .phone-flow,
+.dashboard-page .qr-panel,
+.dashboard-page .actions-panel,
+.dashboard-page .bonus-panel {
+  background: rgba(222, 184, 127, 0.76) !important;
+  border: 1px solid rgba(117, 73, 25, 0.25) !important;
+  box-shadow: 0 24px 70px rgba(96, 58, 20, 0.16) !important;
+  color: #7a5230 !important;
+}
+
+.dashboard-page h1,
+.dashboard-page h2,
+.dashboard-page h3,
+.dashboard-page .panel-title,
+.dashboard-page .metric-card strong,
+.dashboard-page .detail-list dt,
+.dashboard-page label {
+  color: #7a5230 !important;
+}
+
+.dashboard-page p,
+.dashboard-page small,
+.dashboard-page .muted,
+.dashboard-page .detail-list dd {
+  color: rgba(13, 45, 104, 0.78) !important;
+}
+
+.dashboard-page input,
+.dashboard-page textarea,
+.dashboard-page select {
+  background: rgba(255, 251, 243, 0.94) !important;
+  color: #7a5230 !important;
+  border: 1px solid rgba(117, 73, 25, 0.34) !important;
+}
+
+.dashboard-page button,
+.dashboard-page .primary-cta {
+  background: linear-gradient(135deg, #d9973f, #f2c879) !important;
+  color: #7a5230 !important;
+  border: 1px solid rgba(117, 73, 25, 0.35) !important;
+}
+
+.dashboard-page .page-mic {
+  color: #7a5230 !important;
+  filter: none;
+}
+
+
+/* codePerks dashboard soft parchment pass */
+
+.dashboard-page {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(244, 222, 188, 0.62), transparent 38%),
+    linear-gradient(180deg, #fffdf8 0%, #f8efdf 52%, #eedbc0 100%) !important;
+}
+
+.dashboard-page .panel,
+.dashboard-page .metric-card,
+.dashboard-page .side-panel,
+.dashboard-page .phone-flow,
+.dashboard-page .qr-panel,
+.dashboard-page .actions-panel,
+.dashboard-page .bonus-panel {
+  background: rgba(255, 249, 239, 0.88) !important;
+  border: 1px solid rgba(171, 132, 83, 0.16) !important;
+  box-shadow: 0 18px 50px rgba(122, 88, 45, 0.08) !important;
+}
+
+.dashboard-page h1,
+.dashboard-page h2,
+.dashboard-page h3,
+.dashboard-page .panel-title,
+.dashboard-page .metric-card strong,
+.dashboard-page .detail-list dt,
+.dashboard-page label,
+.dashboard-page p,
+.dashboard-page small,
+.dashboard-page .muted,
+.dashboard-page .detail-list dd {
+  color: #7b532f !important;
+}
+
+.dashboard-page input,
+.dashboard-page textarea,
+.dashboard-page select {
+  background: rgba(255,255,255,0.72) !important;
+  color: #7b532f !important;
+  border: 1px solid rgba(171,132,83,0.18) !important;
+}
+
+.dashboard-page button,
+.dashboard-page .primary-cta {
+  background: linear-gradient(135deg, #d6a15c, #edd0a2) !important;
+  color: #6e4725 !important;
+  border: 1px solid rgba(171,132,83,0.24) !important;
+}
+
+.dashboard-page .page-mic {
+  color: #b88a55 !important;
+  font-size: 52px !important;
+  margin: 0 6px !important;
+  transform: translateY(4px);
+  filter: none !important;
+}
+
+
+/* codePerks dashboard remove blue remnants */
+
+.dashboard-page,
+.dashboard-page * {
+  text-shadow: none !important;
+}
+
+.dashboard-page .landing-logo,
+.dashboard-page .logo {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+.dashboard-page h1,
+.dashboard-page h2,
+.dashboard-page h3,
+.dashboard-page h4,
+.dashboard-page strong,
+.dashboard-page span,
+.dashboard-page p,
+.dashboard-page label,
+.dashboard-page small,
+.dashboard-page .panel-title,
+.dashboard-page .detail-list dt,
+.dashboard-page .detail-list dd,
+.dashboard-page .metric-card strong,
+.dashboard-page .metric-card span,
+.dashboard-page .muted,
+.dashboard-page .landing-powered,
+.dashboard-page .page-mic {
+  color: #7a5230 !important;
+}
+
+.dashboard-page button,
+.dashboard-page .primary-cta {
+  color: #6e4725 !important;
+}
+
+
+/* remove blue shadows and force warm brown typography */
+
+.dashboard-page .landing-logo,
+.dashboard-page .logo,
+.dashboard-page h1,
+.dashboard-page h2,
+.dashboard-page h3,
+.dashboard-page .panel-title {
+  filter: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.dashboard-page,
+.dashboard-page * {
+  text-shadow: none !important;
+}
+
+.dashboard-page h1,
+.dashboard-page h2,
+.dashboard-page h3,
+.dashboard-page h4,
+.dashboard-page strong,
+.dashboard-page span,
+.dashboard-page p,
+.dashboard-page label,
+.dashboard-page small,
+.dashboard-page .panel-title,
+.dashboard-page .detail-list dt,
+.dashboard-page .detail-list dd,
+.dashboard-page .metric-card strong,
+.dashboard-page .metric-card span,
+.dashboard-page .muted,
+.dashboard-page .landing-powered,
+.dashboard-page .page-mic {
+  color: #7a5230 !important;
+}
+
+
+/* codePerks final hero typography */
+
+.summary-tagline,
+.page-name,
+.release-name,
+.page-title-row,
+.page-mic {
+  color: #7a5230 !important;
+  text-shadow: none !important;
+}
+
+.page-name {
+  letter-spacing: -0.03em;
+}
+
+
+/* codePerks hero hard override */
+
+.summary-tagline,
+.page-name,
+.release-name,
+.page-title-row,
+.page-mic,
+.summary-text h2,
+.summary-text p {
+  color: #7a5230 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.page-title-row {
+  gap: 4px !important;
+}
+
+
+/* codePerks dashboard hero hard reset - new isolated classes */
+
+.codeperks-dashboard-logo {
+  width: min(220px, 44vw) !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto 18px !important;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.codeperks-dashboard-tagline,
+.codeperks-dashboard-title,
+.codeperks-dashboard-subtitle,
+.codeperks-dashboard-book {
+  color: #7a5230 !important;
+  filter: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.codeperks-dashboard-tagline {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+  margin-bottom: 18px !important;
+}
+
+.codeperks-dashboard-title {
+  font-size: clamp(44px, 7vw, 76px) !important;
+  line-height: 0.95 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.04em !important;
+  margin: 0 !important;
+}
+
+.codeperks-dashboard-subtitle {
+  margin-top: 12px !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+}
+
+.codeperks-dashboard-book {
+  font-size: 42px !important;
+  line-height: 1 !important;
+  margin: 0 4px !important;
+}
+
+.page-title-row {
+  gap: 6px !important;
+}
+
+
+/* codePerks dashboard emergency hard override */
+.dashboard-page .summary img,
+.dashboard-page .summary-brand img,
+.dashboard-page img.codeperks-dashboard-logo {
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.dashboard-page .summary h2,
+.dashboard-page .summary .codeperks-dashboard-title,
+.dashboard-page .summary-text h2 {
+  color: #7a5230 !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+  text-shadow: none !important;
+  filter: none !important;
+  background: none !important;
+}
+
+.dashboard-page .summary h2 *,
+.dashboard-page .summary-text h2 * {
+  color: #7a5230 !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* codePerks unified brown borders */
+
+.dashboard-page .panel,
+.dashboard-page .summary,
+.dashboard-page .mini-card,
+.dashboard-page .metric-card,
+.dashboard-page .side-panel,
+.dashboard-page .phone-flow,
+.dashboard-page .qr-panel,
+.dashboard-page .actions-panel,
+.dashboard-page .bonus-panel,
+.dashboard-page input,
+.dashboard-page textarea,
+.dashboard-page select,
+.dashboard-page .file-control {
+  border-color: #b18454 !important;
+}
+
+
+/* codePerks remove #7a5230 from bonus/tier cards */
+.dashboard-page .bonus-panel,
+.dashboard-page .bonus-panel *,
+.dashboard-page .tier-card,
+.dashboard-page .tier-card *,
+.dashboard-page .status,
+.dashboard-page .tier-count,
+.dashboard-page .bonus-scan-card,
+.dashboard-page .bonus-scan-card * {
+  color: #7a5230 !important;
+  border-color: #b18454 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.dashboard-page .bonus-panel a,
+.dashboard-page .tier-card a,
+.dashboard-page .status {
+  color: #8a5a2f !important;
+}
+
+
+/* codePerks report panel brown text */
+.dashboard-page .report-panel,
+.dashboard-page .report-panel *,
+.dashboard-page .compact-report,
+.dashboard-page .compact-report *,
+.dashboard-page .panel p,
+.dashboard-page .panel h2,
+.dashboard-page .panel h3 {
+  color: #7a5230 !important;
+}
+
+/* codePerks Join page visual alignment */
+.join-page,
+.member-page,
+.bonus-page {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(244, 222, 188, 0.62), transparent 38%),
+    linear-gradient(180deg, #efd2a8 0%, #dfb878 48%, #c9954f 100%) !important;
+  color: #7a5230 !important;
+}
+
+.join-page *,
+.member-page *,
+.bonus-page * {
+  color: #7a5230 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.join-page .panel,
+.join-page .card,
+.join-page .bonus-card,
+.join-page .reward-card,
+.join-page .join-card,
+.member-page .panel,
+.member-page .card,
+.bonus-page .panel,
+.bonus-page .card {
+  background: #fff4df !important;
+  border: 2px solid #b18454 !important;
+  box-shadow: 0 18px 48px rgba(92,58,28,0.12) !important;
+  color: #7a5230 !important;
+}
+
+.join-page input,
+.join-page textarea,
+.join-page select,
+.member-page input,
+.member-page textarea,
+.member-page select,
+.bonus-page input,
+.bonus-page textarea,
+.bonus-page select {
+  background: rgba(255,255,255,0.76) !important;
+  border: 2px solid #b18454 !important;
+  color: #7a5230 !important;
+}
+
+.join-page button,
+.join-page .primary-button,
+.join-page .primary-cta,
+.member-page button,
+.member-page .primary-button,
+.bonus-page button,
+.bonus-page .primary-button {
+  background: linear-gradient(135deg, #d6a15c, #edd0a2) !important;
+  border: 2px solid #b18454 !important;
+  color: #6e4725 !important;
+  box-shadow: 0 10px 24px rgba(122,82,48,0.14) !important;
+}
+
+.join-page img,
+.member-page img,
+.bonus-page img {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+
+/* codePerks Join final brown override + larger cover */
+.join-page,
+.join-page * {
+  color: #7a5230 !important;
+  text-shadow: none !important;
+}
+
+.join-page input,
+.join-page textarea,
+.join-page select {
+  border-color: #b18454 !important;
+  color: #7a5230 !important;
+}
+
+.join-page .join-media {
+  width: auto !important;
+  height: auto !important;
+  max-width: 180px !important;
+  max-height: 260px !important;
+  transform: scale(2);
+  transform-origin: center center;
+  margin: 56px auto !important;
+  display: block !important;
+}
+
+.join-page .release-logo {
+  max-width: 220px !important;
+  max-height: 180px !important;
+}
+
+
+/* codePerks Join hard final override */
+.join-page,
+.join-page * {
+  color: #7a5230 !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.join-page h1,
+.join-page h1 *,
+.join-page h2,
+.join-page h2 *,
+.join-page .highlight,
+.join-page .accent,
+.join-page .brand,
+.join-page .info-title,
+.join-page .section-title {
+  color: #7a5230 !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+/* double book cover size */
+.join-page .join-media {
+  width: 120px !important;
+  max-width: 120px !important;
+  height: auto !important;
+  max-height: none !important;
+  display: block !important;
+  margin: 28px auto 22px !important;
+  transform: none !important;
+}
+
+
+/* codePerks Join - make book cover as large as possible */
+.join-page .join-media {
+  width: min(72vw, 260px) !important;
+  max-width: min(72vw, 260px) !important;
+  height: auto !important;
+  max-height: 360px !important;
+  display: block !important;
+  margin: 34px auto 26px !important;
+  transform: none !important;
+  object-fit: contain !important;
+}
+
+
+/* codePerks Join force large bonus image */
+.join-page img.join-media,
+img.join-media {
+  width: min(82vw, 340px) !important;
+  max-width: min(82vw, 340px) !important;
+  min-width: 260px !important;
+  height: auto !important;
+  max-height: none !important;
+  display: block !important;
+  margin: 28px auto !important;
+  object-fit: contain !important;
+  transform: none !important;
+}
+
+/* codePerks Join – final reward image sizing */
+.join-page .reward-stage,
+.reward-stage {
+  width: 100% !important;
+  max-width: none !important;
+  overflow: visible !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.join-page img.join-media,
+img.join-media {
+  width: 420px !important;
+  max-width: min(92vw, 420px) !important;
+  min-width: 320px !important;
+  height: auto !important;
+  max-height: none !important;
+  display: block !important;
+  margin: 24px auto !important;
+  border-radius: 12px !important;
+  object-fit: contain !important;
+  transform: none !important;
+}
+
+
+/* codePerks Join final override - image + brown fonts */
+
+body .join-page,
+body .join-page * {
+  color: #7a5230 !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+  text-shadow: none !important;
+}
+
+body .join-page .bonus-claim .line-three,
+body .join-page .bonus-claim .line-three * {
+  color: #7a5230 !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+  text-shadow: none !important;
+}
+
+body .join-page .release-block img.release-logo,
+body .join-page img.release-logo,
+img.release-logo {
+  width: min(86vw, 420px) !important;
+  max-width: min(86vw, 420px) !important;
+  min-width: 320px !important;
+  height: auto !important;
+  max-height: none !important;
+  display: block !important;
+  object-fit: contain !important;
+  margin: 18px auto 24px !important;
+  transform: none !important;
+}
+
+
+/* codePerks Join - mobile centered cover */
+
+body .join-page .release-block {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+body .join-page .release-block img.release-logo,
+body .join-page img.release-logo,
+img.release-logo {
+  width: min(72vw, 320px) !important;
+  max-width: min(72vw, 320px) !important;
+  min-width: 0 !important;
+  height: auto !important;
+  display: block !important;
+  margin: 12px auto 18px !important;
+  object-fit: contain !important;
+}
+
+@media (max-width: 768px) {
+  body .join-page .release-block img.release-logo,
+  body .join-page img.release-logo,
+  img.release-logo {
+    width: min(68vw, 280px) !important;
+    max-width: min(68vw, 280px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+
+/* codePerks Join - mobile cover size correction */
+@media (max-width: 768px) {
+  body .join-page .release-block img.release-logo,
+  body .join-page img.release-logo,
+  img.release-logo {
+    width: min(82vw, 340px) !important;
+    max-width: min(82vw, 340px) !important;
+    min-width: 260px !important;
+    height: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+
+/* Increase top logo by 50% */
+
+.landing-logo {
+  width: 345px !important;
+  max-width: 345px !important;
+  height: auto !important;
+}
+
+@media (max-width: 768px) {
+  .landing-logo {
+    width: 285px !important;
+    max-width: 285px !important;
+  }
+}
+
+
+
+/* codePerks — controlled Executive Black & Champagne landing */
+.landing-page {
+  min-height: 100vh !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 24px 64px !important;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(226, 196, 122, 0.22), transparent 34rem),
+    radial-gradient(circle at 92% 72%, rgba(184, 141, 67, 0.12), transparent 28rem),
+    linear-gradient(180deg, #050505 0%, #0b0906 52%, #050505 100%) !important;
+  color: #e2c47a !important;
+}
+
+.landing-header {
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: 34px 0 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.landing-logo {
+  width: 345px !important;
+  max-width: min(345px, 62vw) !important;
+  height: auto !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 18px 42px rgba(226,196,122,.14)) !important;
+}
+
+.landing-powered {
+  color: rgba(226,196,122,.78) !important;
+  font-size: 10px !important;
+  letter-spacing: .28em !important;
+  text-transform: uppercase !important;
+}
+
+.landing-hero {
+  max-width: 1120px !important;
+  margin: 34px auto 0 !important;
+  padding: 36px 0 30px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.hero-copy {
+  max-width: 1060px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+.landing-page .landing-hero .hero-copy h1 {
+  max-width: 1060px !important;
+  margin: 0 auto 32px !important;
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+  background: none !important;
+  background-image: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  font-size: clamp(42px, 5.7vw, 82px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.035em !important;
+  font-weight: 650 !important;
+  text-shadow:
+    0 2px 12px rgba(0,0,0,.76),
+    0 0 24px rgba(226,196,122,.16) !important;
+}
+
+.hero-subtitle,
+.hero-intro,
+.landing-page .landing-hero .hero-copy p {
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+}
+
+.hero-subtitle {
+  max-width: 780px !important;
+  margin: 0 auto !important;
+  font-size: clamp(18px, 2vw, 24px) !important;
+  line-height: 1.5 !important;
+  opacity: .92 !important;
+}
+
+.hero-intro {
+  max-width: 710px !important;
+  margin: 18px auto 0 !important;
+  font-size: 16px !important;
+  line-height: 1.72 !important;
+  opacity: .82 !important;
+}
+
+.primary-cta {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-top: 36px !important;
+  min-height: 50px !important;
+  padding: 0 32px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(246,237,220,.28) !important;
+  background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 48%, #b88d43 100%) !important;
+  color: #090806 !important;
+  -webkit-text-fill-color: #090806 !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+  letter-spacing: .16em !important;
+  text-decoration: none !important;
+  box-shadow:
+    0 0 34px rgba(226,196,122,.28),
+    0 14px 34px rgba(0,0,0,.48) !important;
+}
+
+.cards-kicker {
+  max-width: 1120px !important;
+  margin: 44px auto 18px !important;
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+  font-size: 11px !important;
+  letter-spacing: .24em !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  opacity: .82 !important;
+}
+
+.landing-sections {
+  max-width: 1120px !important;
+  margin: 0 auto !important;
+  padding: 0 0 58px !important;
+  gap: 18px !important;
+}
+
+.info-panel {
+  border-radius: 28px !important;
+  border: 1px solid rgba(226,196,122,.24) !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018)) !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.44),
+    inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+
+.info-panel h2,
+.info-panel p {
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+}
+
+.info-panel h2 {
+  font-size: 18px !important;
+  font-weight: 650 !important;
+}
+
+.info-panel p {
+  font-size: 14px !important;
+  line-height: 1.62 !important;
+  opacity: .80 !important;
+}
+
+@media (max-width: 760px) {
+  .landing-page {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .landing-header {
+    padding-top: 26px !important;
+    gap: 14px !important;
+  }
+
+  .landing-logo {
+    width: 285px !important;
+    max-width: 68vw !important;
+  }
+
+  .landing-page .landing-hero .hero-copy h1 {
+    font-size: clamp(38px, 10vw, 56px) !important;
+    line-height: 1.13 !important;
+    max-width: 96vw !important;
+  }
+
+  .landing-sections {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* codePerks — fix outer cream background and page height */
+
+html,
+body,
+#root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  min-height: 100% !important;
+  background: #050505 !important;
+  color: #e2c47a !important;
+}
+
+body {
+  overflow-x: hidden !important;
+}
+
+.landing-page {
+  min-height: 100vh !important;
+  padding: 0 24px 36px !important;
+  background:
+    radial-gradient(circle at 50% -12%, rgba(226, 196, 122, 0.20), transparent 30rem),
+    linear-gradient(180deg, #050505 0%, #0b0906 52%, #050505 100%) !important;
+}
+
+.landing-header {
+  padding-top: 24px !important;
+  padding-bottom: 8px !important;
+}
+
+.landing-hero {
+  margin-top: 18px !important;
+  padding-top: 22px !important;
+  padding-bottom: 20px !important;
+}
+
+.landing-page .landing-hero .hero-copy h1 {
+  margin-bottom: 22px !important;
+}
+
+.hero-intro {
+  margin-top: 14px !important;
+}
+
+.primary-cta {
+  margin-top: 28px !important;
+}
+
+.cards-kicker {
+  margin-top: 28px !important;
+  margin-bottom: 14px !important;
+}
+
+.landing-sections {
+  padding-bottom: 24px !important;
+}
+
+@media (max-width: 760px) {
+  .landing-page {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    padding-bottom: 28px !important;
+  }
+
+  .landing-hero {
+    margin-top: 10px !important;
+    padding-top: 16px !important;
+  }
+
+  .cards-kicker {
+    margin-top: 24px !important;
+  }
+}
+
+
+/* codePerks — controlled Executive Black & Champagne checkout */
+.checkout-page {
+  min-height: 100vh !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 24px 64px !important;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(226, 196, 122, 0.20), transparent 32rem),
+    radial-gradient(circle at 92% 72%, rgba(184, 141, 67, 0.12), transparent 28rem),
+    linear-gradient(180deg, #050505 0%, #0b0906 52%, #050505 100%) !important;
+  color: #e2c47a !important;
+}
+
+.checkout-page .landing-header {
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: 24px 0 10px !important;
+}
+
+.checkout-page .landing-logo,
+.checkout-page img[src*="codePerks-logo"] {
+  width: 345px !important;
+  max-width: min(345px, 62vw) !important;
+  height: auto !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 18px 42px rgba(226,196,122,.14)) !important;
+}
+
+.checkout-page h1,
+.checkout-page h2,
+.checkout-page h3,
+.checkout-page p,
+.checkout-page label,
+.checkout-page small,
+.checkout-page span,
+.checkout-page .checkout-intro,
+.checkout-page .checkout-intro *,
+.checkout-page .section-title,
+.checkout-page .muted {
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+}
+
+.checkout-page h1 {
+  font-size: clamp(42px, 5.7vw, 82px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.035em !important;
+  font-weight: 650 !important;
+}
+
+.checkout-page .panel,
+.checkout-page .checkout-card,
+.checkout-page .form-card,
+.checkout-page .terms-card,
+.checkout-page form {
+  background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018)) !important;
+  border: 1px solid rgba(226,196,122,.24) !important;
+  border-radius: 28px !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.44),
+    inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+
+.checkout-page input,
+.checkout-page textarea,
+.checkout-page select {
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(226,196,122,.24) !important;
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+.checkout-page input::placeholder,
+.checkout-page textarea::placeholder {
+  color: rgba(226,196,122,.52) !important;
+  -webkit-text-fill-color: rgba(226,196,122,.52) !important;
+}
+
+.checkout-page button,
+.checkout-page button[type="submit"],
+.checkout-page .primary-cta {
+  background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 48%, #b88d43 100%) !important;
+  color: #090806 !important;
+  -webkit-text-fill-color: #090806 !important;
+  border: 1px solid rgba(246,237,220,.28) !important;
+  border-radius: 999px !important;
+  font-weight: 850 !important;
+  letter-spacing: .14em !important;
+  box-shadow:
+    0 0 34px rgba(226,196,122,.28),
+    0 14px 34px rgba(0,0,0,.48) !important;
+}
+
+@media (max-width: 760px) {
+  .checkout-page {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .checkout-page .landing-logo,
+  .checkout-page img[src*="codePerks-logo"] {
+    width: 285px !important;
+    max-width: 68vw !important;
+  }
+}
+
+
+
+/* codePerks checkout: yellow terms panel */
+.checkout-page .terms-card,
+.checkout-page .terms-box,
+.checkout-page .terms-panel,
+.checkout-page .consent-box,
+.checkout-page .terms,
+.checkout-page [class*="terms"],
+.checkout-page [class*="consent"] {
+  background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 55%, #b88d43 100%) !important;
+  border: 1px solid rgba(246,237,220,.45) !important;
+  color: #2f1f13 !important;
+  -webkit-text-fill-color: #2f1f13 !important;
+}
+
+.checkout-page .terms-card *,
+.checkout-page .terms-box *,
+.checkout-page .terms-panel *,
+.checkout-page .consent-box *,
+.checkout-page .terms *,
+.checkout-page [class*="terms"] *,
+.checkout-page [class*="consent"] * {
+  color: #2f1f13 !important;
+  -webkit-text-fill-color: #2f1f13 !important;
+}
+
+.checkout-page input[type="checkbox"] {
+  accent-color: #2f1f13 !important;
+}
+
+
+/* codePerks dashboard — top panel Executive Black & Champagne */
+.dashboard-page .hero-card,
+.dashboard-page .top-panel,
+.dashboard-page .event-summary,
+.dashboard-page .summary-card,
+.dashboard-page .control-hero,
+.dashboard-page .dashboard-hero {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(226, 196, 122, 0.14), transparent 32rem),
+    linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018)) !important;
+  border: 1px solid rgba(226,196,122,.28) !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.46),
+    inset 0 1px 0 rgba(255,255,255,.08) !important;
+  color: #e2c47a !important;
+}
+
+.dashboard-page .hero-card *,
+.dashboard-page .top-panel *,
+.dashboard-page .event-summary *,
+.dashboard-page .summary-card *,
+.dashboard-page .control-hero *,
+.dashboard-page .dashboard-hero * {
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+}
+
+.dashboard-page .status-pill,
+.dashboard-page .summary-pill,
+.dashboard-page .metric-pill {
+  background: rgba(226,196,122,.10) !important;
+  border: 1px solid rgba(226,196,122,.30) !important;
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+
+/* codePerks summary panel */
+.dashboard-page .panel.summary {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(226,196,122,.18), transparent 42%),
+    linear-gradient(145deg,#111111 0%,#171717 45%,#1e1e1e 100%) !important;
+  border: 1px solid rgba(226,196,122,.30) !important;
+  border-radius: 28px !important;
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+.dashboard-page .panel.summary::before {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(226,196,122,.45),
+      transparent
+    ) !important;
+}
+
+.dashboard-page .summary-text h2,
+.dashboard-page .summary-text p,
+.dashboard-page .summary-tagline,
+.dashboard-page .summary .codeperks-dashboard-title,
+.dashboard-page .summary h2 {
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+}
+
+.dashboard-page .summary-brand img,
+.dashboard-page img.codeperks-dashboard-logo {
+  filter:
+    drop-shadow(0 0 12px rgba(226,196,122,.18))
+    drop-shadow(0 0 28px rgba(226,196,122,.10));
+}
+
+.dashboard-page .summary-flags button,
+.dashboard-page .summary-flags .flag-selector {
+  background: rgba(226,196,122,.10) !important;
+  border: 1px solid rgba(226,196,122,.28) !important;
+  color: #f3e4bf !important;
+}
+
+
+/* codePerks dashboard — Executive Black & Champagne full pass */
+
+.dashboard-page {
+  background:
+    radial-gradient(circle at 50% -12%, rgba(226,196,122,.18), transparent 32rem),
+    radial-gradient(circle at 90% 70%, rgba(184,141,67,.10), transparent 30rem),
+    linear-gradient(180deg, #050505 0%, #0b0906 52%, #050505 100%) !important;
+  color: #e2c47a !important;
+}
+
+.dashboard-page .panel,
+.dashboard-page .metrics-panel,
+.dashboard-page .presentation-panel,
+.dashboard-page .report-panel,
+.dashboard-page .bonus-panel,
+.dashboard-page .compact-report,
+.dashboard-page .metric-card,
+.dashboard-page .bonus-scan-card,
+.dashboard-page .tier-card,
+.dashboard-page .phone-flow,
+.dashboard-page .side-panel,
+.dashboard-page .qr-panel {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018)) !important;
+  border: 1px solid rgba(226,196,122,.24) !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.44),
+    inset 0 1px 0 rgba(255,255,255,.07) !important;
+  color: #e2c47a !important;
+}
+
+.dashboard-page .panel.summary {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(226,196,122,.18), transparent 42%),
+    linear-gradient(145deg, #111111 0%, #171717 48%, #1f1b12 100%) !important;
+  border: 1px solid rgba(226,196,122,.32) !important;
+}
+
+.dashboard-page h1,
+.dashboard-page h2,
+.dashboard-page h3,
+.dashboard-page h4,
+.dashboard-page p,
+.dashboard-page span,
+.dashboard-page label,
+.dashboard-page small,
+.dashboard-page strong,
+.dashboard-page .panel-title,
+.dashboard-page .summary-text h2,
+.dashboard-page .summary-text p,
+.dashboard-page .summary-tagline,
+.dashboard-page .detail-list dt,
+.dashboard-page .detail-list dd,
+.dashboard-page .metric-card strong,
+.dashboard-page .metric-card span,
+.dashboard-page .muted {
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+}
+
+.dashboard-page .muted,
+.dashboard-page small,
+.dashboard-page .detail-list dt,
+.dashboard-page .panel p {
+  opacity: .78 !important;
+}
+
+.dashboard-page input,
+.dashboard-page textarea,
+.dashboard-page select,
+.dashboard-page .file-control {
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(226,196,122,.24) !important;
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+.dashboard-page input::placeholder,
+.dashboard-page textarea::placeholder {
+  color: rgba(226,196,122,.48) !important;
+  -webkit-text-fill-color: rgba(226,196,122,.48) !important;
+}
+
+.dashboard-page button,
+.dashboard-page .primary-button,
+.dashboard-page .primary-cta,
+.dashboard-page .checkout-submit {
+  background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 48%, #b88d43 100%) !important;
+  color: #090806 !important;
+  -webkit-text-fill-color: #090806 !important;
+  border: 1px solid rgba(246,237,220,.28) !important;
+  box-shadow:
+    0 0 30px rgba(226,196,122,.22),
+    0 12px 30px rgba(0,0,0,.42) !important;
+}
+
+.dashboard-page button *,
+.dashboard-page .primary-button *,
+.dashboard-page .primary-cta * {
+  color: #090806 !important;
+  -webkit-text-fill-color: #090806 !important;
+}
+
+.dashboard-page button:disabled,
+.dashboard-page .primary-button:disabled {
+  opacity: .45 !important;
+  cursor: not-allowed !important;
+}
+
+.dashboard-page .secondary-button,
+.dashboard-page .ghost-button,
+.dashboard-page .lang-button,
+.dashboard-page .summary-flags button,
+.dashboard-page .summary-flags .flag-selector {
+  background: rgba(226,196,122,.10) !important;
+  border: 1px solid rgba(226,196,122,.28) !important;
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+  box-shadow: none !important;
+}
+
+.dashboard-page .secondary-button *,
+.dashboard-page .ghost-button *,
+.dashboard-page .lang-button * {
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+.dashboard-page a {
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+.dashboard-page .status,
+.dashboard-page .tier-badge,
+.dashboard-page .tier-count,
+.dashboard-page .status-pill,
+.dashboard-page .summary-pill,
+.dashboard-page .metric-pill {
+  background: rgba(226,196,122,.12) !important;
+  border: 1px solid rgba(226,196,122,.30) !important;
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+.dashboard-page .report-panel,
+.dashboard-page .compact-report {
+  background:
+    linear-gradient(145deg, rgba(226,196,122,.10), rgba(255,255,255,.025)) !important;
+}
+
+.dashboard-page .bonus-panel {
+  background:
+    radial-gradient(circle at 80% 0%, rgba(226,196,122,.12), transparent 32%),
+    linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018)) !important;
+}
+
+.dashboard-page img.codeperks-dashboard-logo,
+.dashboard-page .summary-brand img,
+.dashboard-page .landing-logo,
+.dashboard-page .logo {
+  filter:
+    drop-shadow(0 0 12px rgba(226,196,122,.18))
+    drop-shadow(0 0 28px rgba(226,196,122,.10)) !important;
+}
+
+.dashboard-page hr,
+.dashboard-page .divider {
+  border-color: rgba(226,196,122,.20) !important;
+}
+
+
+/* codePerks dashboard — gold info/metric cards with brown text */
+.dashboard-page .mini-card,
+.dashboard-page .metric-card {
+  background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 55%, #b88d43 100%) !important;
+  border: 1px solid rgba(246,237,220,.48) !important;
+  color: #2f1f13 !important;
+  -webkit-text-fill-color: #2f1f13 !important;
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.35) !important;
+}
+
+.dashboard-page .mini-card *,
+.dashboard-page .metric-card * {
+  color: #2f1f13 !important;
+  -webkit-text-fill-color: #2f1f13 !important;
+}
+
+.dashboard-page .mini-card .label,
+.dashboard-page .metric-card .label {
+  color: #5a351d !important;
+  -webkit-text-fill-color: #5a351d !important;
+  opacity: .85 !important;
+}
+
+
+/* codePerks Join — Executive Black & Champagne */
+
+.join-page,
+.member-page,
+.bonus-page {
+  background:
+    radial-gradient(circle at 50% -12%, rgba(226,196,122,.16), transparent 32rem),
+    radial-gradient(circle at 90% 72%, rgba(184,141,67,.10), transparent 28rem),
+    linear-gradient(180deg, #050505 0%, #0b0906 55%, #050505 100%) !important;
+  color: #e2c47a !important;
+}
+
+.join-page .panel,
+.member-page .panel,
+.bonus-page .panel,
+.join-card,
+.member-card,
+.bonus-card {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018)) !important;
+  border: 1px solid rgba(226,196,122,.28) !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.48),
+    inset 0 1px 0 rgba(255,255,255,.07) !important;
+  color: #e2c47a !important;
+}
+
+.join-page h1,
+.join-page h2,
+.join-page h3,
+.join-page p,
+.join-page span,
+.join-page label,
+.join-page small,
+.member-page h1,
+.member-page h2,
+.member-page h3,
+.member-page p,
+.member-page span,
+.member-page label,
+.member-page small,
+.bonus-page h1,
+.bonus-page h2,
+.bonus-page h3,
+.bonus-page p,
+.bonus-page span,
+.bonus-page label,
+.bonus-page small {
+  color: #e2c47a !important;
+  -webkit-text-fill-color: #e2c47a !important;
+}
+
+.join-page .muted,
+.member-page .muted,
+.bonus-page .muted,
+.join-page small,
+.member-page small,
+.bonus-page small {
+  color: rgba(243,228,191,.76) !important;
+  -webkit-text-fill-color: rgba(243,228,191,.76) !important;
+}
+
+.join-page input,
+.member-page input,
+.bonus-page input {
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(226,196,122,.28) !important;
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+.join-page input::placeholder,
+.member-page input::placeholder,
+.bonus-page input::placeholder {
+  color: rgba(243,228,191,.48) !important;
+  -webkit-text-fill-color: rgba(243,228,191,.48) !important;
+}
+
+.join-page button,
+.member-page button,
+.bonus-page button,
+.join-page .primary-cta,
+.member-page .primary-cta,
+.bonus-page .primary-cta {
+  background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 48%, #b88d43 100%) !important;
+  color: #090806 !important;
+  -webkit-text-fill-color: #090806 !important;
+  border: 1px solid rgba(246,237,220,.30) !important;
+  box-shadow:
+    0 0 30px rgba(226,196,122,.24),
+    0 12px 30px rgba(0,0,0,.45) !important;
+}
+
+.join-page button *,
+.member-page button *,
+.bonus-page button * {
+  color: #090806 !important;
+  -webkit-text-fill-color: #090806 !important;
+}
+
+.join-page a,
+.member-page a,
+.bonus-page a {
+  color: #f3e4bf !important;
+  -webkit-text-fill-color: #f3e4bf !important;
+}
+
+.join-page img[src*="codePerks-logo"],
+.member-page img[src*="codePerks-logo"],
+.bonus-page img[src*="codePerks-logo"],
+.join-page .landing-logo,
+.member-page .landing-logo,
+.bonus-page .landing-logo {
+  filter:
+    drop-shadow(0 0 12px rgba(226,196,122,.20))
+    drop-shadow(0 0 32px rgba(0,0,0,.72)) !important;
+}
+

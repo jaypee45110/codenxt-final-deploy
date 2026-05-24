@@ -7,12 +7,12 @@ const API_BASE = 'https://codenxt-backend-production.up.railway.app';
 
 const emptyForm = {
   stackName: '',
-  publisherName: '',
+  companyName: '',
   releaseTitle: '',
   releaseDate: '',
   releaseTime: '06:00',
   platform: '',
-  members: '',
+  customers: '',
   contactName: '',
   email: '',
   phone: '',
@@ -20,16 +20,360 @@ const emptyForm = {
   logoFileName: '',
   stackLogo: '',
   bonusWindow: '24h',
+  rewardCompany: '',
+  rewardResponsible: '',
+  rewardAddress1: '',
+  rewardAddress2: '',
+  rewardPostalCode: '',
+  rewardCountry: '',
+  rewardPhone: '',
+  rewardEmail: '',
+  goldTotal: '100',
+  silverTotal: '500',
+  campaignEndDate: '',
 };
 
 function generateReleaseCode() {
-  return `CP-${Math.floor(10000 + Math.random() * 90000)}`;
+  return `PK-${Math.floor(10000 + Math.random() * 90000)}`;
 }
 
 export default function CheckoutPage({ lang, setLang }) {
   const navigate = useNavigate();
   const text = t(lang);
   const c = text.checkout;
+  const pageTextByLang = {
+    no: {
+      title: 'Sett opp medlemsfordelen',
+      subtitle: 'Koble kundemoment, medlemsfordel og bedrift direkte til kunden.',
+      fields: {
+        stackName: 'Medlemsfordel',
+        logo: 'Illustrasjon',
+        companyName: 'Bedrift',
+        releaseTitle: 'Type medlemsfordel',
+        platform: 'Kampanjemedium',
+        releaseDate: 'Startdato',
+        releaseTime: 'Kampanjens starttidspunkt',
+        bonusActive: 'Kampanjen slutter',
+        bonusActive24h: 'Velg sluttdato for kampanjen',
+        customers: 'Forventet antall deltakere',
+        contactName: 'Kontaktperson',
+        email: 'E-post',
+        phone: 'Telefon',
+        comments: 'Medlemsfordel / notater',
+      },
+      placeholders: {
+        stackName: 'VIP-fordel, kundeklubb, åpningstilbud ...',
+        companyName: 'Bedriftens navn',
+        releaseTitle: 'VIP, lojalitet, kupong, invitasjon, lansering ...',
+        platform: 'Internavis, TV, nettside, butikk, klubb, kampanje ...',
+        customers: '2500',
+        contactName: 'Fullt navn',
+        email: 'navn@bedrift.no',
+        phone: '+47 ...',
+        comments: 'Beskriv fordelen, tilbudet eller belønningen kunden får.',
+      },
+      chooseFile: 'Velg PNG eller JPG',
+      noFile: 'Ingen fil valgt',
+      selectedFile: 'Valgt fil',
+      termsText: 'codePerks brukes til QR- og lenkebasert tilgang, digitale fordeler, kunderespons og direkte oppfølging via codeNXT.',
+      accept: 'Jeg godtar vilkårene for codePerks.',
+      continue: 'OPPRETT MEDLEMSFORDEL',
+      creating: 'Oppretter medlemsfordel...',
+      submitError: 'Kunne ikke opprette medlemsfordelen. Prøv igjen.',
+    },
+    en: {
+      title: 'Set up your perk',
+      subtitle: 'Connect a customer moment, perk and company directly to the customer.',
+      fields: {
+        stackName: 'Perk / offer',
+        logo: 'Illustration',
+        companyName: 'Company',
+        releaseTitle: 'Perk type',
+        platform: 'Campaign medium',
+        releaseDate: 'Start date',
+        releaseTime: 'Campaign start time',
+        bonusActive: 'Campaign ends',
+        bonusActive24h: 'Choose campaign end date',
+        customers: 'Expected participants',
+        contactName: 'Contact person',
+        email: 'Email',
+        phone: 'Phone',
+        comments: 'Perk content / notes',
+      },
+      placeholders: {
+        stackName: 'VIP perk, loyalty reward, opening offer ...',
+        companyName: 'Company name',
+        releaseTitle: 'VIP, loyalty, coupon, invitation, launch ...',
+        platform: 'Internal newsletter, TV, website, store, club, campaign ...',
+        customers: '2500',
+        contactName: 'Full name',
+        email: 'name@company.com',
+        phone: '+44 ...',
+        comments: 'Describe the perk, offer or reward the customer receives.',
+      },
+      chooseFile: 'Choose PNG or JPG',
+      noFile: 'No file chosen',
+      selectedFile: 'Selected file',
+      termsText: 'codePerks is used for QR and link-based access, digital perks, customer response and direct follow-up via codeNXT.',
+      accept: 'I accept the codePerks terms.',
+      continue: 'CREATE A PERK',
+      creating: 'Creating perk...',
+      submitError: 'Could not create the perk. Please try again.',
+    },
+    de: {
+      title: 'Kundenvorteil einrichten',
+      subtitle: 'Verbinden Sie einen Kundenmoment, einen Kundenvorteil und ein Unternehmen direkt mit dem Kunden.',
+      fields: {
+        stackName: 'Kundenvorteil',
+        logo: 'Illustration',
+        companyName: 'Unternehmen',
+        releaseTitle: 'Art des Kundenvorteils',
+        platform: 'Kampagnenmedium',
+        releaseDate: 'Startdatum',
+        releaseTime: 'Startzeit der Kampagne',
+        bonusActive: 'Kampagne endet',
+        bonusActive24h: 'Enddatum der Kampagne wählen',
+        customers: 'Erwartete Teilnehmerzahl',
+        contactName: 'Kontaktperson',
+        email: 'E-Mail',
+        phone: 'Telefon',
+        comments: 'Kundenvorteil / Notizen',
+      },
+      placeholders: {
+        stackName: 'VIP-Vorteil, Kundenclub, Eröffnungsangebot ...',
+        companyName: 'Name des Unternehmens',
+        releaseTitle: 'VIP, Loyalität, Gutschein, Einladung, Einführung ...',
+        platform: 'Internes Magazin, TV, Website, Geschäft, Club, Kampagne ...',
+        customers: '2500',
+        contactName: 'Vollständiger Name',
+        email: 'name@unternehmen.de',
+        phone: '+49 ...',
+        comments: 'Beschreiben Sie den Vorteil, das Angebot oder die Belohnung für den Kunden.',
+      },
+      chooseFile: 'PNG oder JPG wählen',
+      noFile: 'Keine Datei gewählt',
+      selectedFile: 'Gewählte Datei',
+      termsText: 'codePerks wird für QR- und Link-Zugang, digitale Kundenvorteile, Kundenreaktionen und direkte Nachverfolgung über codeNXT genutzt.',
+      accept: 'Ich akzeptiere die Bedingungen für codePerks.',
+      continue: 'KUNDENVORTEIL ERSTELLEN',
+      creating: 'Kundenvorteil wird erstellt...',
+      submitError: 'Der Kundenvorteil konnte nicht erstellt werden. Bitte versuchen Sie es erneut.',
+    },
+    fr: {
+      title: 'Configurer un avantage client',
+      subtitle: 'Connectez un moment client, un avantage et une entreprise directement au client.',
+      fields: {
+        stackName: 'Avantage client',
+        logo: 'Illustration',
+        companyName: 'Entreprise',
+        releaseTitle: 'Type d’avantage client',
+        platform: 'Support de campagne',
+        releaseDate: 'Date de début',
+        releaseTime: 'Heure de début de campagne',
+        bonusActive: 'Fin de campagne',
+        bonusActive24h: 'Choisir la date de fin de campagne',
+        customers: 'Nombre de participants attendu',
+        contactName: 'Contact',
+        email: 'E-mail',
+        phone: 'Téléphone',
+        comments: 'Avantage client / notes',
+      },
+      placeholders: {
+        stackName: 'Avantage VIP, club client, offre d’ouverture ...',
+        companyName: 'Nom de l’entreprise',
+        releaseTitle: 'VIP, fidélité, coupon, invitation, lancement ...',
+        platform: 'Journal interne, TV, site web, boutique, club, campagne ...',
+        customers: '2500',
+        contactName: 'Nom complet',
+        email: 'nom@entreprise.fr',
+        phone: '+33 ...',
+        comments: 'Décrivez l’avantage, l’offre ou la récompense que le client recevra.',
+      },
+      chooseFile: 'Choisir PNG ou JPG',
+      noFile: 'Aucun fichier choisi',
+      selectedFile: 'Fichier choisi',
+      termsText: 'codePerks sert à gérer l’accès par QR et lien, les avantages numériques, la réponse client et le suivi direct via codeNXT.',
+      accept: 'J’accepte les conditions de codePerks.',
+      continue: 'CRÉER UN AVANTAGE',
+      creating: 'Création de l’avantage...',
+      submitError: 'Impossible de créer l’avantage. Veuillez réessayer.',
+    },
+    es: {
+      title: 'Configurar un beneficio para clientes',
+      subtitle: 'Conecta un momento del cliente, un beneficio y una empresa directamente con el cliente.',
+      fields: {
+        stackName: 'Beneficio para clientes',
+        logo: 'Ilustración',
+        companyName: 'Empresa',
+        releaseTitle: 'Tipo de beneficio',
+        platform: 'Medio de campaña',
+        releaseDate: 'Fecha de inicio',
+        releaseTime: 'Hora de inicio de campaña',
+        bonusActive: 'Beneficio activo',
+        bonusActive24h: 'Elegir fecha de fin de campaña',
+        customers: 'Participantes esperados',
+        contactName: 'Persona de contacto',
+        email: 'E-mail',
+        phone: 'Teléfono',
+        comments: 'Beneficio / notas',
+      },
+      placeholders: {
+        stackName: 'Beneficio VIP, club de clientes, oferta de apertura ...',
+        companyName: 'Nombre de la empresa',
+        releaseTitle: 'VIP, fidelización, cupón, invitación, lanzamiento ...',
+        platform: 'Boletín interno, TV, web, tienda, club, campaña ...',
+        customers: '2500',
+        contactName: 'Nombre completo',
+        email: 'nombre@empresa.es',
+        phone: '+34 ...',
+        comments: 'Describe el beneficio, la oferta o la recompensa que recibirá el cliente.',
+      },
+      chooseFile: 'Elegir PNG o JPG',
+      noFile: 'Ningún archivo elegido',
+      selectedFile: 'Archivo elegido',
+      termsText: 'codePerks se usa para acceso por QR y enlace, beneficios digitales, respuesta de clientes y seguimiento directo vía codeNXT.',
+      accept: 'Acepto las condiciones de codePerks.',
+      continue: 'CREAR BENEFICIO',
+      creating: 'Creando beneficio...',
+      submitError: 'No se pudo crear el beneficio. Inténtalo de nuevo.',
+    },
+  };
+
+  const pageText = pageTextByLang[lang] || pageTextByLang.en;
+
+  const benefitInventoryText = {
+    no: {
+      title: 'Fordelsbeholdning',
+      help: 'Definer begrenset antall premiumfordeler. Standardfordeler er ubegrenset.',
+      gold: 'Gullfordeler',
+      silver: 'Sølvfordeler',
+      standard: 'Standardfordeler',
+      unlimited: 'Ubegrenset',
+      campaignEnds: 'Kampanjen slutter',
+      distributionNote: 'Gullfordeler tildeles først. Når alle gullfordeler er brukt opp fortsetter systemet med sølv. Standardfordeler er alltid tilgjengelige.',
+    },
+    en: {
+      title: 'Benefit Inventory',
+      help: 'Define the limited premium benefit pool. Standard benefits remain unlimited.',
+      gold: 'Gold Benefits',
+      silver: 'Silver Benefits',
+      standard: 'Standard Benefits',
+      unlimited: 'Unlimited',
+      distributionNote: 'Gold benefits are assigned first. When all Gold benefits have been allocated, Silver benefits are assigned. Standard benefits remain available at all times.',
+    },
+    de: {
+      title: 'Vorteilsbestand',
+      help: 'Definieren Sie die begrenzten Premiumvorteile. Standardvorteile bleiben unbegrenzt.',
+      gold: 'Gold-Vorteile',
+      silver: 'Silber-Vorteile',
+      standard: 'Standard-Vorteile',
+      unlimited: 'Unbegrenzt',
+      campaignEnds: 'Kampagne endet',
+      distributionNote: 'Goldvorteile werden zuerst vergeben. Danach werden Silbervorteile zugewiesen. Standardvorteile bleiben jederzeit verfügbar.',
+    },
+    fr: {
+      title: 'Inventaire des avantages',
+      help: 'Définissez le nombre limité d’avantages premium. Les avantages standard restent illimités.',
+      gold: 'Avantages Or',
+      silver: 'Avantages Argent',
+      standard: 'Avantages Standard',
+      unlimited: 'Illimité',
+      campaignEnds: 'Fin de campagne',
+      distributionNote: 'Les avantages Or sont attribués en premier. Ensuite les avantages Argent sont attribués. Les avantages Standard restent toujours disponibles.',
+    },
+    es: {
+      title: 'Inventario de beneficios',
+      help: 'Define el número limitado de beneficios premium. Los beneficios estándar siguen siendo ilimitados.',
+      gold: 'Beneficios Oro',
+      silver: 'Beneficios Plata',
+      standard: 'Beneficios Estándar',
+      unlimited: 'Ilimitado',
+      campaignEnds: 'La campaña termina',
+      distributionNote: 'Los beneficios Oro se asignan primero. Después se asignan los beneficios Plata. Los beneficios Estándar permanecen siempre disponibles.',
+    },
+  }[lang] || {
+    title: 'Benefit Inventory',
+    help: 'Define the limited premium benefit pool. Standard benefits remain unlimited.',
+    gold: 'Gold Benefits',
+    silver: 'Silver Benefits',
+    standard: 'Standard Benefits',
+    unlimited: 'Unlimited',
+    distributionNote: 'Gold benefits are assigned first. When all Gold benefits have been allocated, Silver benefits are assigned. Standard benefits remain available at all times.',
+  };
+
+  const rewardDeliveryText = {
+    no: {
+      title: 'Informasjon for levering av fordeler',
+      help: 'Denne informasjonen brukes kun til levering av fordeler, verifisering av vinnere og sertifikatregistrering.',
+      company: 'Bedrift',
+      responsible: 'Ansvarlig person',
+      address1: 'Adresselinje 1',
+      address2: 'Adresselinje 2',
+      postalCode: 'Postnummer',
+      country: 'Land',
+      phone: 'Telefon',
+      email: 'E-post',
+    },
+    en: {
+      title: 'Reward Delivery Information',
+      help: 'This information is used solely for reward fulfillment, winner verification and certificate registration.',
+      company: 'Company',
+      responsible: 'Responsible Person',
+      address1: 'Address Line 1',
+      address2: 'Address Line 2',
+      postalCode: 'ZIP / Postal Code',
+      country: 'Country',
+      phone: 'Phone',
+      email: 'Email',
+    },
+    de: {
+      title: 'Informationen zur Vorteilszustellung',
+      help: 'Diese Informationen werden nur für die Zustellung von Vorteilen, Gewinnerprüfung und Zertifikatsregistrierung verwendet.',
+      company: 'Unternehmen',
+      responsible: 'Verantwortliche Person',
+      address1: 'Adresszeile 1',
+      address2: 'Adresszeile 2',
+      postalCode: 'Postleitzahl',
+      country: 'Land',
+      phone: 'Telefon',
+      email: 'E-Mail',
+    },
+    fr: {
+      title: 'Informations de livraison des avantages',
+      help: 'Ces informations sont utilisées uniquement pour la livraison des avantages, la vérification des gagnants et l’enregistrement du certificat.',
+      company: 'Entreprise',
+      responsible: 'Responsable',
+      address1: 'Adresse ligne 1',
+      address2: 'Adresse ligne 2',
+      postalCode: 'Code postal',
+      country: 'Pays',
+      phone: 'Téléphone',
+      email: 'E-mail',
+    },
+    es: {
+      title: 'Información de entrega de beneficios',
+      help: 'Esta información se utiliza únicamente para la entrega de beneficios, verificación de ganadores y registro del certificado.',
+      company: 'Empresa',
+      responsible: 'Persona responsable',
+      address1: 'Dirección línea 1',
+      address2: 'Dirección línea 2',
+      postalCode: 'Código postal',
+      country: 'País',
+      phone: 'Teléfono',
+      email: 'Email',
+    },
+  }[lang] || {
+    title: 'Reward Delivery Information',
+    help: 'This information is used solely for reward fulfillment, winner verification and certificate registration.',
+    company: 'Company',
+    responsible: 'Responsible Person',
+    address1: 'Address Line 1',
+    address2: 'Address Line 2',
+    postalCode: 'ZIP / Postal Code',
+    country: 'Country',
+    phone: 'Phone',
+    email: 'Email',
+  };
   const [formData, setFormData] = useState(emptyForm);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [triedSubmit, setTriedSubmit] = useState(false);
@@ -38,23 +382,36 @@ export default function CheckoutPage({ lang, setLang }) {
   const [logoError, setLogoError] = useState('');
 
   useEffect(() => {
-    document.title = 'Checkout - codeStack';
+    document.title = 'Checkout - codePerks';
   }, []);
 
   const missingRequired = useMemo(() => {
     return (
       !formData.stackName.trim() ||
-      !formData.publisherName.trim() ||
+      !formData.companyName.trim() ||
       !formData.releaseTitle.trim() ||
       !formData.releaseDate.trim() ||
       !formData.releaseTime.trim() ||
       !formData.platform.trim() ||
-      !formData.members.trim() ||
-      Number(formData.members) <= 0 ||
+      !formData.customers.trim() ||
+      Number(formData.customers) <= 0 ||
       !formData.contactName.trim() ||
       !formData.email.trim() ||
       !formData.phone.trim() ||
       !formData.comments.trim() ||
+      !formData.rewardCompany.trim() ||
+      !formData.rewardResponsible.trim() ||
+      !formData.rewardAddress1.trim() ||
+      !formData.rewardAddress2.trim() ||
+      !formData.rewardPostalCode.trim() ||
+      !formData.rewardCountry.trim() ||
+      !formData.rewardPhone.trim() ||
+      !formData.rewardEmail.trim() ||
+      !formData.goldTotal.trim() ||
+      Number(formData.goldTotal) < 0 ||
+      !formData.silverTotal.trim() ||
+      Number(formData.silverTotal) < 0 ||
+      !formData.campaignEndDate.trim() ||
       !formData.stackLogo
     );
   }, [formData]);
@@ -127,9 +484,29 @@ export default function CheckoutPage({ lang, setLang }) {
       const unlockAt = new Date(`${releaseDate}T${releaseTime}:00`);
       const endAt = new Date(unlockAt.getTime() + 24 * 60 * 60 * 1000);
 
+      const rewardDelivery = {
+        company: formData.rewardCompany.trim(),
+        responsiblePerson: formData.rewardResponsible.trim(),
+        address1: formData.rewardAddress1.trim(),
+        address2: formData.rewardAddress2.trim(),
+        postalCode: formData.rewardPostalCode.trim(),
+        country: formData.rewardCountry.trim(),
+        phone: formData.rewardPhone.trim(),
+        email: formData.rewardEmail.trim(),
+      };
+
+      const benefitInventory = {
+        mode: 'progressive_scarcity',
+        goldTotal: Number(formData.goldTotal || 0),
+        silverTotal: Number(formData.silverTotal || 0),
+        standardUnlimited: true,
+        campaignStart: releaseDate,
+        campaignEnd: formData.campaignEndDate,
+      };
+
       const payload = {
-        vertical: 'codestack',
-        productName: 'codeStack',
+        vertical: 'codeperks',
+        productName: 'codePerks',
         engine: 'codeNXT',
         eventCode: releaseCode,
         code: releaseCode,
@@ -138,22 +515,24 @@ export default function CheckoutPage({ lang, setLang }) {
         phone: formData.phone.trim(),
         artistName: formData.stackName.trim(),
         stackName: formData.stackName.trim(),
-        publisherName: formData.publisherName.trim(),
+        companyName: formData.companyName.trim(),
         releaseTitle: formData.releaseTitle.trim(),
-        venue: formData.platform.trim() || 'Stack channel',
+        venue: formData.platform.trim() || 'Customer channel',
         platform: formData.platform.trim(),
         eventDate: releaseDate,
         releaseDate,
         releaseTime,
         city: '',
-        audienceSize: formData.members.trim(),
-        estimatedMembers: formData.members.trim(),
+        audienceSize: formData.customers.trim(),
+        estimatedCustomers: formData.customers.trim(),
         comment: formData.comments.trim(),
+        rewardDelivery,
+        benefitInventory,
         logoFileName: formData.logoFileName,
         stackLogo: artistLogo,
         artistLogo,
         logoTooLarge: false,
-        selectedTypes: ['Stack release'],
+        selectedTypes: ['codePerks release'],
         termsAccepted,
         shortLink: `${window.location.origin}/join/${releaseCode}`,
         bonusWindow: '24h',
@@ -164,23 +543,23 @@ export default function CheckoutPage({ lang, setLang }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          vertical: 'codestack',
+          vertical: 'codeperks',
           code: releaseCode,
           name: payload.stackName,
           stackName: payload.stackName,
-          publisherName: payload.publisherName,
+          companyName: payload.companyName,
           releaseTitle: payload.releaseTitle,
           artistLogo: payload.artistLogo || '',
-          venue: payload.platform || 'Stack channel',
+          venue: payload.platform || 'Customer channel',
           platform: payload.platform,
           city: '',
-          badgeConfig: { template: 'codestack' },
+          badgeConfig: { template: 'codeperks' },
           startAt: unlockAt.toISOString(),
           releaseDate,
           releaseTime,
           unlockAt: unlockAt.toISOString(),
           endAt: endAt.toISOString(),
-          maxClaims: Math.max(Number(payload.estimatedMembers || 0), 5000),
+          maxClaims: Math.max(Number(payload.estimatedCustomers || 0), 5000),
           status: 'active',
         }),
       });
@@ -196,15 +575,15 @@ export default function CheckoutPage({ lang, setLang }) {
 
       localStorage.setItem('codenxt_event', JSON.stringify(payload));
       localStorage.setItem('codenxt_active_event_code', finalEventCode);
-      localStorage.setItem('codestack_latest_event', JSON.stringify(payload));
+      localStorage.setItem('codeperks_latest_event', JSON.stringify(payload));
 
       navigate(`/dashboard?event=${finalEventCode}&lang=${lang}`, {
         state: payload,
         replace: true,
       });
     } catch (err) {
-      console.error('CREATE CODESTACK RELEASE FAILED:', err);
-      setError(c.submitError);
+      console.error('OPPRETT EN PERK RELEASE FAILED:', err);
+      setError(pageText.submitError);
       setSubmitting(false);
     }
   };
@@ -212,26 +591,26 @@ export default function CheckoutPage({ lang, setLang }) {
   return (
     <main className="page-shell checkout-page">
       <header className="landing-header">
-        <img src="/codestack-logo.png" alt="codeStack logo" className="landing-logo" />
+        <img src="/codePerks-logo.png?v=3" alt="codePerks logo" className="landing-logo" />
         <div className="landing-powered">{text.common.powered}</div>
         <LanguageSwitcher lang={lang} onChange={setLang} />
       </header>
 
       <section className="page-intro checkout-intro">
-        <h1>{c.title}</h1>
-        <p>{c.subtitle}</p>
+        <h1>{pageText.title}</h1>
+        <p>{pageText.subtitle}</p>
       </section>
 
       <section className="panel checkout-card">
         <div className="input-grid checkout-grid">
           <label>
-            {c.fields.stackName} *
-            <input name="stackName" value={formData.stackName} onChange={handleChange} placeholder={c.placeholders.stackName} />
+            {pageText.fields.stackName} *
+            <input name="stackName" value={formData.stackName} onChange={handleChange} placeholder={pageText.placeholders.stackName} />
             {fieldError('stackName') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            Stack-logo (PNG/JPG) *
+            {pageText.fields.logo} (PNG/JPG) *
             <input
               type="file"
               accept="image/png,image/jpeg"
@@ -242,68 +621,186 @@ export default function CheckoutPage({ lang, setLang }) {
             {triedSubmit && !formData.stackLogo && <small>{text.common.required}</small>}
           </label>
           <label>
-            {c.fields.publisherName} *
-            <input name="publisherName" value={formData.publisherName} onChange={handleChange} placeholder={c.placeholders.publisherName} />
-            {fieldError('publisherName') && <small>{text.common.required}</small>}
+            {pageText.fields.companyName} *
+            <input name="companyName" value={formData.companyName} onChange={handleChange} placeholder={pageText.placeholders.companyName} />
+            {fieldError('companyName') && <small>{text.common.required}</small>}
           </label>
           <label>
-            {c.fields.releaseTitle} *
-            <input name="releaseTitle" value={formData.releaseTitle} onChange={handleChange} placeholder={c.placeholders.releaseTitle} />
+            {pageText.fields.releaseTitle} *
+            <input name="releaseTitle" value={formData.releaseTitle} onChange={handleChange} placeholder={pageText.placeholders.releaseTitle} />
             {fieldError('releaseTitle') && <small>{text.common.required}</small>}
           </label>
           <label>
-            {c.fields.platform} *
-            <input name="platform" value={formData.platform} onChange={handleChange} placeholder={c.placeholders.platform} />
+            {pageText.fields.platform} *
+            <input name="platform" value={formData.platform} onChange={handleChange} placeholder={pageText.placeholders.platform} />
             {fieldError('platform') && <small>{text.common.required}</small>}
           </label>
           <label>
-            {c.fields.releaseDate} *
+            {pageText.fields.releaseDate} *
             <input type="date" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
             {fieldError('releaseDate') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            {c.fields.releaseTime} *
+            {pageText.fields.releaseTime} *
             <input type="time" name="releaseTime" value={formData.releaseTime} onChange={handleChange} />
             {fieldError('releaseTime') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            {c.fields.bonusActive} *
-            <input type="text" value={c.fields.bonusActive24h} readOnly />
+            {pageText.fields.bonusActive} *
+            <input
+              type="date"
+              name="campaignEndDate"
+              value={formData.campaignEndDate}
+              onChange={handleChange}
+            />
+            {fieldError('campaignEndDate') && <small>{text.common.required}</small>}
           </label>
           <label>
-            {c.fields.members} *
-            <input name="members" value={formData.members} onChange={handleChange} placeholder={c.placeholders.members} inputMode="numeric" />
-            {triedSubmit && (!formData.members.trim() || Number(formData.members) <= 0) && <small>{text.common.required}</small>}
+            {pageText.fields.customers} *
+            <input name="customers" value={formData.customers} onChange={handleChange} placeholder={pageText.placeholders.customers} inputMode="numeric" />
+            {triedSubmit && (!formData.customers.trim() || Number(formData.customers) <= 0) && <small>{text.common.required}</small>}
           </label>
           <label>
-            {c.fields.contactName} *
-            <input name="contactName" value={formData.contactName} onChange={handleChange} placeholder={c.placeholders.contactName} />
+            {pageText.fields.contactName} *
+            <input name="contactName" value={formData.contactName} onChange={handleChange} placeholder={pageText.placeholders.contactName} />
             {fieldError('contactName') && <small>{text.common.required}</small>}
           </label>
           <label>
-            {c.fields.email} *
-            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={c.placeholders.email} />
+            {pageText.fields.email} *
+            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={pageText.placeholders.email} />
             {fieldError('email') && <small>{text.common.required}</small>}
           </label>
           <label>
-            {c.fields.phone} *
-            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder={c.placeholders.phone} />
+            {pageText.fields.phone} *
+            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder={pageText.placeholders.phone} />
             {fieldError('phone') && <small>{text.common.required}</small>}
           </label>
           <label className="wide">
-            {c.fields.comments} *
-            <textarea name="comments" value={formData.comments} onChange={handleChange} placeholder={c.placeholders.comments} />
+            {pageText.fields.comments} *
+            <textarea name="comments" value={formData.comments} onChange={handleChange} placeholder={pageText.placeholders.comments} />
             {fieldError('comments') && <small>{text.common.required}</small>}
           </label>
         </div>
 
+
+
+          <div className="terms-box benefit-inventory-box" style={{ marginTop: "28px" }}>
+            <h3 style={{marginBottom:'8px'}}>{benefitInventoryText.title}</h3>
+            <p style={{marginBottom:'18px',opacity:.8}}>
+              {benefitInventoryText.help}
+            </p>
+
+            <div className="input-grid checkout-grid">
+              <label>
+                {benefitInventoryText.gold} *
+                <input
+                  name="goldTotal"
+                  value={formData.goldTotal}
+                  onChange={handleChange}
+                  placeholder="100"
+                  inputMode="numeric"
+                />
+                {fieldError('goldTotal') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {benefitInventoryText.silver} *
+                <input
+                  name="silverTotal"
+                  value={formData.silverTotal}
+                  onChange={handleChange}
+                  placeholder="500"
+                  inputMode="numeric"
+                />
+                {fieldError('silverTotal') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {benefitInventoryText.standard}
+                <input value={benefitInventoryText.unlimited} readOnly />
+              </label>
+
+              <p
+                style={{
+                  gridColumn: '1 / -1',
+                  margin: '8px 0 0',
+                  fontSize: '12px',
+                  lineHeight: '1.45',
+                  opacity: 0.75
+                }}
+              >
+                {benefitInventoryText.distributionNote}
+              </p>
+            </div>
+          </div>
+
+          <div className="terms-box reward-delivery-box" style={{ marginTop: "28px" }}>
+            <h3 style={{marginBottom:'8px'}}>{rewardDeliveryText.title}</h3>
+            <p style={{marginBottom:'18px',opacity:.8}}>
+              {rewardDeliveryText.help}
+            </p>
+
+            <div className="input-grid checkout-grid">
+
+              <label>
+                {rewardDeliveryText.company} *
+                <input name="rewardCompany" value={formData.rewardCompany} onChange={handleChange} placeholder={rewardDeliveryText.company} />
+                {fieldError('rewardCompany') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {rewardDeliveryText.responsible} *
+                <input name="rewardResponsible" value={formData.rewardResponsible} onChange={handleChange} placeholder={rewardDeliveryText.responsible} />
+                {fieldError('rewardResponsible') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {rewardDeliveryText.address1} *
+                <input name="rewardAddress1" value={formData.rewardAddress1} onChange={handleChange} placeholder={rewardDeliveryText.address1} />
+                {fieldError('rewardAddress1') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {rewardDeliveryText.address2} *
+                <input name="rewardAddress2" value={formData.rewardAddress2} onChange={handleChange} placeholder={rewardDeliveryText.address2} />
+                {fieldError('rewardAddress2') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {rewardDeliveryText.postalCode} *
+                <input name="rewardPostalCode" value={formData.rewardPostalCode} onChange={handleChange} placeholder={rewardDeliveryText.postalCode} />
+                {fieldError('rewardPostalCode') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {rewardDeliveryText.country} *
+                <input name="rewardCountry" value={formData.rewardCountry} onChange={handleChange} placeholder={rewardDeliveryText.country} />
+                {fieldError('rewardCountry') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {rewardDeliveryText.phone} *
+                <input name="rewardPhone" value={formData.rewardPhone} onChange={handleChange} placeholder={rewardDeliveryText.phone} />
+                {fieldError('rewardPhone') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                {rewardDeliveryText.email} *
+                <input type="email" name="rewardEmail" value={formData.rewardEmail} onChange={handleChange} placeholder={rewardDeliveryText.email} />
+                {fieldError('rewardEmail') && <small>{text.common.required}</small>}
+              </label>
+
+            </div>
+          </div>
+
+
         <div className="terms-box checkout-terms">
-          <p>{c.termsText}</p>
+          <p>{pageText.termsText}</p>
           <label className="check-row">
             <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} />
-            {c.accept}
+            {pageText.accept}
           </label>
           {triedSubmit && !termsAccepted && <small>{text.common.required}</small>}
         </div>
@@ -321,7 +818,7 @@ export default function CheckoutPage({ lang, setLang }) {
         </p>
 
         <button type="button" className="primary-cta checkout-submit" disabled={!canContinue} onClick={handleContinue}>
-          {submitting ? c.creating : c.continue}
+          {submitting ? pageText.creating : pageText.continue}
         </button>
       </section>
           <style>{`

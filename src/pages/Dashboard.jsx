@@ -3,42 +3,52 @@ import { useLocation } from 'react-router-dom';
 import QRCode from 'qrcode';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { getLang, setLang as persistLang, t as getAppCopy } from '../i18n';
-import badgeBase from '../assets/cpBadges/codestack-badge.png';
+import badgeBase from '../assets/cpBadges/codeperks-badge.png';
+
+const BADGE_SIZE = { width: 1669, height: 942 };
+const QR_BOX = { x: 126, y: 116, size: 531 };
+const QR_BOX_STYLE = {
+  left: `${(QR_BOX.x / BADGE_SIZE.width) * 100}%`,
+  top: `${(QR_BOX.y / BADGE_SIZE.height) * 100}%`,
+  width: `${(QR_BOX.size / BADGE_SIZE.width) * 100}%`,
+  height: `${(QR_BOX.size / BADGE_SIZE.height) * 100}%`,
+};
 
 const API_BASE = 'https://codenxt-backend-production.up.railway.app';
-const STORAGE_KEYS = ['codenxt_event', 'codestack_latest_event'];
+const STORAGE_KEYS = ['codenxt_event', 'codeperks_latest_event'];
 const BONUS_TIERS = ['gold', 'silver', 'general'];
 const BONUS_TYPES = ['pdf', 'image', 'audio', 'video', 'url'];
-const DEFAULT_TIER_SPLIT = { gold: 10, silver: 20, general: 70 };
+const DEFAULT_TIER_SPLIT = { gold: 100, silver: 200, general: 700 };
 
 const dashboardCopy = {
   no: {
     title: 'KONTROLLSENTER',
     subtitle: 'Kontrollpanel for presentasjon, bonusinnhold og rapportering.',
-    byline: 'codeStack by codeNXT',
-    missingRelease: 'Ingen release funnet. Opprett releasen i Checkout først.',
+    byline: 'codePerks by codeNXT',
+    missingRelease: 'Ingen medlemsfordel funnet. Opprett medlemsfordelen i Checkout først.',
     refreshData: 'Oppdater fra Checkout',
-    stackFallback: 'Stack mangler',
-    releaseFallback: 'Release mangler',
+    pageFallback: 'Medlemsfordel mangler',
+    releaseFallback: 'Medlemsfordel mangler',
     logoFallback: 'Logo klargjøres fra Checkout',
-    publishDate: 'Publ. dato',
-    expectedMembers: 'Antatt lyttere',
-    publisher: 'Vert',
-    releaseCode: 'Releasekode',
-    platform: 'Plattform',
-    memberLink: 'Lytterlenke',
+    publishDate: 'Startdato',
+    expectedMembers: 'Antall kunder',
+    company: 'Bedrift',
+    releaseCode: 'Kampanjekode',
+    platform: 'Kampanjemedium',
+    customerLink: 'Kundelenke',
     scans: 'Skanninger',
     uniqueScans: 'Unike skanninger',
-    insideJoins: 'InSide joins',
-    conversionRate: 'Konverteringsrate',
+    insideJoins: 'InSide members',
+    ownershipCertificates: 'Eiersertifikater',
+    conversionRate: 'Konvertering',
     presentation: 'Presentasjon',
     insideMessage: 'Bli med i InSide',
     downloadImage: 'Last ned bilde',
-    presentationHint: 'Legg bildet inn som hale etter stacken. Anbefalt varighet: 12 sekunder.',
+    presentationHint: 'Del i relevante kanaler når kampanjen er klar.',
     imageReady: 'Bilde klart.',
     imageError: 'Kunne ikke lage bilde. Prøv igjen.',
-    bonus: 'Bonus',
-    bonusHelp: 'Bonusinnhold for hver InSide-niva.',
+    bonus: 'Medlemsfordel',
+    bonusHelp: 'Fordeler for hvert InSide-nivå.',
     tierCount: 'Antall bonusnivåer',
     tierCount1: '1 nivå: Gull',
     tierCount2: '2 nivåer: Gull + Sølv',
@@ -58,54 +68,63 @@ const dashboardCopy = {
     fileOrUrl: 'Fil eller URL',
     chooseFile: 'Velg fil',
     edit: 'Rediger',
-    saveBonus: 'Lagre bonus',
-    savingBonus: 'Lagrer...',
+    saveBeneficio: 'Lagre fordel',
+    savingBeneficio: 'Lagrer...',
     saved: 'Lagret',
     empty: 'Tom',
-    localFallback: 'Backend svarte ikke. Bonusen er lagret lokalt.',
+    localFallback: 'Backend svarte ikke. Beneficioen er lagret lokalt.',
     ready: 'Klar',
     notSet: 'Ikke satt',
-    report: 'Rapport',
-    reportHelp: 'Hent rapport eller last ned CSV for releasen.',
-    viewReport: 'Hent rapport',
+    report: 'Nøkkeltall',
+    reportHelp: 'Hent nøkkeltall eller last ned CSV for kampanjen.',
+    viewReport: 'Hent nøkkeltall',
     downloadCsv: 'Last ned CSV',
-    reportUnavailable: 'Rapport-endepunktet er ikke tilgjengelig. Lokale tall vises hvis de finnes.',
-    reportPdfTitle: 'Stackrapport',
+    reportUnavailable: 'Nøkkeltall-endepunktet er ikke tilgjengelig. Lokale tall vises hvis de finnes.',
+    reportPdfTitle: 'Nøkkeltall',
     collaborationLabel: 'I samarbeid med',
     sentDate: 'Sendt dato',
-    eventCodeLabel: 'Eventkode',
-    bonusDistribution24h: 'Bonusfordeling (24 timer etter release)',
-    bonusActive24h: '${esc(text.bonusActive24h || text.bonusDistribution24h || "Bonus aktiv: 24 timer etter release")}',
+    eventCodeLabel: 'Kampanjekode',
+    bonusDistribution24h: 'Beneficiofordeling (24 timer etter release)',
+    bonusActive24h: '${esc(text.bonusActive24h || text.bonusDistribution24h || "Beneficio aktiv: 24 timer etter release")}',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Ikke tilgjengelig',
+    verifiedNetworkEyebrow: 'Verified Benefit Network',
+    verifiedNetworkTitle: 'Hver medlemsfordel får sitt eget sertifikatspor.',
+    verifiedNetworkText: 'Hver utstedte fordel kan kobles til Certificate ID, utstedelsesdato, claim-status og fulfillment-logg. Dette gjør codePerks til et verifiserbart system for medlemsfordeler.',
+    verifiedIssued: 'Utstedt',
+    verifiedMembers: 'Registrerte',
+    verifiedStatus: 'Status',
+    verifiedAuditReady: 'Audit-ready',
+    remaining: 'Resten',
   },
   en: {
     title: 'CONTROL CENTER',
     subtitle: 'Control panel for presentation, bonus content, and reporting.',
-    byline: 'codeStack by codeNXT',
-    missingRelease: 'No release found. Create the release in Checkout first.',
+    byline: 'codePerks by codeNXT',
+    missingRelease: 'No member benefit found. Create the member benefit in Checkout first.',
     refreshData: 'Refresh from Checkout',
-    stackFallback: 'Stack missing',
-    releaseFallback: 'Release missing',
+    pageFallback: 'Member benefit missing',
+    releaseFallback: 'Member benefit missing',
     logoFallback: 'Logo prepared from Checkout',
-    publishDate: 'Publ. date',
-    expectedMembers: 'Expected members',
-    publisher: 'Publisher',
-    releaseCode: 'Release code',
+    publishDate: 'Start date',
+    expectedMembers: 'Expected customers',
+    company: 'Empresa',
+    releaseCode: 'Campaign code',
     platform: 'Platform',
-    memberLink: 'Member link',
+    customerLink: 'Customer link',
     scans: 'Scans',
     uniqueScans: 'Unique scans',
-    insideJoins: 'InSide joins',
-    conversionRate: 'Conversion rate',
+    insideJoins: 'InSide members',
+    ownershipCertificates: 'Certificates',
+    conversionRate: 'Conversion',
     presentation: 'Presentation',
     insideMessage: 'Join InSide',
     downloadImage: 'Download image',
-    presentationHint: 'Use this image as a tail after the stack. Recommended duration: 12 seconds.',
+    presentationHint: 'Share it in relevant channels when the campaign is ready.',
     imageReady: 'Image ready.',
     imageError: 'Could not create image. Try again.',
-    bonus: 'Bonus',
-    bonusHelp: 'Only bonus content is managed here. Stack data comes from Checkout.',
+    bonus: 'Member benefit',
+    bonusHelp: 'Only member benefits are managed here. Campaign data comes from Checkout.',
     tier: 'Tier',
     gold: 'Gold',
     silver: 'Silver',
@@ -121,54 +140,63 @@ const dashboardCopy = {
     fileOrUrl: 'File or URL',
     chooseFile: 'Choose file',
     edit: 'Edit',
-    saveBonus: 'Save bonus',
-    savingBonus: 'Saving...',
+    saveBeneficio: 'Save benefit',
+    savingBeneficio: 'Saving...',
     saved: 'Saved',
     empty: 'Empty',
-    localFallback: 'The backend did not respond. Bonus saved locally.',
+    localFallback: 'The backend did not respond. Beneficio saved locally.',
     ready: 'Ready',
     notSet: 'Not set',
-    report: 'Report',
-    reportHelp: 'View the report or download CSV for the release.',
-    viewReport: 'View report',
+    report: 'Key figures',
+    reportHelp: 'View key figures or download CSV for the campaign.',
+    viewReport: 'View key figures',
     downloadCsv: 'Download CSV',
-    reportUnavailable: 'The report endpoint is not available. Local numbers are shown if present.',
-    reportPdfTitle: 'Stack report',
+    reportUnavailable: 'The key figures endpoint is not available. Local numbers are shown if present.',
+    reportPdfTitle: 'Key figures',
     collaborationLabel: 'In collaboration with',
-    sentDate: 'Release date',
-    eventCodeLabel: 'Event code',
-    bonusDistribution24h: 'Bonus distribution (24 hours after release)',
-    bonusActive24h: 'Bonus active: 24 hours after release',
+    sentDate: 'Start date',
+    eventCodeLabel: 'Campaign code',
+    bonusDistribution24h: 'Beneficio distribution (24 hours after release)',
+    bonusActive24h: 'Beneficio active: 24 hours after release',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Unavailable',
+    verifiedNetworkEyebrow: 'Verified Benefit Network',
+    verifiedNetworkTitle: 'Every member benefit gets its own certificate trail.',
+    verifiedNetworkText: 'Each issued benefit can be connected to a Certificate ID, issue date, claim status and fulfillment record. This makes codePerks a verifiable guest benefit system.',
+    verifiedIssued: 'Issued',
+    verifiedMembers: 'Registered',
+    verifiedStatus: 'Status',
+    verifiedAuditReady: 'Audit-ready',
+    remaining: 'Remaining',
   },
   de: {
     title: 'KONTROLLZENTRUM',
-    subtitle: 'Kontrollpanel fuer Praesentation, Bonusinhalte und Reporting.',
-    byline: 'codeStack by codeNXT',
-    missingRelease: 'Keine Release gefunden. Erstelle die Release zuerst im Checkout.',
+    subtitle: 'Kontrollpanel fuer Praesentation, Beneficioinhalte und Reporting.',
+    byline: 'codePerks by codeNXT',
+    missingRelease: 'Kein Kundenvorteil gefunden. Erstellen Sie den Kundenvorteil zuerst im Checkout.',
     refreshData: 'Aus Checkout aktualisieren',
-    stackFallback: 'Stack fehlt',
-    releaseFallback: 'Release fehlt',
+    pageFallback: 'Mitgliedervorteil fehlt',
+    releaseFallback: 'Mitgliedervorteil fehlt',
     logoFallback: 'Logo aus Checkout vorbereitet',
-    publishDate: 'Veroeff. datum',
-    expectedMembers: 'Erwartete Hoerer',
-    publisher: 'Publisher',
-    releaseCode: 'Releasencode',
-    platform: 'Plattform',
-    memberLink: 'Hoererlink',
+    publishDate: 'Startdatum',
+    expectedMembers: 'Erwartete Kunden',
+    company: 'Empresa',
+    releaseCode: 'Kampagnencode',
+    platform: 'Kampanjemedium',
+    customerLink: 'Kundenlink',
     scans: 'Scans',
     uniqueScans: 'Einmalige Scans',
-    insideJoins: 'InSide-Beitritte',
-    conversionRate: 'Conversion Rate',
+    insideJoins: 'InSide',
+    ownershipCertificates: 'Zertifikate',
+    conversionRate: 'Conversion',
     presentation: 'Praesentation',
     insideMessage: 'InSide beitreten',
     downloadImage: 'Bild herunterladen',
-    presentationHint: 'Dieses Bild als Abspann nach dem Stack verwenden. Empfohlene Dauer: 12 Sekunden.',
+    presentationHint: 'Teilen Sie es in relevanten Kanälen, sobald die Kampagne bereit ist.',
     imageReady: 'Bild bereit.',
     imageError: 'Bild konnte nicht erstellt werden. Bitte erneut versuchen.',
-    bonus: 'Bonus',
-    bonusHelp: 'Hier werden nur Bonusinhalte verwaltet. Stackdaten kommen aus Checkout.',
+    bonus: 'Kundenvorteil',
+    bonusHelp: 'Hier werden nur Beneficioinhalte verwaltet. Pagedaten kommen aus Checkout.',
     tier: 'Stufe',
     gold: 'Gold',
     silver: 'Silber',
@@ -184,54 +212,63 @@ const dashboardCopy = {
     fileOrUrl: 'Datei oder URL',
     chooseFile: 'Datei waehlen',
     edit: 'Bearbeiten',
-    saveBonus: 'Bonus speichern',
-    savingBonus: 'Speichert...',
+    saveBeneficio: 'Beneficio speichern',
+    savingBeneficio: 'Speichert...',
     saved: 'Gespeichert',
     empty: 'Leer',
-    localFallback: 'Das Backend hat nicht geantwortet. Bonus lokal gespeichert.',
+    localFallback: 'Das Backend hat nicht geantwortet. Beneficio lokal gespeichert.',
     ready: 'Bereit',
     notSet: 'Nicht gesetzt',
-    report: 'Bericht',
-    reportHelp: 'Bericht ansehen oder CSV fuer die Release herunterladen.',
-    viewReport: 'Bericht ansehen',
+    report: 'Kennzahlen',
+    reportHelp: 'Kennzahlen ansehen oder CSV für die Kampagne herunterladen.',
+    viewReport: 'Kennzahlen ansehen',
     downloadCsv: 'CSV herunterladen',
-    reportUnavailable: 'Der Report-Endpunkt ist nicht verfuegbar. Lokale Zahlen werden angezeigt, wenn vorhanden.',
-    reportPdfTitle: 'Stack-Bericht',
+    reportUnavailable: 'Der Kennzahlen-Endpunkt ist nicht verfuegbar. Lokale Zahlen werden angezeigt, wenn vorhanden.',
+    reportPdfTitle: 'Kennzahlen',
     collaborationLabel: 'In Zusammenarbeit mit',
-    sentDate: 'Veroeffentlichungsdatum',
-    eventCodeLabel: 'Eventcode',
-    bonusDistribution24h: 'Bonusverteilung (24 Stunden nach Veroeffentlichung)',
-    bonusActive24h: 'Bonus aktiv: 24 Stunden nach Veroeffentlichung',
+    sentDate: 'Startdatum',
+    eventCodeLabel: 'Kampagnencode',
+    bonusDistribution24h: 'Beneficioverteilung (24 Stunden nach Kampagnenstart)',
+    bonusActive24h: 'Beneficio aktiv: 24 Stunden nach Kampagnenstart',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Nicht verfuegbar',
+    verifiedNetworkEyebrow: 'Verified Benefit Network',
+    verifiedNetworkTitle: 'Jeder Mitgliedervorteil erhaelt seine eigene Zertifikatsspur.',
+    verifiedNetworkText: 'Jeder ausgegebene Vorteil kann mit Certificate ID, Ausgabedatum, Claim-Status und Fulfillment-Protokoll verbunden werden. So wird codePerks zu einem verifizierbaren System fuer Mitgliedervorteile.',
+    verifiedIssued: 'Ausgegeben',
+    verifiedMembers: 'Registriert',
+    verifiedStatus: 'Status',
+    verifiedAuditReady: 'Audit-ready',
+    remaining: 'Rest',
   },
   fr: {
     title: 'CENTRE DE CONTROLE',
     subtitle: 'Panneau de controle pour presentation, contenu bonus et reporting.',
-    byline: 'codeStack by codeNXT',
-    missingRelease: 'Aucun release trouve. Creez d abord l release dans Checkout.',
+    byline: 'codePerks by codeNXT',
+    missingRelease: 'Aucun avantage client trouvé. Créez d’abord l’avantage client dans Checkout.',
     refreshData: 'Actualiser depuis Checkout',
-    stackFallback: 'Stack manquant',
-    releaseFallback: 'Release manquant',
+    pageFallback: 'Avantage client manquant',
+    releaseFallback: 'Avantage client manquant',
     logoFallback: 'Logo prepare depuis Checkout',
-    publishDate: 'Date publ.',
-    expectedMembers: 'Auditeurs prevus',
-    publisher: 'Hote',
-    releaseCode: 'Code release',
-    platform: 'Plateforme',
-    memberLink: 'Lien auditeur',
+    publishDate: 'Date de début',
+    expectedMembers: 'Clients prévus',
+    company: 'Entreprise',
+    releaseCode: 'Code campagne',
+    platform: 'Support de campagne',
+    customerLink: 'Lien client',
     scans: 'Scans',
     uniqueScans: 'Scans uniques',
-    insideJoins: 'Rejoins InSide',
+    insideJoins: 'Membres InSide',
+    ownershipCertificates: 'Certificats ownership',
     conversionRate: 'Taux de conversion',
     presentation: 'Presentation',
     insideMessage: 'Rejoindre InSide',
     downloadImage: 'Telecharger image',
-    presentationHint: 'Utilisez cette image comme fin après le stack. Durée recommandée : 12 secondes.',
+    presentationHint: 'Partagez-la sur les réseaux sociaux et dans vos canaux de campagne.',
     imageReady: 'Image prete.',
     imageError: 'Impossible de creer l image. Reessayez.',
-    bonus: 'Bonus',
-    bonusHelp: 'Seul le contenu bonus est gere ici. Les donnees stack viennent de Checkout.',
+    bonus: 'Avantage client',
+    bonusHelp: 'Seul le contenu bonus est gere ici. Les données de campagne proviennent de Checkout.',
     tier: 'Niveau',
     gold: 'Or',
     silver: 'Argent',
@@ -247,54 +284,63 @@ const dashboardCopy = {
     fileOrUrl: 'Fichier ou URL',
     chooseFile: 'Choisir fichier',
     edit: 'Modifier',
-    saveBonus: 'Enregistrer bonus',
-    savingBonus: 'Enregistrement...',
+    saveBeneficio: 'Enregistrer avantage',
+    savingBeneficio: 'Enregistrement...',
     saved: 'Enregistre',
     empty: 'Vide',
-    localFallback: 'Le backend n a pas repondu. Bonus enregistre localement.',
+    localFallback: 'Le backend n a pas repondu. Beneficio enregistre localement.',
     ready: 'Pret',
     notSet: 'Non defini',
-    report: 'Rapport',
-    reportHelp: 'Voir le rapport ou telecharger le CSV de l release.',
-    viewReport: 'Voir rapport',
+    report: 'Chiffres clés',
+    reportHelp: 'Voir les chiffres clés ou télécharger le CSV de la campagne.',
+    viewReport: 'Voir les chiffres clés',
     downloadCsv: 'Telecharger CSV',
     reportUnavailable: 'Le endpoint rapport n est pas disponible. Les chiffres locaux sont affiches si disponibles.',
-    reportPdfTitle: 'Rapport stack',
+    reportPdfTitle: 'Chiffres clés',
     collaborationLabel: 'En collaboration avec',
-    sentDate: 'Date de publication',
-    eventCodeLabel: 'Code evenement',
-    bonusDistribution24h: 'Repartition bonus (24 heures apres publication)',
-    bonusActive24h: 'Bonus actif : 24 heures apres publication',
+    sentDate: 'Date de début',
+    eventCodeLabel: 'Code campagne',
+    bonusDistribution24h: 'Répartition bonus (24 heures après le début)',
+    bonusActive24h: 'Beneficio actif : 24 heures après le début',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Indisponible',
+    verifiedNetworkEyebrow: 'Verified Benefit Network',
+    verifiedNetworkTitle: 'Chaque avantage membre recoit sa propre trace de certificat.',
+    verifiedNetworkText: 'Chaque avantage emis peut etre relie a un Certificate ID, une date d emission, un statut de claim et un journal de fulfillment. codePerks devient ainsi un systeme verifiable pour les avantages membres.',
+    verifiedIssued: 'Emis',
+    verifiedMembers: 'Enregistrés',
+    verifiedStatus: 'Statut',
+    verifiedAuditReady: 'Audit-ready',
+    remaining: 'Reste',
   },
   es: {
     title: 'CENTRO DE CONTROL',
     subtitle: 'Panel de control para presentacion, contenido extra e informes.',
-    byline: 'codeStack by codeNXT',
-    missingRelease: 'No se encontro ningun episodio. Crea primero el episodio en Checkout.',
+    byline: 'codePerks by codeNXT',
+    missingRelease: 'No se encontró ninguna campaña. Créala primero en Checkout.',
     refreshData: 'Actualizar desde Checkout',
-    stackFallback: 'Stack faltante',
-    releaseFallback: 'Episodio faltante',
+    pageFallback: 'Beneficio faltante',
+    releaseFallback: 'Beneficio faltante',
     logoFallback: 'Logo preparado desde Checkout',
-    publishDate: 'Fecha publ.',
-    expectedMembers: 'Oyentes previstos',
-    publisher: 'Publisher',
-    releaseCode: 'Codigo episodio',
-    platform: 'Plataforma',
-    memberLink: 'Enlace oyente',
+    publishDate: 'Fecha de inicio',
+    expectedMembers: 'Clientes esperados',
+    company: 'Empresa',
+    releaseCode: 'Código de campaña',
+    platform: 'Medio de campaña',
+    customerLink: 'Enlace cliente',
     scans: 'Scans',
     uniqueScans: 'Scans unicos',
-    insideJoins: 'Uniones a InSide',
+    insideJoins: 'Miembros InSide',
+    ownershipCertificates: 'Certificados ownership',
     conversionRate: 'Tasa conversion',
     presentation: 'Presentacion',
     insideMessage: 'Unirse a InSide',
     downloadImage: 'Descargar imagen',
-    presentationHint: 'Usa esta imagen como cierre del stack. Duración recomendada: 12 segundos.',
+    presentationHint: 'Compártela en redes sociales y otros canales de campaña.',
     imageReady: 'Imagen lista.',
     imageError: 'No se pudo crear la imagen. Intentalo de nuevo.',
-    bonus: 'Bonus',
-    bonusHelp: 'Aqui solo se gestiona contenido extra. Los datos del stack vienen de Checkout.',
+    bonus: 'Beneficio',
+    bonusHelp: 'Aquí solo se gestiona contenido adicional. Los datos de la campaña provienen de Checkout.',
     tier: 'Nivel',
     gold: 'Oro',
     silver: 'Plata',
@@ -310,26 +356,34 @@ const dashboardCopy = {
     fileOrUrl: 'Archivo o URL',
     chooseFile: 'Elegir archivo',
     edit: 'Editar',
-    saveBonus: 'Guardar bonus',
-    savingBonus: 'Guardando...',
+    saveBeneficio: 'Guardar beneficio',
+    savingBeneficio: 'Guardando...',
     saved: 'Guardado',
     empty: 'Vacio',
-    localFallback: 'El backend no respondio. Bonus guardado localmente.',
+    localFallback: 'El backend no respondio. Beneficio guardado localmente.',
     ready: 'Listo',
     notSet: 'No definido',
-    report: 'Informe',
-    reportHelp: 'Ver informe o descargar CSV del episodio.',
-    viewReport: 'Ver informe',
+    report: 'Cifras clave',
+    reportHelp: 'Ver cifras clave o descargar CSV de la campaña.',
+    viewReport: 'Ver cifras clave',
     downloadCsv: 'Descargar CSV',
     reportUnavailable: 'El endpoint de informe no esta disponible. Se muestran datos locales si existen.',
-    reportPdfTitle: 'Informe stack',
+    reportPdfTitle: 'Cifras clave',
     collaborationLabel: 'En colaboracion con',
     sentDate: 'Fecha de publicacion',
-    eventCodeLabel: 'Codigo del evento',
+    eventCodeLabel: 'Código de campaña',
     bonusDistribution24h: 'Distribucion de bonus (24 horas despues del lanzamiento)',
-    bonusActive24h: 'Bonus activo: 24 horas despues del lanzamiento',
+    bonusActive24h: 'Beneficio activo: 24 horas despues del lanzamiento',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'No disponible',
+    verifiedNetworkEyebrow: 'Verified Benefit Network',
+    verifiedNetworkTitle: 'Cada beneficio de miembro obtiene su propio rastro de certificado.',
+    verifiedNetworkText: 'Cada beneficio emitido puede conectarse a un Certificate ID, fecha de emision, estado de claim y registro de fulfillment. Asi codePerks se convierte en un sistema verificable de beneficios para miembros.',
+    verifiedIssued: 'Emitidos',
+    verifiedMembers: 'Registrados',
+    verifiedStatus: 'Estado',
+    verifiedAuditReady: 'Audit-ready',
+    remaining: 'Resto',
   },
 };
 
@@ -347,27 +401,27 @@ function firstValue(...values) {
 
 function normalizeReleaseData(data = {}, previous = {}) {
   const eventCode = firstValue(data.eventCode, data.code, previous.eventCode, previous.code);
-  const stackName = firstValue(data.stackName, data.artistName, data.name, previous.stackName, previous.artistName);
+  const pageName = firstValue(data.pageName, data.artistName, data.name, previous.pageName, previous.artistName);
   const releaseTitle = firstValue(data.releaseTitle, data.releaseName, data.title, previous.releaseTitle, previous.releaseName);
-  const logo = firstValue(data.stackLogo, data.stackImage, data.logoUrl, data.artistLogo, data.image, previous.stackLogo, previous.stackImage, previous.logoUrl, previous.artistLogo);
+  const logo = firstValue(data.pageLogo, data.pageImage, data.logoUrl, data.artistLogo, data.image, previous.pageLogo, previous.pageImage, previous.logoUrl, previous.artistLogo);
   const publishDate = firstValue(data.publishDate, data.releaseDate, data.eventDate, data.startAt, previous.publishDate, previous.releaseDate, previous.eventDate);
   const platform = firstValue(data.platform, data.channel, data.venue, previous.platform, previous.channel, previous.venue);
   const memberCount = firstValue(data.expectedMembers, data.estimatedMembers, data.audienceSize, data.members, previous.expectedMembers, previous.estimatedMembers, previous.audienceSize);
-  const joinUrl = firstValue(data.joinUrl, data.memberLink, data.shortLink, previous.joinUrl, previous.memberLink, previous.shortLink, eventCode ? `${window.location.origin}/join/${eventCode}` : '');
+  const joinUrl = firstValue(data.joinUrl, data.customerLink, data.shortLink, previous.joinUrl, previous.customerLink, previous.shortLink, eventCode ? `${window.location.origin}/join/${eventCode}` : '');
 
   return {
     ...previous,
     ...data,
-    vertical: firstValue(data.vertical, previous.vertical, 'codestack'),
-    productName: firstValue(data.productName, previous.productName, 'codeStack'),
+    vertical: firstValue(data.vertical, previous.vertical, 'codeperks'),
+    productName: firstValue(data.productName, previous.productName, 'codePerks'),
     eventCode,
     code: eventCode,
-    stackName,
-    artistName: stackName,
+    pageName,
+    artistName: pageName,
     releaseTitle,
     releaseName: releaseTitle,
-    stackLogo: logo,
-    stackImage: logo,
+    pageLogo: logo,
+    pageImage: logo,
     artistLogo: logo,
     publishDate,
     releaseDate: publishDate,
@@ -375,11 +429,11 @@ function normalizeReleaseData(data = {}, previous = {}) {
     expectedMembers: memberCount,
     estimatedMembers: memberCount,
     audienceSize: memberCount,
-    publisherName: firstValue(data.publisherName, data.publisher, data.presenter, previous.publisherName, previous.publisher),
+    companyName: firstValue(data.companyName, data.company, data.presenter, previous.companyName, previous.company),
     platform,
     venue: platform,
     joinUrl,
-    memberLink: joinUrl,
+    customerLink: joinUrl,
     shortLink: joinUrl,
     language: firstValue(data.language, data.lang, previous.language),
     metadata: {
@@ -433,9 +487,9 @@ export default function Dashboard({ lang: appLang, setLang }) {
   const [activeTier, setActiveTier] = useState('gold');
   const [tierCount, setTierCount] = useState(3);
   const [tierSplit, setTierSplit] = useState(DEFAULT_TIER_SPLIT);
-  const [bonusSaving, setBonusSaving] = useState(false);
-  const [bonusMessage, setBonusMessage] = useState('');
-  const [bonusDrafts, setBonusDrafts] = useState(() => {
+  const [bonusSaving, setBeneficioSaving] = useState(false);
+  const [bonusMessage, setBeneficioMessage] = useState('');
+  const [bonusDrafts, setBeneficioDrafts] = useState(() => {
     return BONUS_TIERS.reduce((acc, tier) => {
       acc[tier] = {
         title: '',
@@ -458,6 +512,12 @@ export default function Dashboard({ lang: appLang, setLang }) {
     source: 'local',
   });
   const [reportMessage, setReportMessage] = useState('');
+  const [adminKey, setAdminKey] = useState(() => sessionStorage.getItem('codeperks_admin_key') || '');
+  const [adminInput, setAdminInput] = useState('');
+  const [adminError, setAdminError] = useState('');
+  const [claims, setClaims] = useState([]);
+  const [claimsLoading, setClaimsLoading] = useState(false);
+  const [claimsMessage, setClaimsMessage] = useState('');
 
   const handleLanguageChange = useCallback((nextLang) => {
     const savedLang = persistLang(nextLang);
@@ -465,14 +525,38 @@ export default function Dashboard({ lang: appLang, setLang }) {
     if (setLang) setLang(savedLang);
   }, [setLang]);
 
+  const adminHeaders = useMemo(() => (
+    adminKey ? { 'x-admin-key': adminKey } : {}
+  ), [adminKey]);
+
+  const unlockDashboard = () => {
+    const value = adminInput.trim();
+    if (!value) {
+      setAdminError('Enter dashboard passcode.');
+      return;
+    }
+
+    sessionStorage.setItem('codeperks_admin_key', value);
+    setAdminKey(value);
+    setAdminInput('');
+    setAdminError('');
+  };
+
+  const lockDashboard = () => {
+    sessionStorage.removeItem('codeperks_admin_key');
+    setAdminKey('');
+    setAdminInput('');
+    setAdminError('');
+  };
+
   const joinUrl = useMemo(() => {
     const code = eventData.eventCode || eventData.code;
     if (!code) return '';
-    const base = eventData.joinUrl || eventData.memberLink || eventData.shortLink || `${window.location.origin}/join/${code}`;
+    const base = eventData.joinUrl || eventData.customerLink || eventData.shortLink || `${window.location.origin}/join/${code}`;
     const url = new URL(base, window.location.origin);
     url.searchParams.set('lang', lang);
     return url.toString();
-  }, [eventData.code, eventData.eventCode, eventData.joinUrl, eventData.memberLink, eventData.shortLink, lang]);
+  }, [eventData.code, eventData.eventCode, eventData.joinUrl, eventData.customerLink, eventData.shortLink, lang]);
 
   const loadCheckoutData = useCallback(async () => {
     const params = new URLSearchParams(location.search);
@@ -484,7 +568,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
     let backendData = {};
     if (activeCode) {
       try {
-        const res = await fetch(`${API_BASE}/event/${encodeURIComponent(activeCode)}?vertical=codestack`);
+        const res = await fetch(`${API_BASE}/event/${encodeURIComponent(activeCode)}?vertical=codeperks`);
         if (res.ok) backendData = await res.json();
       } catch (error) {
         console.warn('Checkout event refresh failed:', error);
@@ -503,7 +587,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
       );
       if (merged.eventCode) {
         localStorage.setItem('codenxt_event', JSON.stringify(merged));
-        localStorage.setItem('codestack_latest_event', JSON.stringify(merged));
+        localStorage.setItem('codeperks_latest_event', JSON.stringify(merged));
         localStorage.setItem('codenxt_active_event_code', merged.eventCode);
       }
       return merged;
@@ -514,7 +598,9 @@ export default function Dashboard({ lang: appLang, setLang }) {
     if (!eventData.eventCode) return;
     setReportMessage('');
     try {
-      const res = await fetch(`${API_BASE}/report/${encodeURIComponent(eventData.eventCode)}?vertical=codestack`);
+      const res = await fetch(`${API_BASE}/report/${encodeURIComponent(eventData.eventCode)}?vertical=codeperks`, {
+        headers: adminHeaders,
+      });
       if (!res.ok) throw new Error(`Report failed: ${res.status}`);
       const data = await res.json();
       const legacyJoinKey = 'inner' + 'CircleJoinCount';
@@ -522,6 +608,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
       const totalScans = Number(data?.metrics?.scans || data?.metrics?.totalScans || data?.totalScans || 0);
       const uniqueScans = Number(data?.metrics?.uniqueScans || data?.uniqueScans || 0);
       const joins = Number(data?.metrics?.joins || data?.metrics?.[legacyJoinKey] || data?.[legacyJoinKey] || data?.joins || 0);
+      const ownershipCertificates = Number(data?.metrics?.ownershipCertificates || data?.ownershipCertificates?.length || 0);
       const rows = (data?.scans || data?.[legacyRowsKey] || data?.rows || []).map((entry, index) => ({
         eventCode: eventData.eventCode,
         scanId: entry.scanId || entry.id || `scan-${index + 1}`,
@@ -530,22 +617,48 @@ export default function Dashboard({ lang: appLang, setLang }) {
         tier: entry.tier || entry.rewardTier || '',
         source: entry.source || entry.type || 'qr',
       }));
-      setReport({ totalScans, uniqueScans, joins, rows, source: 'backend' });
-      setReportMessage(`Rapport hentet: ${totalScans} skanninger, ${joins} InSide-joins.`);
+      setReport({ totalScans, uniqueScans, joins, ownershipCertificates, rows, source: 'backend' });
+      setReportMessage(`Nøkkeltall hentet: ${totalScans} skanninger, ${joins} InSide-medlemmer, ${ownershipCertificates} ownership-bevis.`);
     } catch (error) {
       console.warn('Report unavailable:', error);
       setReportMessage(text.reportUnavailable);
-      const localRows = readJsonStorage(`codestack_report_rows_${eventData.eventCode}`);
+      const localRows = readJsonStorage(`codeperks_report_rows_${eventData.eventCode || `PK-${String(Math.floor(Math.random() * 90000) + 10000)}`}`);
       setReport((previous) => ({
         ...previous,
         rows: Array.isArray(localRows) ? localRows : previous.rows,
         source: 'local',
       }));
     }
-  }, [eventData.eventCode, text.reportUnavailable]);
+  }, [eventData.eventCode, text.reportUnavailable, adminHeaders]);
+
+  const loadClaims = useCallback(async () => {
+    if (!eventData.eventCode) return;
+
+    setClaimsLoading(true);
+    setClaimsMessage('');
+
+    try {
+      const res = await fetch(`${API_BASE}/reward-claims/${encodeURIComponent(eventData.eventCode)}`, {
+        headers: adminHeaders,
+      });
+      if (!res.ok) throw new Error(`Reward claims failed: ${res.status}`);
+
+      const data = await res.json();
+      const rows = Array.isArray(data?.claims) ? data.claims : [];
+
+      setClaims(rows);
+      setClaimsMessage(`${rows.length} reward claim${rows.length === 1 ? '' : 's'} loaded.`);
+    } catch (error) {
+      console.warn('Reward claims unavailable:', error);
+      setClaimsMessage('Reward claims could not be loaded.');
+    } finally {
+      setClaimsLoading(false);
+    }
+  }, [eventData.eventCode, adminHeaders]);
+
 
   useEffect(() => {
-    document.title = `${text.title} - codeStack`;
+    document.title = `${text.title} - codePerks`;
   }, [text.title]);
 
   useEffect(() => {
@@ -578,26 +691,28 @@ export default function Dashboard({ lang: appLang, setLang }) {
     if (!eventData.eventCode) return;
 
     loadReport();
+    loadClaims();
 
     const reportTimer = window.setInterval(() => {
       loadReport();
+      loadClaims();
     }, 20000);
 
     return () => window.clearInterval(reportTimer);
-  }, [eventData.eventCode, loadReport]);
+  }, [eventData.eventCode, loadReport, loadClaims]);
 
-  const updateBonusDraft = (tier, patch) => {
-    setBonusDrafts((previous) => {
+  const updateBeneficioDraft = (tier, patch) => {
+    setBeneficioDrafts((previous) => {
       const next = { ...previous, [tier]: { ...previous[tier], ...patch } };
       return next;
     });
   };
 
-  const saveBonus = useCallback(async () => {
+  const saveBeneficio = useCallback(async () => {
     const draft = bonusDrafts[activeTier];
     if (!eventData.eventCode || (!draft.url && !draft.file)) return;
-    setBonusSaving(true);
-    setBonusMessage('');
+    setBeneficioSaving(true);
+    setBeneficioMessage('');
 
     let bonusUrl = draft.url;
     try {
@@ -616,7 +731,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
       }
 
       const reward = {
-        vertical: 'codestack',
+        vertical: 'codeperks',
         eventCode: eventData.eventCode,
         tier: activeTier,
         title: draft.title,
@@ -624,16 +739,16 @@ export default function Dashboard({ lang: appLang, setLang }) {
         type: draft.type,
         url: bonusUrl,
         fileName: draft.fileName,
-        stackName: eventData.stackName,
+        pageName: eventData.pageName,
         releaseTitle: eventData.releaseTitle,
-        stackLogo: eventData.stackLogo,
+        pageLogo: eventData.pageLogo,
         createdAt: new Date().toISOString(),
       };
 
       let eventId = eventData.id;
       if (!eventId) {
         try {
-          const eventRes = await fetch(`${API_BASE}/event/${encodeURIComponent(eventData.eventCode)}?vertical=codestack`);
+          const eventRes = await fetch(`${API_BASE}/event/${encodeURIComponent(eventData.eventCode)}?vertical=codeperks`);
           if (eventRes.ok) {
             const eventInfo = await eventRes.json();
             eventId = eventInfo.id;
@@ -645,40 +760,37 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
       const bonusRes = await fetch(`${API_BASE}/reward`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...adminHeaders },
         body: JSON.stringify({ eventId, reward }),
       });
       if (!bonusRes.ok) throw new Error(`Reward save failed: ${bonusRes.status}`);
 
-      updateBonusDraft(activeTier, { ...draft, url: bonusUrl, file: null, status: 'saved', storage: 'backend' });
-      setBonusMessage(`${text.saved}: ${text[activeTier]}`);
+      updateBeneficioDraft(activeTier, { ...draft, url: bonusUrl, file: null, status: 'saved', storage: 'backend' });
+      setBeneficioMessage(`${text.saved}: ${text[activeTier]}`);
     } catch (error) {
-      console.warn('Bonus backend save failed, using localStorage fallback:', error);
-      updateBonusDraft(activeTier, { ...draft, file: null, status: 'saved', storage: 'local' });
-      setBonusMessage(text.localFallback);
+      console.warn('Beneficio backend save failed, using localStorage fallback:', error);
+      updateBeneficioDraft(activeTier, { ...draft, file: null, status: 'saved', storage: 'local' });
+      setBeneficioMessage(text.localFallback);
     } finally {
-      setBonusSaving(false);
+      setBeneficioSaving(false);
     }
   }, [activeTier, bonusDrafts, eventData, text]);
 
   const downloadBadgeImage = useCallback(async () => {
     try {
       const canvas = document.createElement('canvas');
-      canvas.width = 1600;
-      canvas.height = 900;
+      canvas.width = BADGE_SIZE.width;
+      canvas.height = BADGE_SIZE.height;
       const ctx = canvas.getContext('2d');
       const base = await loadImage(badgeBase);
       ctx.drawImage(base, 0, 0, canvas.width, canvas.height);
 
       if (qrDataUrl) {
         const qr = await loadImage(qrDataUrl);
-        const qrLeft = canvas.width * 0.3875;
-        const qrTop = canvas.height * 0.319;
-        const qrSize = canvas.width * 0.225;
-        const quiet = qrSize * 0.035;
+        const quiet = 0;
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(qrLeft, qrTop, qrSize, qrSize);
-        ctx.drawImage(qr, qrLeft + quiet, qrTop + quiet, qrSize - quiet * 2, qrSize - quiet * 2);
+        ctx.fillRect(QR_BOX.x, QR_BOX.y, QR_BOX.size, QR_BOX.size);
+        ctx.drawImage(qr, QR_BOX.x + quiet, QR_BOX.y + quiet, QR_BOX.size - quiet * 2, QR_BOX.size - quiet * 2);
       }
 
       if (eventData.eventCode) {
@@ -686,15 +798,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
         ctx.font = '300 18px Arial, Helvetica, sans-serif';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.86)';
         ctx.textAlign = 'right';
-        ctx.textBaseline = 'top';
+        ctx.textBaseline = 'bottom';
         ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
         ctx.shadowBlur = 8;
-        ctx.fillText(String(eventData.eventCode).toUpperCase(), canvas.width - 34, 28);
+        ctx.fillText(eventData.eventCode || 'PK-00001', canvas.width - 6, canvas.height - 2);
         ctx.restore();
       }
 
       const link = document.createElement('a');
-      link.download = `${eventData.eventCode || 'codestack'}-badge.png`;
+      link.download = `${eventData.eventCode || 'codeperks'}-badge.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
       setImageStatus(text.imageReady);
@@ -717,7 +829,9 @@ export default function Dashboard({ lang: appLang, setLang }) {
     let reportForPdf = report;
 
     try {
-      const res = await fetch(`${API_BASE}/report/${encodeURIComponent(eventData.eventCode)}?vertical=codestack`);
+      const res = await fetch(`${API_BASE}/report/${encodeURIComponent(eventData.eventCode)}?vertical=codeperks`, {
+          headers: adminHeaders,
+        });
       if (res.ok) {
         const data = await res.json();
         const legacyJoinKey = 'inner' + 'CircleJoinCount';
@@ -726,6 +840,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
         const totalScans = Number(data?.metrics?.scans || data?.metrics?.totalScans || data?.totalScans || 0);
         const uniqueScans = Number(data?.metrics?.uniqueScans || data?.uniqueScans || 0);
         const joins = Number(data?.metrics?.joins || data?.metrics?.[legacyJoinKey] || data?.[legacyJoinKey] || data?.joins || 0);
+        const ownershipCertificates = Number(data?.metrics?.ownershipCertificates || data?.ownershipCertificates?.length || 0);
 
         const rows = (data?.scans || data?.[legacyRowsKey] || data?.rows || []).map((entry, index) => ({
           eventCode: eventData.eventCode,
@@ -736,7 +851,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           source: entry.source || entry.type || 'qr',
         }));
 
-        reportForPdf = { totalScans, uniqueScans, joins, rows, source: 'backend' };
+        reportForPdf = { totalScans, uniqueScans, joins, ownershipCertificates, rows, source: 'backend' };
         setReport(reportForPdf);
       }
     } catch (error) {
@@ -752,7 +867,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
     const rows = Array.isArray(reportForPdf.rows) ? reportForPdf.rows : [];
     const generatedAt = new Date().toLocaleString();
 
-    const logoUrl = eventData.stackLogo || eventData.artistLogo || eventData.logoUrl || '';
+    const logoUrl = eventData.pageLogo || eventData.artistLogo || eventData.logoUrl || '';
 
     const html = `<!doctype html>
 <html>
@@ -765,7 +880,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
     padding: 34px;
     font-family: Arial, Helvetica, sans-serif;
     background: #eef3f8;
-    color: #07111f;
+    color: #2f1f13;
   }
 
   .report {
@@ -779,7 +894,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
   .hero {
     background:
-      radial-gradient(circle at 18% 12%, rgba(0,240,255,.22), transparent 34%),
+      radial-gradient(circle at 18% 12%, rgba(177,132,84,0.18), transparent 34%),
       linear-gradient(135deg, #050b18 0%, #071426 58%, #03141b 100%);
     color: white;
     padding: 34px 38px 32px;
@@ -812,7 +927,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
   }
 
   .brand {
-    color: #20e7ff;
+    color: #e2c47a;
     font-size: 12px;
     font-weight: 900;
     letter-spacing: .12em;
@@ -857,15 +972,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
   }
 
   .card {
-    border: 1px solid #dbe5f0;
+    border: 1px solid rgba(184,141,67,.35);
     border-radius: 18px;
     padding: 18px;
-    background: linear-gradient(180deg, #fbfdff 0%, #f4f8fc 100%);
+    background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 55%, #b88d43 100%);
   }
 
   .label {
-    font-size: 10px;
-    color: #667386;
+    font-size: 9px;
+    color: #5a351d;
     text-transform: uppercase;
     font-weight: 900;
     letter-spacing: .10em;
@@ -875,14 +990,14 @@ export default function Dashboard({ lang: appLang, setLang }) {
     margin-top: 8px;
     font-size: 32px;
     font-weight: 950;
-    color: #07111f;
+    color: #2f1f13;
   }
 
   .section-title {
     margin: 8px 0 12px;
     font-size: 17px;
     font-weight: 950;
-    color: #07111f;
+    color: #2f1f13;
   }
 
   table {
@@ -899,7 +1014,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
     background: #07111f;
     color: white;
     padding: 12px 10px;
-    font-size: 10px;
+    font-size: 9px;
     text-transform: uppercase;
     letter-spacing: .08em;
   }
@@ -921,7 +1036,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
     justify-content: space-between;
     gap: 20px;
     color: #7b8797;
-    font-size: 11px;
+    font-size: 9px;
     border-top: 1px solid #e8eef6;
     padding-top: 16px;
   }
@@ -936,6 +1051,47 @@ export default function Dashboard({ lang: appLang, setLang }) {
       border-radius: 0;
     }
   }
+
+
+.dashboard-page .metrics-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+.dashboard-page .metrics-grid .mini-card {
+  min-width: 0 !important;
+  width: auto !important;
+  padding: 12px 14px !important;
+}
+
+.dashboard-page .metrics-grid .mini-card .label {
+  font-size: clamp(8px, 0.72vw, 11px) !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.12em !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+.dashboard-page .metrics-grid .mini-card .metric-value {
+  font-size: clamp(20px, 2.1vw, 34px) !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-page .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-page .metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -977,8 +1133,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
           margin-bottom:18px;
         ">
           <img
-            src="https://codestack.codenxt.global/codestack-logo.png"
-            alt="codeStack"
+            src="https://codeperks.codenxt.global/codePerks-logo.png?v=2"
+            alt="codePerks"
             style="
               width: 180px;
               max-width: 60%;
@@ -1000,7 +1156,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           margin: 0 0 8px;
           font-size: 42px;
         ">
-          ${esc(eventData.stackName || 'codeStack')}
+          ${esc(eventData.pageName || 'codePerks')}
         </h1>
 
         <p class="release" style="
@@ -1018,7 +1174,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           font-weight: 600;
         ">
           ${eventData.releaseDate ? `${esc(text.sentDate || 'Sendt dato')}: ${esc(String(eventData.releaseDate).slice(0, 10))}<br/>` : ''}
-          ${esc(text.eventCodeLabel || 'Event code')}: ${esc(eventData.eventCode)}
+          ${esc(text.eventCodeLabel || 'Campaign code')}: ${esc(eventData.eventCode)}
         </p>
       </div>
     </div>
@@ -1028,13 +1184,14 @@ export default function Dashboard({ lang: appLang, setLang }) {
         <div class="card"><div class="label">${esc(text.scans || "Scans")}</div><div class="value">${reportForPdf.totalScans || 0}</div></div>
         <div class="card"><div class="label">${esc(text.uniqueScans || "Unique scans")}</div><div class="value">${reportForPdf.uniqueScans || 0}</div></div>
         <div class="card"><div class="label">${esc(text.insideJoins || "InSide")}</div><div class="value">${reportForPdf.joins || 0}</div></div>
+        <div class="card"><div class="label">${esc(text.ownershipCertificates || "Ownership certificates")}</div><div class="value">${reportForPdf.ownershipCertificates || 0}</div></div>
         <div class="card"><div class="label">${esc(text.conversion || "Conversion")}</div><div class="value">${reportForPdf.totalScans ? Math.round((reportForPdf.joins / reportForPdf.totalScans) * 100) : 0}%</div></div>
         <div class="card"><div class="label">${esc(text.gold || "Gull")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'gold').length}</div></div>
         <div class="card"><div class="label">${esc(text.silver || "Sølv")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'silver').length}</div></div>
         <div class="card"><div class="label">${esc(text.general || "Generell")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'general').length}</div></div>
       </div>
 
-      <div class="section-title">${esc(text.bonusDistribution24h || "Bonusfordeling (24 timer etter release)")}</div>
+      <div class="section-title">${esc(text.bonusDistribution24h || "Beneficiofordeling (24 timer etter release)")}</div>
 
       <div class="cards">
         <div class="card">
@@ -1052,8 +1209,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
       </div>
 
       <div class="footer">
-        <div>${esc(text.bonusActive24h || text.bonusDistribution24h || "Bonus aktiv: 24 timer etter release")}</div>
-        <div>codeStack by codeNXT</div>
+        <div>${esc(text.bonusActive24h || text.bonusDistribution24h || "Beneficio aktiv: 24 timer etter release")}</div>
+        <div>codePerks by codeNXT</div>
       </div>
     </div>
   </div>
@@ -1109,28 +1266,131 @@ export default function Dashboard({ lang: appLang, setLang }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${eventData.eventCode || 'codestack'}-report.csv`;
+    link.download = `${eventData.eventCode || 'codeperks'}-report.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }, [eventData.eventCode, report.rows, report.source]);
 
+  const downloadClaimsCsv = useCallback(() => {
+    const csv = [
+      ['eventCode', 'certificateId', 'claimId', 'type', 'status', 'fullName', 'email', 'phone', 'address', 'postalCode', 'country', 'createdAt'].map(csvEscape).join(','),
+      ...claims.map((claim) => [
+        claim.eventCode || eventData.eventCode || '',
+        claim.certificateId || '',
+        claim.id || '',
+        claim.type || '',
+        claim.status || '',
+        claim.claimant?.fullName || '',
+        claim.claimant?.email || '',
+        claim.claimant?.phone || '',
+        claim.claimant?.address || '',
+        claim.claimant?.postalCode || '',
+        claim.claimant?.country || '',
+        claim.createdAt || '',
+      ].map(csvEscape).join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `${eventData.eventCode || 'codeperks'}-reward-claims.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }, [claims, eventData.eventCode]);
+
+
   const activeDraft = bonusDrafts[activeTier];
-  const canSaveBonus = Boolean(activeDraft?.url || activeDraft?.file);
+  const canSaveBeneficio = Boolean(activeDraft?.url || activeDraft?.file);
   const conversionRate = makeConversion(report.joins, report.uniqueScans);
   const infoCards = [
     [text.publishDate, eventData.publishDate],
     [text.expectedMembers, eventData.expectedMembers],
-    [text.publisher, eventData.publisherName],
+    [text.company, eventData.companyName],
     [text.releaseCode, eventData.eventCode],
     [text.platform, eventData.platform],
-    [text.memberLink, joinUrl],
+    [text.customerLink, joinUrl],
   ];
   const metricCards = [
     [text.scans, report.totalScans.toLocaleString()],
     [text.uniqueScans, report.uniqueScans.toLocaleString()],
     [text.insideJoins, report.joins.toLocaleString()],
     [text.conversionRate, conversionRate],
+    [text.ownershipCertificates || 'Ownership certificates', Number(report.ownershipCertificates || 0).toLocaleString()],
+    
   ];
+
+  if (!adminKey) {
+    return (
+      <main className="dashboard-page admin-lock-page">
+        <section className="panel admin-lock-panel">
+          <img src="/codePerks-logo.png?v=3" alt="codePerks logo" className="codeperks-dashboard-logo" />
+          <h1>Dashboard Access</h1>
+          <p>Enter the codePerks dashboard passcode to continue.</p>
+          <input
+            type="password"
+            value={adminInput}
+            onChange={(event) => setAdminInput(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') unlockDashboard();
+            }}
+            placeholder="Dashboard passcode"
+          />
+          {adminError ? <small>{adminError}</small> : null}
+          <button type="button" className="primary-cta" onClick={unlockDashboard}>
+            Unlock Dashboard
+          </button>
+        </section>
+
+        <style>{`
+          .admin-lock-page {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background:
+              radial-gradient(circle at top, rgba(216,189,120,.16), transparent 36%),
+              linear-gradient(135deg, #140f0a 0%, #251609 48%, #080706 100%);
+          }
+
+          .admin-lock-panel {
+            width: min(460px, 100%);
+            text-align: center;
+          }
+
+          .admin-lock-panel h1 {
+            margin: 16px 0 8px;
+            color: #f0d58f;
+          }
+
+          .admin-lock-panel p {
+            color: rgba(255,255,255,.7);
+          }
+
+          .admin-lock-panel input {
+            width: 100%;
+            box-sizing: border-box;
+            margin: 18px 0 10px;
+            border: 1px solid rgba(216,189,120,.35);
+            background: rgba(0,0,0,.28);
+            color: #fff8e8;
+            border-radius: 16px;
+            padding: 14px 15px;
+            outline: none;
+            text-align: center;
+          }
+
+          .admin-lock-panel small {
+            display: block;
+            margin-bottom: 10px;
+            color: #f0d58f;
+          }
+        `}</style>
+      </main>
+    );
+  }
 
   return (
     <>
@@ -1138,15 +1398,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
         * { box-sizing: border-box; }
         body {
           margin: 0;
-          background: #030711;
+          background: #f8efe1;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
         }
         .dashboard-page {
           min-height: 100vh;
           color: #fff;
           background:
-            radial-gradient(circle at 50% -8%, rgba(0,240,255,0.18), transparent 30%),
-            linear-gradient(180deg, #07101d 0%, #02050d 46%, #000 100%);
+            radial-gradient(circle at 50% -8%, rgba(222, 174, 105, 0.18), transparent 30%),
+            linear-gradient(180deg, #efd2a8 0%, #dfb878 48%, #c9954f 100%);
         }
         .dashboard-shell {
           width: min(1188px, 100%);
@@ -1156,13 +1416,27 @@ export default function Dashboard({ lang: appLang, setLang }) {
         .logo {
           height: 96px;
           object-fit: contain;
-          filter: drop-shadow(0 18px 36px rgba(0,240,255,0.2));
+          filter: none;
         }
+
+        .info-grid .mini-card,
+        .metrics-grid .mini-card {
+          background: #ffffff !important;
+          border: 2px solid #a97942 !important;
+        }
+        .info-grid .mini-card .label,
+        .info-grid .mini-card .value,
+        .metrics-grid .mini-card .label,
+        .metrics-grid .mini-card .metric-value {
+          color: #7a5230 !important;
+          opacity: 1 !important;
+        }
+
         .panel {
-          background: linear-gradient(180deg, rgba(13,25,45,0.94), rgba(6,12,24,0.96));
-          border: 1px solid rgba(143,247,255,0.16);
+          background: #f8efe1;
+          border: 2px solid #b18454;
           border-radius: 12px;
-          box-shadow: 0 22px 70px rgba(0,0,0,0.28);
+          box-shadow: 0 18px 48px rgba(92,58,28,0.12);
           padding: 16px;
         }
         .summary {
@@ -1182,8 +1456,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
           position: absolute;
           inset: 0;
           background:
-            radial-gradient(circle at 50% 6%, rgba(0,240,255,0.2), transparent 31%),
-            radial-gradient(circle at 15% 100%, rgba(57,120,255,0.12), transparent 30%);
+            radial-gradient(circle at 50% 6%, rgba(222,174,105,0.10), transparent 31%),
+            radial-gradient(circle at 15% 100%, rgba(222,174,105,0.06), transparent 30%);
         }
         .summary > * {
           position: relative;
@@ -1195,7 +1469,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           max-height: 96px;
           object-fit: contain;
           margin: 0 0 14px;
-          filter: drop-shadow(0 12px 28px rgba(0,0,0,0.28));
+          filter: none;
         }
         .pod-logo.placeholder {
           min-width: 118px;
@@ -1205,7 +1479,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           align-items: center;
           justify-content: center;
           color: rgba(255,255,255,0.5);
-          font-size: 10px;
+          font-size: 9px;
           line-height: 1.2;
           text-align: center;
           border: 1px dashed rgba(255,255,255,0.16);
@@ -1213,20 +1487,20 @@ export default function Dashboard({ lang: appLang, setLang }) {
           background: rgba(255,255,255,0.04);
           padding: 0 14px;
         }
-        .stack-name {
+        .page-name {
           margin: 0;
-          color: #20e7ff;
+          color: #e2c47a;
           font-size: clamp(54px, 6vw, 78px);
           line-height: 0.98;
           font-weight: 900;
           letter-spacing: 0.035em;
           text-align: center;
           text-transform: uppercase;
-          text-shadow: 0 0 26px rgba(0,240,255,0.22);
+          text-shadow: none;
         }
         .release-name {
           margin: 10px 0 0;
-          color: #ffffff;
+          color: #e2c47a;
           font-size: clamp(24px, 2.55vw, 32px);
           font-weight: 800;
           line-height: 1.18;
@@ -1235,14 +1509,14 @@ export default function Dashboard({ lang: appLang, setLang }) {
         .refresh-removed {
           position: absolute;
           right: 26px;
-          top: 62%;
+          top: 25.00%;
           min-height: 28px;
           padding: 6px 9px;
           border-radius: 8px;
           border: 1px solid rgba(143,247,255,0.24);
-          background: rgba(0,240,255,0.08);
+          background: rgba(177,132,84,0.18);
           color: #fff;
-          font-size: 10px;
+          font-size: 9px;
           font-weight: 800;
           cursor: pointer;
           transform: translateY(-50%);
@@ -1283,7 +1557,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           word-break: break-word;
         }
         .metric-value {
-          color: #8ff7ff;
+          color: #8a5a2f;
           font-size: 28px;
           line-height: 1;
           font-weight: 850;
@@ -1313,41 +1587,55 @@ export default function Dashboard({ lang: appLang, setLang }) {
         }
         .slide {
           position: relative;
-          aspect-ratio: 16 / 9;
+          width: 100%;
+          aspect-ratio: 1219 / 687;
           overflow: hidden;
           border-radius: 9px;
-          border: 1px solid rgba(143,247,255,0.18);
-          background: #020914;
+          border: 2px solid #b18454;
+          background: #fff4df;
         }
         .presentation-panel .slide {
+          position: relative;
           width: 100%;
-          margin: 0 auto;
+          aspect-ratio: 1219 / 687;
+          overflow: hidden;
+          border-radius: 9px;
+          border: 2px solid #b18454;
+          background: #fff4df;
         }
         .slide-bg {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
-          object-fit: cover;
-          opacity: 0.98;
+          object-fit: contain;
+          opacity: 1;
         }
         .qr-box {
           position: absolute;
-          left: 38.75%;
-          top: 31.9%;
-          width: 22.5%;
-          height: 40.1%;
+          left: ${QR_BOX_STYLE.left};
+          top: ${QR_BOX_STYLE.top};
+          width: ${QR_BOX_STYLE.width};
+          height: ${QR_BOX_STYLE.height};
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        };
+          top: ${QR_BOX_STYLE.top};
+          width: ${QR_BOX_STYLE.width};
+          height: ${QR_BOX_STYLE.height};
           display: flex;
           align-items: center;
           justify-content: center;
         }
         .qr-img {
-          width: 93%;
-          height: 93%;
-          object-fit: contain;
+          width: 100%;
+          height: 100%;
+          object-fit: fill;
           border-radius: 4px;
           background: #fff;
-          padding: 2px;
+          padding: 0;
+          display: block;
         }
         .presentation-panel .button-row {
           justify-content: center;
@@ -1359,7 +1647,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           margin-top: 12px;
         }
         .primary-button,
-        .gpublisher-button {
+        .gcompany-button {
           min-height: 40px;
           padding: 10px 13px;
           border-radius: 8px;
@@ -1372,21 +1660,21 @@ export default function Dashboard({ lang: appLang, setLang }) {
           background: linear-gradient(135deg, #00f0ff 0%, #3978ff 100%);
           color: #020914;
         }
-        .gpublisher-button {
+        .gcompany-button {
           border: 1px solid rgba(255,255,255,0.12);
           background: rgba(255,255,255,0.05);
           color: #fff;
         }
         .primary-button:disabled,
-        .gpublisher-button:disabled {
+        .gcompany-button:disabled {
           opacity: 0.45;
           cursor: not-allowed;
         }
         .status {
           min-height: 16px;
           margin-top: 8px;
-          color: #8ff7ff;
-          font-size: 11px;
+          color: #8a5a2f;
+          font-size: 9px;
           line-height: 1.45;
         }
         .bonus-list {
@@ -1406,8 +1694,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
           border: 1px solid rgba(255,255,255,0.075);
         }
         .bonus-row.active {
-          border-color: rgba(0,240,255,0.45);
-          background: rgba(0,240,255,0.08);
+          border-color: rgba(177,132,84,0.18);
+          background: rgba(177,132,84,0.18);
         }
         .bonus-icon {
           width: 24px;
@@ -1416,15 +1704,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
           align-items: center;
           justify-content: center;
           border-radius: 50%;
-          color: #8ff7ff;
-          background: rgba(0,240,255,0.1);
+          color: #8a5a2f;
+          background: rgba(177,132,84,0.18);
           font-size: 14px;
           font-weight: 900;
         }
         .bonus-cell {
           min-width: 0;
           color: rgba(255,255,255,0.78);
-          font-size: 11px;
+          font-size: 9px;
           line-height: 1.25;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -1435,7 +1723,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           font-weight: 900;
         }
         .bonus-status-text {
-          color: #8ff7ff;
+          color: #8a5a2f;
           font-weight: 800;
         }
         .edit-button {
@@ -1445,7 +1733,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           border: 1px solid rgba(143,247,255,0.2);
           background: rgba(255,255,255,0.055);
           color: #fff;
-          font-size: 11px;
+          font-size: 9px;
           font-weight: 850;
           cursor: pointer;
         }
@@ -1503,7 +1791,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           grid-column: 1 / -1;
           margin-top: 2px;
           color: rgba(255,255,255,0.48);
-          font-size: 10px;
+          font-size: 9px;
           line-height: 1.4;
         }
         .warning {
@@ -1545,7 +1833,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           .pod-logo {
             max-height: 64px;
           }
-          .stack-name {
+          .page-name {
             font-size: clamp(34px, 10vw, 56px);
           }
           .release-name {
@@ -1591,7 +1879,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           }
 
           .summary .logo {
-            width: 180px !important;
+            width: 320px !important;
             height: 180px !important;
             object-fit: contain !important;
             display: block !important;
@@ -1613,16 +1901,16 @@ export default function Dashboard({ lang: appLang, setLang }) {
             align-items: center !important;
           }
 
-          .stack-name {
+          .page-name {
             margin: 0 !important;
-            color: #1fe8ff !important;
+            color: #8a5a2f !important;
             font-size: clamp(34px, 5.6vw, 58px) !important;
             line-height: 0.96 !important;
             font-weight: 950 !important;
             letter-spacing: 0.045em !important;
             text-transform: uppercase !important;
             text-align: center !important;
-            text-shadow: 0 0 28px rgba(31,232,255,0.28) !important;
+            text-shadow: none;
           }
 
           .release-name {
@@ -1671,7 +1959,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
           .bonus-list {
             display: grid !important;
-            gap: 10px !important;
+            gap: 4px !important;
             margin: 0 0 16px !important;
             width: 100% !important;
           }
@@ -1691,8 +1979,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
           }
 
           .bonus-row.active {
-            border-color: rgba(0,240,255,0.5) !important;
-            background: rgba(0,240,255,0.08) !important;
+            border-color: rgba(177,132,84,0.18) !important;
+            background: rgba(177,132,84,0.18) !important;
           }
 
           .tier-badge {
@@ -1711,8 +1999,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            background: rgba(0,240,255,0.14) !important;
-            color: #8ff7ff !important;
+            background: rgba(177,132,84,0.18) !important;
+            color: #8a5a2f !important;
             flex: 0 0 auto !important;
           }
 
@@ -1753,7 +2041,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           }
 
           .bonus-state {
-            color: #8ff7ff !important;
+            color: #8a5a2f !important;
             font-size: 12px !important;
             font-weight: 900 !important;
             text-align: center !important;
@@ -1785,7 +2073,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
             }
           }
 
-          .left-stack {
+          .left-page {
             display: grid;
             gap: 0;
             min-width: 0;
@@ -1814,7 +2102,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           .csv-note {
             margin: 12px 0 0;
             color: rgba(255,255,255,0.48);
-            font-size: 11px;
+            font-size: 9px;
             line-height: 1.4;
           }
 
@@ -1846,7 +2134,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
             flex-direction: row !important;
             justify-content: flex-start !important;
             align-items: center !important;
-            gap: 10px !important;
+            gap: 4px !important;
             margin: 0 0 12px !important;
           }
 
@@ -1895,8 +2183,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
             max-width: none;
             white-space: nowrap;
             text-align: center;
-            color: rgba(255,255,255,0.62);
-            font-size: 11px;
+            color: #7a5230;
+            font-size: 9px;
             line-height: 1.3;
           }
 
@@ -1904,18 +2192,18 @@ export default function Dashboard({ lang: appLang, setLang }) {
             padding-bottom: 4px !important;
           }
 
-          .stack-title-row {
+          .page-title-row {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 26px !important;
+            gap: 4px !important;
             width: 100% !important;
           }
 
-          .stack-mic {
+          .page-mic {
             font-size: clamp(42px, 6vw, 66px) !important;
             line-height: 1 !important;
-            filter: drop-shadow(0 0 12px rgba(0,230,255,0.45)) !important;
+            filter: none !important;
           }
 
           .summary .language-switcher,
@@ -1926,8 +2214,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
             pointer-events: auto !important;
           }
 
-          .stack-title-row,
-          .stack-mic,
+          .page-title-row,
+          .page-mic,
           .summary-text {
             pointer-events: auto !important;
           }
@@ -1951,10 +2239,10 @@ export default function Dashboard({ lang: appLang, setLang }) {
           }
 
           .summary-text,
-          .stack-title-row,
-          .stack-name,
+          .page-title-row,
+          .page-name,
           .release-name,
-          .stack-mic {
+          .page-mic {
             position: relative !important;
             z-index: 1 !important;
           }
@@ -1988,8 +2276,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
           }
 
           .summary-flags .flag-button.is-active {
-            box-shadow: 0 0 12px rgba(0,230,255,0.6);
-            border-color: rgba(0,230,255,0.8);
+            box-shadow: 0 0 12px rgba(177,132,84,0.35);
+            border-color: rgba(177,132,84,0.55);
           }
 
 
@@ -2011,16 +2299,16 @@ export default function Dashboard({ lang: appLang, setLang }) {
             position: absolute !important;
             top: 12px !important;
             right: 14px !important;
-            color: rgba(255,255,255,0.82) !important;
-            font-size: 10px !important;
-            font-weight: 300 !important;
+            color: rgba(255, 255, 255, 0.96);
+            font-size: 9px;
+            font-weight: 200;
             letter-spacing: 0.08em !important;
             text-transform: uppercase !important;
             font-family: Arial, Helvetica, sans-serif !important;
-            text-shadow: 0 0 6px rgba(0,0,0,0.55) !important;
+            text-shadow: none;
             pointer-events: none !important;
             z-index: 20 !important;
-          }
+        }
 
           .bonus-scan-count {
             margin: 2px 0 14px;
@@ -2047,7 +2335,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           .bonus-scan-card span {
             display: block;
             color: rgba(255,255,255,0.58);
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 900;
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -2072,7 +2360,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           }
 
           .bonus-scan-card.tier-general strong {
-            color: #1fe8ff;
+            color: #8a5a2f;
           }
 
           .main-grid {
@@ -2080,17 +2368,17 @@ export default function Dashboard({ lang: appLang, setLang }) {
             align-items: stretch !important;
           }
 
-          .left-stack {
+          .left-page {
             height: 100% !important;
             display: flex !important;
             flex-direction: column !important;
           }
 
-          .left-stack .presentation-panel {
+          .left-page .presentation-panel {
             flex: 0 0 auto !important;
           }
 
-          .left-stack .compact-report {
+          .left-page .compact-report {
             flex: 1 1 auto !important;
           }
 
@@ -2113,11 +2401,315 @@ export default function Dashboard({ lang: appLang, setLang }) {
             box-sizing: border-box !important;
           }
 
-          .left-stack > .compact-report,
+          .left-page > .compact-report,
           .bonus-panel {
             height: 100% !important;
           }
-      `}</style>
+      
+          
+          /* codePerks final top summary panel */
+          .dashboard-page .panel.summary {
+            background:
+              radial-gradient(circle at 50% 0%, rgba(226,196,122,.10), transparent 32%),
+              radial-gradient(circle at 8% 92%, rgba(184,141,67,.08), transparent 28%),
+              linear-gradient(145deg, #030303 0%, #090909 45%, #020202 100%) !important;
+            border: 1px solid rgba(226,196,122,.42) !important;
+            border-radius: 28px !important;
+            box-shadow:
+              0 32px 80px rgba(0,0,0,.55),
+              inset 0 1px 0 rgba(255,255,255,.08),
+              inset 0 -1px 0 rgba(226,196,122,.18) !important;
+          }
+
+          .dashboard-page .panel.summary::before {
+            background:
+              linear-gradient(
+                90deg,
+                transparent,
+                rgba(226,196,122,.52),
+                rgba(243,228,191,.34),
+                rgba(226,196,122,.52),
+                transparent
+              ) !important;
+            display: block !important;
+            opacity: .72 !important;
+          }
+
+          .dashboard-page .summary-brand {
+            gap: 2px !important;
+          }
+
+          .dashboard-page img.codeperks-dashboard-logo {
+            width: 320px !important;
+            max-width: 320px !important;
+            filter:
+              drop-shadow(0 0 12px rgba(226,196,122,.22))
+              drop-shadow(0 0 32px rgba(0,0,0,.72)) !important;
+          }
+
+          .dashboard-page .codeperks-dashboard-tagline {
+            color: #f3e4bf !important;
+            -webkit-text-fill-color: #f3e4bf !important;
+            letter-spacing: .08em !important;
+            opacity: .92 !important;
+          }
+
+          .dashboard-page .summary-text {
+            margin-top: 18px !important;
+          }
+
+          .dashboard-page .codeperks-dashboard-title {
+            font-size: clamp(2.7rem, 5.5vw, 4.3rem) !important;
+            color: #e2c47a !important;
+            -webkit-text-fill-color: #e2c47a !important;
+            text-shadow:
+              0 2px 12px rgba(0,0,0,.65),
+              0 0 24px rgba(226,196,122,.18) !important;
+          }
+
+          .dashboard-page .codeperks-dashboard-subtitle {
+            color: #f3e4bf !important;
+            -webkit-text-fill-color: #f3e4bf !important;
+            opacity: .82 !important;
+          }
+
+          .dashboard-page .codeperks-dashboard-book {
+            color: #f3e4bf !important;
+            -webkit-text-fill-color: #f3e4bf !important;
+            opacity: .95 !important;
+          }
+
+          .dashboard-page .summary-flags button,
+          .dashboard-page .summary-flags .flag-selector {
+            background: rgba(226,196,122,.13) !important;
+            border: 1px solid rgba(226,196,122,.32) !important;
+            box-shadow: 0 8px 22px rgba(0,0,0,.30) !important;
+          }
+
+          /* codePerks gold cards — direct Dashboard override */
+          .dashboard-page .info-grid .mini-card,
+          .dashboard-page .metrics-grid .mini-card,
+          .dashboard-page .metrics-panel .mini-card,
+          .dashboard-page .metric-card {
+            background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 55%, #b88d43 100%) !important;
+            border: 1px solid rgba(246,237,220,.55) !important;
+            box-shadow:
+              0 14px 34px rgba(0,0,0,.38),
+              inset 0 1px 0 rgba(255,255,255,.38) !important;
+          }
+
+          .dashboard-page .info-grid .mini-card *,
+          .dashboard-page .metrics-grid .mini-card *,
+          .dashboard-page .metrics-panel .mini-card *,
+          .dashboard-page .metric-card * {
+            color: #2f1f13 !important;
+            -webkit-text-fill-color: #2f1f13 !important;
+          }
+
+          .dashboard-page .info-grid .mini-card .label,
+          .dashboard-page .metrics-grid .mini-card .label,
+          .dashboard-page .metrics-panel .mini-card .label,
+          .dashboard-page .metric-card .label {
+            color: #5a351d !important;
+            -webkit-text-fill-color: #5a351d !important;
+            opacity: .88 !important;
+          }
+
+
+          /* FINAL OVERRIDE: codePerks metrics, 5 cards on one desktop row */
+          .dashboard-page .metrics-grid {
+            display: grid !important;
+            grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+            gap: 8px !important;
+          }
+
+          .dashboard-page .metrics-grid .mini-card {
+            min-width: 0 !important;
+            width: auto !important;
+            padding: 10px 12px !important;
+          }
+
+          .dashboard-page .metrics-grid .mini-card .label {
+            font-size: 9px !important;
+            line-height: 1.1 !important;
+            letter-spacing: .11em !important;
+            white-space: normal !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          .dashboard-page .metrics-grid .mini-card .metric-value {
+            font-size: 22px !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+          }
+
+          @media (max-width: 1100px) {
+            .dashboard-page .metrics-grid {
+              grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+          }
+
+          @media (max-width: 640px) {
+            .dashboard-page .metrics-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+
+
+          .claims-panel {
+            margin-top: 18px;
+          }
+
+          .claims-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 16px;
+          }
+
+          .claim-row {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr 1.35fr .6fr .75fr .75fr;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(0,0,0,.18);
+          }
+
+          .claim-row span {
+            display: block;
+            margin-bottom: 4px;
+            color: rgba(255,255,255,.48);
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+          }
+
+          .claim-row strong {
+            display: block;
+            color: #fff8e8;
+            font-size: 11px;
+            line-height: 1.25;
+            word-break: break-word;
+          }
+
+          @media (max-width: 900px) {
+            .claim-row {
+              grid-template-columns: 1fr 1fr;
+            }
+          }
+
+          @media (max-width: 560px) {
+            .claim-row {
+              grid-template-columns: 1fr;
+            }
+          }
+
+
+          .claims-summary-box {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+          }
+
+          .claims-summary-box div {
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(0,0,0,.18);
+          }
+
+          .claims-summary-box span {
+            display: block;
+            margin-bottom: 6px;
+            color: rgba(255,255,255,.48);
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+          }
+
+          .claims-summary-box strong {
+            display: block;
+            color: #fff8e8;
+            font-size: 24px;
+            line-height: 1;
+          }
+
+          @media (max-width: 720px) {
+            .claims-summary-box {
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+          }
+
+`}
+
+</style>
+
+
+<style>{`
+          .verification-panel {
+            margin-top: 30px;
+            padding: 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(214, 162, 72, .55);
+            background: rgba(0,0,0,.22);
+          }
+
+          .verification-panel .verification-copy h3 {
+            margin: 6px 0 8px;
+            color: #f7d88a;
+            font-size: 18px;
+          }
+
+          .verification-panel .verification-copy p {
+            margin: 0;
+            max-width: 720px;
+            color: rgba(255, 238, 196, .82);
+            font-size: 13px;
+            line-height: 1.55;
+          }
+
+          .verification-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+          }
+
+          .verification-grid div {
+            min-height: 82px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(214, 162, 72, .45);
+            background: rgba(255,255,255,.035);
+          }
+
+          .verification-grid span {
+            display: block;
+            margin-bottom: 8px;
+            color: #f7d88a;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+          }
+
+          .verification-grid strong {
+            display: block;
+            color: #fff1bf;
+            font-size: 28px;
+            line-height: 1.05;
+          }
+
+          @media (max-width: 720px) {
+            .verification-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+`}</style>
 
       <main className="dashboard-page">
         <div className="dashboard-shell">
@@ -2125,8 +2717,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
           <section className="panel summary">
             <div className="summary-brand">
-              <img src="/codestack-logo.png" alt="codeStack logo" className="logo" />
-              <div className="summary-tagline">codeStack by codeNXT</div>
+              <img src="/codePerks-logo.png?v=2" alt="codePerks logo" className="codeperks-dashboard-logo" />
+              <div className="codeperks-dashboard-tagline">codePerks by codeNXT</div>
             </div>
 
             <div
@@ -2141,12 +2733,12 @@ export default function Dashboard({ lang: appLang, setLang }) {
             </div>
 
             <div className="summary-text">
-              <div className="stack-title-row">
-                <span className="stack-mic" aria-hidden="true">🎙️</span>
-                <h2 className="stack-name">{eventData.stackName || text.stackFallback}</h2>
-                <span className="stack-mic" aria-hidden="true">🎙️</span>
+              <div className="page-title-row">
+                <span className="codeperks-dashboard-book" aria-hidden="true">✦</span>
+                <h2 className="codeperks-dashboard-title">{eventData.pageName || text.pageFallback}</h2>
+                <span className="codeperks-dashboard-book" aria-hidden="true">✦</span>
               </div>
-              <p className="release-name">{eventData.releaseTitle || text.releaseFallback}</p>
+              <p className="codeperks-dashboard-subtitle">{eventData.releaseTitle || text.releaseFallback}</p>
             </div>
           </section>
 
@@ -2171,16 +2763,16 @@ export default function Dashboard({ lang: appLang, setLang }) {
           </section>
 
           <div className="main-grid">
-            <div className="left-stack">
+            <div className="left-page">
             <section className="panel presentation-panel">
               <h2 className="panel-title">{text.presentation}</h2>
               <div className="slide">
                 <img className="slide-bg" src={badgeBase} alt="" aria-hidden="true" />
                 <div className="qr-box">
-                  {qrDataUrl ? <img className="qr-img" src={qrDataUrl} alt={text.memberLink} /> : null}
+                  {qrDataUrl ? <img className="qr-img" src={qrDataUrl} alt={text.customerLink} /> : null}
                 </div>
                 {eventData.eventCode ? (
-                  <div className="presentation-event-code">{eventData.eventCode}</div>
+                  <div className="presentation-event-code">{eventData.eventCode || `PK-${String(Math.floor(Math.random() * 90000) + 10000)}`}</div>
                 ) : null}
               </div>
               <div className="button-row">
@@ -2198,7 +2790,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
               </p>
 
               <div className="button-row report-buttons">
-                <button type="button" className="gpublisher-button" onClick={exportPdfReport}>
+                <button type="button" className="gcompany-button" onClick={exportPdfReport}>
                   {text.viewReport}
                 </button>
                 <button type="button" className="primary-button" onClick={downloadCsv}>
@@ -2208,6 +2800,47 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
               <p className="csv-note">{text.reportLifecycle}</p>
 
+            </section>
+
+            <section className="panel report-panel compact-report claims-panel">
+              <h2 className="panel-title">Reward Claims</h2>
+              <p className="report-copy">
+                Registered email and postal reward claims for this campaign.
+              </p>
+
+              <div className="button-row report-buttons">
+                <button type="button" className="gcompany-button" onClick={loadClaims} disabled={claimsLoading}>
+                  {claimsLoading ? 'Loading...' : 'Refresh claims'}
+                </button>
+                <button type="button" className="primary-button" onClick={downloadClaimsCsv} disabled={!claims.length}>
+                  Export claims CSV
+                </button>
+              </div>
+
+              {claimsMessage ? <p className="csv-note">{claimsMessage}</p> : null}
+
+              <div className="claims-summary-box">
+                <div>
+                  <span>Total claims</span>
+                  <strong>{claims.length}</strong>
+                </div>
+                <div>
+                  <span>Email</span>
+                  <strong>{claims.filter((claim) => claim.type === 'email').length}</strong>
+                </div>
+                <div>
+                  <span>Post</span>
+                  <strong>{claims.filter((claim) => claim.type === 'post').length}</strong>
+                </div>
+                <div>
+                  <span>Pending</span>
+                  <strong>{claims.filter((claim) => (claim.status || 'pending') === 'pending').length}</strong>
+                </div>
+              </div>
+
+              <p className="csv-note">
+                Full claim details are kept in the CSV export to keep the dashboard compact.
+              </p>
             </section>
             </div>
 
@@ -2225,7 +2858,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
                       value={activeTier}
                       onChange={(event) => {
                         setActiveTier(event.target.value);
-                        setBonusMessage('');
+                        setBeneficioMessage('');
                       }}
                     >
                       {BONUS_TIERS.slice(0, tierCount).map((tier) => <option value={tier} key={tier}>{text[tier]}</option>)}
@@ -2236,7 +2869,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
                     <span className="label">{text.type}</span>
                     <select
                       value={activeDraft.type}
-                      onChange={(event) => updateBonusDraft(activeTier, { type: event.target.value, file: null, fileName: '', url: '' })}
+                      onChange={(event) => updateBeneficioDraft(activeTier, { type: event.target.value, file: null, fileName: '', url: '' })}
                     >
                       {BONUS_TYPES.map((type) => <option value={type} key={type}>{text[type] || type.toUpperCase()}</option>)}
                     </select>
@@ -2245,7 +2878,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
                   <label>
                     <span className="label">{text.fileOrUrl}</span>
                     {activeDraft.type === 'url' ? (
-                      <input value={activeDraft.url} placeholder="https://..." onChange={(event) => updateBonusDraft(activeTier, { url: event.target.value })} />
+                      <input value={activeDraft.url} placeholder="https://..." onChange={(event) => updateBeneficioDraft(activeTier, { url: event.target.value })} />
                     ) : (
                       <input
                         key={`${activeTier}-${activeDraft.type}`}
@@ -2260,7 +2893,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
                         }
                         onChange={(event) => {
                           const file = event.target.files?.[0];
-                          updateBonusDraft(activeTier, { file, fileName: file?.name || '' });
+                          updateBeneficioDraft(activeTier, { file, fileName: file?.name || '' });
                         }}
                       />
                     )}
@@ -2273,17 +2906,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
                     <div className={`bonus-scan-card tier-${tier}`} key={tier}>
                       <span>{text[tier]}</span>
                       <strong>
-                        {tierSplit[tier]}% ca. {Number(eventData.estimatedMembers || eventData.audienceSize || eventData.members || 0) > 0
-                          ? Math.round(Number(eventData.estimatedMembers || eventData.audienceSize || eventData.members || 0) * Number(tierSplit[tier] || 0) / 100)
-                          : 0}
+                        {tier === 'general' ? (text.remaining || 'Resten') : Number(eventData?.tierLimits?.[tier] || eventData?.bonusLimits?.[tier] || tierSplit[tier] || 0)}
                       </strong>
                     </div>
                   ))}
                 </div>
 
                 <div className="button-row">
-                  <button type="button" className="primary-button" onClick={saveBonus} disabled={!canSaveBonus || bonusSaving}>
-                    {bonusSaving ? text.savingBonus : text.saveBonus}
+                  <button type="button" className="primary-button" onClick={saveBeneficio} disabled={!canSaveBeneficio || bonusSaving}>
+                    {bonusSaving ? text.savingBeneficio : text.saveBeneficio}
                   </button>
                 </div>
 
@@ -2322,9 +2953,9 @@ export default function Dashboard({ lang: appLang, setLang }) {
                       className="edit-button"
                       onClick={async () => {
                         setActiveTier(tier);
-                        setBonusMessage('');
+                        setBeneficioMessage('');
 
-                        updateBonusDraft(tier, {
+                        updateBeneficioDraft(tier, {
                           title: '',
                           description: '',
                           type: 'url',
@@ -2359,6 +2990,29 @@ export default function Dashboard({ lang: appLang, setLang }) {
                     </button>
                   </div>
                 ))}
+              </div>
+
+              <div className="verification-panel">
+                <div className="verification-copy">
+                  <span className="eyebrow">{text.verifiedNetworkEyebrow}</span>
+                  <h3>{text.verifiedNetworkTitle}</h3>
+                  <p>{text.verifiedNetworkText}</p>
+                </div>
+
+                <div className="verification-grid">
+                  <div>
+                    <span>{text.verifiedIssued}</span>
+                    <strong>{claims.length || 0}</strong>
+                  </div>
+                  <div>
+                    <span>{text.verifiedMembers}</span>
+                    <strong>{Number(eventData?.joins || 0)}</strong>
+                  </div>
+                  <div>
+                    <span>{text.verifiedStatus}</span>
+                    <strong>{text.verifiedAuditReady}</strong>
+                  </div>
+                </div>
               </div>
             </section>
           </div>

@@ -1,0 +1,270 @@
+import React, { useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+
+function readJson(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+export default function CertificatePage({ lang }) {
+  const { eventCode, certificateId } = useParams();
+  const eventData = useMemo(() => readJson('codenxt_event'), []);
+  const latestEvent = useMemo(() => readJson('codeperks_latest_event'), []);
+  const data = { ...latestEvent, ...eventData };
+  const rewardDelivery = data.rewardDelivery || {};
+
+  const [claimMethod, setClaimMethod] = useState('email');
+
+  const issuedDate = new Date().toISOString().slice(0, 10);
+
+  return (
+    <main className="certificate-page">
+      <section className="certificate-shell">
+        <div className="certificate-top">
+          <img src="/codePerks-logo.png?v=3" alt="codePerks logo" className="certificate-logo" />
+          <div className="certificate-kicker">VERIFIED REWARD CERTIFICATE</div>
+          <h1>Reward Claim Certificate</h1>
+          <p>This certificate verifies your codePerks member benefit and gives you the information needed to claim your reward.</p>
+        </div>
+
+        <section className="certificate-card verified">
+          <div className="status-pill">VALID</div>
+
+          <div className="certificate-grid">
+            <div>
+              <span>Certificate ID</span>
+              <strong>{certificateId}</strong>
+            </div>
+            <div>
+              <span>Event code</span>
+              <strong>{eventCode}</strong>
+            </div>
+            <div>
+              <span>Issued</span>
+              <strong>{issuedDate}</strong>
+            </div>
+            <div>
+              <span>Campaign / perk</span>
+              <strong>{data.releaseTitle || data.stackName || 'codePerks reward'}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="certificate-card">
+          <h2>Reward Delivery Information</h2>
+          <p className="muted">Use this information to claim your reward by email or ordinary post.</p>
+
+          <div className="delivery-list">
+            <div><span>Company</span><strong>{rewardDelivery.company || 'Not registered'}</strong></div>
+            <div><span>Responsible person</span><strong>{rewardDelivery.responsiblePerson || 'Not registered'}</strong></div>
+            <div><span>Address</span><strong>{rewardDelivery.address1 || 'Not registered'}</strong></div>
+            <div><span>Address line 2</span><strong>{rewardDelivery.address2 || 'Not registered'}</strong></div>
+            <div><span>ZIP / Postal code</span><strong>{rewardDelivery.postalCode || 'Not registered'}</strong></div>
+            <div><span>Country</span><strong>{rewardDelivery.country || 'Not registered'}</strong></div>
+            <div><span>Phone</span><strong>{rewardDelivery.phone || 'Not registered'}</strong></div>
+            <div><span>Email</span><strong>{rewardDelivery.email || 'Not registered'}</strong></div>
+          </div>
+        </section>
+
+        <section className="certificate-card">
+          <h2>Claim your reward</h2>
+          <div className="claim-toggle">
+            <button type="button" className={claimMethod === 'email' ? 'active' : ''} onClick={() => setClaimMethod('email')}>Email</button>
+            <button type="button" className={claimMethod === 'post' ? 'active' : ''} onClick={() => setClaimMethod('post')}>Ordinary post</button>
+          </div>
+
+          {claimMethod === 'email' ? (
+            <div className="claim-box">
+              <p>Send an email with your Certificate ID and Event code to:</p>
+              <strong>{rewardDelivery.email || 'Reward email not registered'}</strong>
+            </div>
+          ) : (
+            <div className="claim-box">
+              <p>Send your claim by ordinary post to:</p>
+              <strong>{rewardDelivery.company || 'Company not registered'}</strong>
+              <span>{rewardDelivery.responsiblePerson || ''}</span>
+              <span>{rewardDelivery.address1 || ''}</span>
+              <span>{rewardDelivery.address2 || ''}</span>
+              <span>{rewardDelivery.postalCode || ''} {rewardDelivery.country || ''}</span>
+            </div>
+          )}
+        </section>
+
+        <Link className="back-link" to={`/join/${eventCode}`}>
+          Back to reward
+        </Link>
+      </section>
+
+      <style>{`
+        .certificate-page {
+          min-height: 100vh;
+          padding: 32px 18px;
+          background:
+            radial-gradient(circle at top, rgba(216,189,120,.18), transparent 34%),
+            linear-gradient(135deg, #140f0a 0%, #251609 48%, #080706 100%);
+          color: #fff8e8;
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .certificate-shell {
+          width: min(920px, 100%);
+          margin: 0 auto;
+        }
+
+        .certificate-top {
+          text-align: center;
+          margin-bottom: 22px;
+        }
+
+        .certificate-logo {
+          width: 150px;
+          height: auto;
+          margin-bottom: 14px;
+        }
+
+        .certificate-kicker {
+          color: #d8bd78;
+          font-size: 12px;
+          font-weight: 900;
+          letter-spacing: .22em;
+          text-transform: uppercase;
+        }
+
+        .certificate-top h1 {
+          margin: 10px 0;
+          font-size: clamp(32px, 6vw, 58px);
+          line-height: .96;
+        }
+
+        .certificate-top p {
+          max-width: 620px;
+          margin: 0 auto;
+          color: rgba(255,248,232,.76);
+          line-height: 1.55;
+        }
+
+        .certificate-card {
+          margin-top: 18px;
+          padding: 22px;
+          border: 1px solid rgba(216,189,120,.28);
+          border-radius: 24px;
+          background: rgba(255,255,255,.055);
+          box-shadow: 0 24px 70px rgba(0,0,0,.38);
+          backdrop-filter: blur(18px);
+        }
+
+        .certificate-card h2 {
+          margin: 0 0 8px;
+          color: #f0d58f;
+        }
+
+        .muted {
+          color: rgba(255,248,232,.68);
+          margin-top: 0;
+        }
+
+        .status-pill {
+          display: inline-flex;
+          padding: 8px 13px;
+          border-radius: 999px;
+          background: rgba(216,189,120,.16);
+          color: #f0d58f;
+          border: 1px solid rgba(216,189,120,.38);
+          font-size: 12px;
+          font-weight: 900;
+          letter-spacing: .18em;
+        }
+
+        .certificate-grid,
+        .delivery-list {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 14px;
+          margin-top: 18px;
+        }
+
+        .certificate-grid div,
+        .delivery-list div {
+          padding: 14px;
+          border-radius: 16px;
+          background: rgba(0,0,0,.2);
+          border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .certificate-grid span,
+        .delivery-list span {
+          display: block;
+          color: rgba(255,248,232,.56);
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: .13em;
+          margin-bottom: 6px;
+        }
+
+        .certificate-grid strong,
+        .delivery-list strong,
+        .claim-box strong {
+          display: block;
+          color: #fff8e8;
+          font-size: 16px;
+          word-break: break-word;
+        }
+
+        .claim-toggle {
+          display: flex;
+          gap: 10px;
+          margin-top: 16px;
+        }
+
+        .claim-toggle button {
+          flex: 1;
+          border: 1px solid rgba(216,189,120,.35);
+          background: rgba(0,0,0,.18);
+          color: #fff8e8;
+          border-radius: 999px;
+          padding: 12px 14px;
+          font-weight: 900;
+          cursor: pointer;
+        }
+
+        .claim-toggle button.active {
+          background: linear-gradient(135deg, #f0d58f, #b8863b);
+          color: #1c1006;
+        }
+
+        .claim-box {
+          margin-top: 16px;
+          padding: 16px;
+          border-radius: 18px;
+          background: rgba(0,0,0,.24);
+          border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .claim-box span {
+          display: block;
+          margin-top: 5px;
+          color: rgba(255,248,232,.82);
+        }
+
+        .back-link {
+          display: block;
+          width: fit-content;
+          margin: 22px auto 0;
+          color: #f0d58f;
+          text-decoration: none;
+          font-weight: 900;
+        }
+
+        @media (max-width: 720px) {
+          .certificate-grid,
+          .delivery-list {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
+    </main>
+  );
+}

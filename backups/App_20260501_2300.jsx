@@ -49,7 +49,7 @@ p4: (
     – audience participation rate<br />
     – InnerCircle joins<br />
     – timing of the drop<br /><br />
-    Download your data as CSV and keep your audience.
+    Download your data as PGV and keep your audience.
   </>
 ),
 cta: 'SEE HOW IT WORKS →'
