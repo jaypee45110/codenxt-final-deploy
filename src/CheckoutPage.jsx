@@ -59,7 +59,7 @@ export default function CheckoutPage({ lang, setLang }) {
         bonusActive24h: 'Velg sluttdato for kampanjen',
         customers: 'Forventet antall deltakere',
         contactName: 'Kontaktperson',
-        email: 'E-post',
+        email: 'Delivery-ansvarlig e-post',
         phone: 'Telefon',
         comments: 'Medlemsfordel / notater',
       },
@@ -98,7 +98,7 @@ export default function CheckoutPage({ lang, setLang }) {
         bonusActive24h: 'Choose campaign end date',
         customers: 'Expected participants',
         contactName: 'Contact person',
-        email: 'Email',
+        email: 'Delivery Contact Email',
         phone: 'Phone',
         comments: 'Perk content / notes',
       },
@@ -308,25 +308,25 @@ export default function CheckoutPage({ lang, setLang }) {
       title: 'Informasjon for levering av fordeler',
       help: 'Denne informasjonen brukes kun til levering av fordeler, verifisering av vinnere og sertifikatregistrering.',
       company: 'Bedrift',
-      responsible: 'Ansvarlig person',
+      responsible: 'Delivery-ansvarlig navn',
       address1: 'Adresselinje 1',
       address2: 'Adresselinje 2',
       postalCode: 'Postnummer',
       country: 'Land',
       phone: 'Telefon',
-      email: 'E-post',
+      email: 'Delivery-ansvarlig e-post',
     },
     en: {
       title: 'Reward Delivery Information',
       help: 'This information is used solely for reward fulfillment, winner verification and certificate registration.',
       company: 'Company',
-      responsible: 'Responsible Person',
+      responsible: 'Delivery Contact Name',
       address1: 'Address Line 1',
       address2: 'Address Line 2',
       postalCode: 'ZIP / Postal Code',
       country: 'Country',
       phone: 'Phone',
-      email: 'Email',
+      email: 'Delivery Contact Email',
     },
     de: {
       title: 'Informationen zur Vorteilszustellung',
@@ -362,19 +362,19 @@ export default function CheckoutPage({ lang, setLang }) {
       postalCode: 'Código postal',
       country: 'País',
       phone: 'Teléfono',
-      email: 'Email',
+      email: 'Delivery Contact Email',
     },
   }[lang] || {
     title: 'Reward Delivery Information',
     help: 'This information is used solely for reward fulfillment, winner verification and certificate registration.',
     company: 'Company',
-    responsible: 'Responsible Person',
+    responsible: 'Delivery Contact Name',
     address1: 'Address Line 1',
     address2: 'Address Line 2',
     postalCode: 'ZIP / Postal Code',
     country: 'Country',
     phone: 'Phone',
-    email: 'Email',
+    email: 'Delivery Contact Email',
   };
   const [formData, setFormData] = useState(emptyForm);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -401,13 +401,7 @@ export default function CheckoutPage({ lang, setLang }) {
       !formData.email.trim() ||
       !formData.phone.trim() ||
       !formData.comments.trim() ||
-      !formData.rewardCompany.trim() ||
       !formData.rewardResponsible.trim() ||
-      !formData.rewardAddress1.trim() ||
-      !formData.rewardAddress2.trim() ||
-      !formData.rewardPostalCode.trim() ||
-      !formData.rewardCountry.trim() ||
-      !formData.rewardPhone.trim() ||
       !formData.rewardEmail.trim() ||
       !formData.goldTotal.trim() ||
       Number(formData.goldTotal) < 0 ||
@@ -491,13 +485,7 @@ export default function CheckoutPage({ lang, setLang }) {
       const endAt = new Date(`${campaignEndDate}T${campaignEndTime}:00`);
 
       const rewardDelivery = {
-        company: formData.rewardCompany.trim(),
         responsiblePerson: formData.rewardResponsible.trim(),
-        address1: formData.rewardAddress1.trim(),
-        address2: formData.rewardAddress2.trim(),
-        postalCode: formData.rewardPostalCode.trim(),
-        country: formData.rewardCountry.trim(),
-        phone: formData.rewardPhone.trim(),
         email: formData.rewardEmail.trim(),
       };
 
@@ -771,45 +759,9 @@ export default function CheckoutPage({ lang, setLang }) {
             <div className="input-grid checkout-grid">
 
               <label>
-                {rewardDeliveryText.company} *
-                <input name="rewardCompany" value={formData.rewardCompany} onChange={handleChange} placeholder={rewardDeliveryText.company} />
-                {fieldError('rewardCompany') && <small>{text.common.required}</small>}
-              </label>
-
-              <label>
                 {rewardDeliveryText.responsible} *
                 <input name="rewardResponsible" value={formData.rewardResponsible} onChange={handleChange} placeholder={rewardDeliveryText.responsible} />
                 {fieldError('rewardResponsible') && <small>{text.common.required}</small>}
-              </label>
-
-              <label>
-                {rewardDeliveryText.address1} *
-                <input name="rewardAddress1" value={formData.rewardAddress1} onChange={handleChange} placeholder={rewardDeliveryText.address1} />
-                {fieldError('rewardAddress1') && <small>{text.common.required}</small>}
-              </label>
-
-              <label>
-                {rewardDeliveryText.address2} *
-                <input name="rewardAddress2" value={formData.rewardAddress2} onChange={handleChange} placeholder={rewardDeliveryText.address2} />
-                {fieldError('rewardAddress2') && <small>{text.common.required}</small>}
-              </label>
-
-              <label>
-                {rewardDeliveryText.postalCode} *
-                <input name="rewardPostalCode" value={formData.rewardPostalCode} onChange={handleChange} placeholder={rewardDeliveryText.postalCode} />
-                {fieldError('rewardPostalCode') && <small>{text.common.required}</small>}
-              </label>
-
-              <label>
-                {rewardDeliveryText.country} *
-                <input name="rewardCountry" value={formData.rewardCountry} onChange={handleChange} placeholder={rewardDeliveryText.country} />
-                {fieldError('rewardCountry') && <small>{text.common.required}</small>}
-              </label>
-
-              <label>
-                {rewardDeliveryText.phone} *
-                <input name="rewardPhone" value={formData.rewardPhone} onChange={handleChange} placeholder={rewardDeliveryText.phone} />
-                {fieldError('rewardPhone') && <small>{text.common.required}</small>}
               </label>
 
               <label>
