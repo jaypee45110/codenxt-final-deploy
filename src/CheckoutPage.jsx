@@ -31,6 +31,8 @@ const emptyForm = {
   goldTotal: '100',
   silverTotal: '500',
   campaignEndDate: '',
+  campaignEndTime: '23:00',
+  claimWindowHours: '24',
 };
 
 function generateReleaseCode() {
@@ -502,7 +504,8 @@ export default function CheckoutPage({ lang, setLang }) {
         silverTotal: Number(formData.silverTotal || 0),
         standardUnlimited: true,
         campaignStart: `${releaseDate}T${releaseTime}:00`,
-        campaignEnd: `${campaignEndDate}T23:59:59.999`,
+        campaignEnd: `${campaignEndDate}T${campaignEndTime}:00`,
+        claimWindowHours,
       };
 
       const payload = {

@@ -35,6 +35,7 @@ const bonusCopy = {
     benefitNotOpenBody: 'Du kan skanne og motta din fordel fra {start} til {end}.',
     benefitClosedTitle: 'BEKLAGER, DU VAR FOR SENT UTE',
     benefitClosedBody: 'Denne bonuskampanjen ble avsluttet {end}.',
+    benefitClaimUntil: 'Krav/innløsning kan gjøres innen {claimUntil}.',
   },
   en: {
     
@@ -65,6 +66,7 @@ const bonusCopy = {
     benefitNotOpenBody: 'You can scan and receive your benefit from {start} until {end}.',
     benefitClosedTitle: 'SORRY, YOU WERE TOO LATE',
     benefitClosedBody: 'This bonus campaign closed on {end}.',
+    benefitClaimUntil: 'Claims can be completed until {claimUntil}.',
   },
   de: {
     
@@ -1000,6 +1002,12 @@ export default function JoinPage({ lang, setLang }) {
           font-size: 13px;
           line-height: 1.5;
           opacity: .9;
+        }
+
+        body .join-page .window-claim-note {
+          margin-top: 10px !important;
+          color: #fff1bf;
+          font-weight: 800;
         }
 
       `}</style>
