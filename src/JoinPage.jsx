@@ -406,7 +406,13 @@ export default function JoinPage({ lang, setLang }) {
         </p>
       );
     }
-    if (!reward) return <p className="muted center">{j.missing}</p>;
+    if (!reward) {
+      return (
+        <p className="muted center">
+          {j.rewardPending || 'Your verified benefit will be shown on the claim certificate after you join.'}
+        </p>
+      );
+    }
 
     if (reward.type === 'image') return <img src={reward.url} alt={reward.title || ''} className="join-media" />;
     if (reward.type === 'video') return <video src={reward.url} controls playsInline className="join-media" />;

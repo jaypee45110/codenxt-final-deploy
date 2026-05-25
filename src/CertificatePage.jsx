@@ -235,11 +235,8 @@ export default function CertificatePage({ lang }) {
           ) : (
             <div className="claim-box">
               <p>Send your claim by ordinary post to:</p>
-              <strong>{rewardDelivery.company || 'Company not registered'}</strong>
-              <span>{rewardDelivery.responsiblePerson || ''}</span>
-              <span>{rewardDelivery.address1 || ''}</span>
-              <span>{rewardDelivery.address2 || ''}</span>
-              <span>{rewardDelivery.postalCode || ''} {rewardDelivery.country || ''}</span>
+              <strong>{rewardDelivery.responsiblePerson || 'Delivery contact not registered'}</strong>
+              <span>{rewardDelivery.email || ''}</span>
             </div>
           )}
         </section>
