@@ -144,13 +144,13 @@ export default function CertificatePage({ lang }) {
       const json = await response.json().catch(() => ({}));
 
       if (!response.ok || !json.ok) {
-        throw new Error(json.error || 'Could not register claim');
+        throw new Error(json.error || `Could not register claim (${response.status})`);
       }
       setClaimStatus(type === 'post' ? 'Postal claim registered.' : 'Email claim registered.');
       return true;
     } catch (error) {
       console.error('Reward claim registration failed:', error);
-      setClaimStatus('Could not register claim. Please try again.');
+      setClaimStatus(error?.message || 'Could not register claim. Please try again.');
       return false;
     }
   }
