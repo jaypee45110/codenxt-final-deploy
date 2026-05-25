@@ -31,6 +31,10 @@ const bonusCopy = {
     availableBenefits: 'TILGJENGELIGE FORDELER',
     left: 'IGJEN',
     fullyClaimed: 'FULLT TILDELT',
+    benefitNotOpenTitle: 'BONUSKAMPANJEN ER IKKE ÅPEN ENNÅ',
+    benefitNotOpenBody: 'Du kan skanne og motta din fordel fra {start} til {end}.',
+    benefitClosedTitle: 'BEKLAGER, DU VAR FOR SENT UTE',
+    benefitClosedBody: 'Denne bonuskampanjen ble avsluttet {end}.',
   },
   en: {
     
@@ -57,6 +61,10 @@ const bonusCopy = {
     availableBenefits: 'AVAILABLE BENEFITS',
     left: 'LEFT',
     fullyClaimed: 'FULLY CLAIMED',
+    benefitNotOpenTitle: 'BONUS CAMPAIGN NOT YET OPEN',
+    benefitNotOpenBody: 'You can scan and receive your benefit from {start} until {end}.',
+    benefitClosedTitle: 'SORRY, YOU WERE TOO LATE',
+    benefitClosedBody: 'This bonus campaign closed on {end}.',
   },
   de: {
     
@@ -83,6 +91,10 @@ const bonusCopy = {
     availableBenefits: 'VERFÜGBARE VORTEILE',
     left: 'ÜBRIG',
     fullyClaimed: 'VOLLSTÄNDIG VERGEBEN',
+    benefitNotOpenTitle: 'BONUSKAMPAGNE NOCH NICHT GEÖFFNET',
+    benefitNotOpenBody: 'Du kannst scannen und deinen Vorteil von {start} bis {end} erhalten.',
+    benefitClosedTitle: 'LEIDER ZU SPÄT',
+    benefitClosedBody: 'Diese Bonuskampagne wurde am {end} geschlossen.',
   },
   fr: {
     
@@ -963,6 +975,28 @@ export default function JoinPage({ lang, setLang }) {
           opacity: .82 !important;
         }
 
+        body .join-page .window-status-card {
+          margin: 18px 0;
+          padding: 18px;
+          border-radius: 16px;
+          background: rgba(255,255,255,.06);
+          border: 1px solid rgba(255,255,255,.12);
+          text-align: center;
+        }
+
+        body .join-page .window-status-card h2 {
+          margin: 0 0 10px;
+          font-size: 16px;
+          letter-spacing: .08em;
+        }
+
+        body .join-page .window-status-card p {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.5;
+          opacity: .9;
+        }
+
       `}</style>
 
       <section className="bonus-card">
@@ -981,6 +1015,23 @@ export default function JoinPage({ lang, setLang }) {
           <p className="release-name-line">{release.releaseTitle || titleLine}</p>
           {releaseDate ? <p className="release-date">{b.date}: {releaseDate}</p> : null}
         </section>
+
+        {benefitWindowStatus !== 'open' && benefitWindow ? (
+          <section className="window-status-card">
+            <h2>
+              {benefitWindowStatus === 'not_open'
+                ? b.benefitNotOpenTitle
+                : b.benefitClosedTitle}
+            </h2>
+            <p>
+              {(benefitWindowStatus === 'not_open'
+                ? b.benefitNotOpenBody
+                : b.benefitClosedBody)
+                .replace('{start}', benefitWindow.campaignStart || '')
+                .replace('{end}', benefitWindow.campaignEnd || '')}
+            </p>
+          </section>
+        ) : null}
 
         <section className="bonus-content">
           <p className="bonus-content-title">{tierText} {b.bonus}</p>
