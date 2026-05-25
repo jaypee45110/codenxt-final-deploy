@@ -2987,55 +2987,11 @@ export default function Dashboard({ lang: appLang, setLang }) {
                 </div>
               </div>
 
-              <div className="claims-list">
-                {claims.length ? claims.map((claim) => {
-                  const status = claim.status || 'pending';
-
-                  return (
-                    <div className="claim-row" key={claim.id || claim.certificateId}>
-                      <div>
-                        <span>Certificate</span>
-                        <strong>{claim.certificateId || '—'}</strong>
-                      </div>
-                      <div>
-                        <span>Name</span>
-                        <strong>{claim.claimant?.fullName || '—'}</strong>
-                      </div>
-                      <div>
-                        <span>Type</span>
-                        <strong>{claim.type || '—'}</strong>
-                      </div>
-                      <div>
-                        <span>Status</span>
-                        <strong className={`claim-status status-${status}`}>{status}</strong>
-                      </div>
-                      <div className="claim-actions">
-                        {status === 'pending' ? (
-                          <button type="button" className="gcompany-button small" onClick={() => updateClaimStatus(claim.id, 'approved')}>
-                            Approve
-                          </button>
-                        ) : null}
-
-                        {status === 'approved' ? (
-                          <button type="button" className="primary-button small" onClick={() => updateClaimStatus(claim.id, 'fulfilled')}>
-                            Fulfill
-                          </button>
-                        ) : null}
-
-                        {status !== 'fulfilled' && status !== 'rejected' ? (
-                          <button type="button" className="edit-button small" onClick={() => updateClaimStatus(claim.id, 'rejected')}>
-                            Reject
-                          </button>
-                        ) : null}
-
-                        {status === 'fulfilled' ? <strong className="fulfilled-mark">✓ Fulfilled</strong> : null}
-                      </div>
-                    </div>
-                  );
-                }) : (
-                  <p className="csv-note">No reward claims yet.</p>
-                )}
-              </div>
+              {!claims.length ? (
+                <p className="csv-note">No reward claims yet.</p>
+              ) : (
+                <p className="csv-note">Claims are summarized above. Use the fulfillment list for operational follow-up.</p>
+              )}
             </section>
             </div>
 
