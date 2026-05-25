@@ -440,7 +440,9 @@ function normalizeReleaseData(data = {}, previous = {}) {
     joinUrl,
     customerLink: joinUrl,
     shortLink: joinUrl,
-    language: firstValue(data.language, data.lang, previous.language),
+    defaultLang: firstValue(data.defaultLang, data.lang, data.language, previous.defaultLang, previous.language),
+    lang: firstValue(data.defaultLang, data.lang, data.language, previous.lang, previous.language),
+    language: firstValue(data.defaultLang, data.lang, data.language, previous.language),
     metadata: {
       ...(previous.metadata || {}),
       ...(data.metadata || {}),

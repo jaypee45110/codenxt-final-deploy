@@ -299,6 +299,11 @@ export default function JoinPage({ lang, setLang }) {
           setReward(null);
         }
 
+        const campaignLang = data?.defaultLang || data?.lang || data?.language || release?.defaultLang || release?.lang || release?.language || '';
+        if (campaignLang && setLang) {
+          setLang(campaignLang);
+        }
+
         setStatus('ready');
       } catch (error) {
         console.error('Could not load codePerks join page:', error);

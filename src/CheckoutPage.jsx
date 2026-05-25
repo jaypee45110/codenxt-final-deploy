@@ -536,6 +536,9 @@ export default function CheckoutPage({ lang, setLang }) {
         termsAccepted,
         shortLink: `${window.location.origin}/join/${releaseCode}`,
         bonusWindow: '24h',
+        defaultLang: lang || 'en',
+        lang: lang || 'en',
+        language: lang || 'en',
         createdAt: new Date().toISOString(),
       };
 
@@ -568,6 +571,9 @@ export default function CheckoutPage({ lang, setLang }) {
           maxClaims: Math.max(Number(payload.estimatedCustomers || 0), 5000),
           benefitInventory: payload.benefitInventory,
           rewardDelivery: payload.rewardDelivery,
+          defaultLang: payload.defaultLang || lang || 'en',
+          lang: payload.defaultLang || lang || 'en',
+          language: payload.defaultLang || lang || 'en',
           status: 'active',
         }),
       });
