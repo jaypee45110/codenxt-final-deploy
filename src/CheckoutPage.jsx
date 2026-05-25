@@ -395,8 +395,6 @@ export default function CheckoutPage({ lang, setLang }) {
       !formData.releaseDate.trim() ||
       !formData.releaseTime.trim() ||
       !formData.platform.trim() ||
-      !formData.customers.trim() ||
-      Number(formData.customers) <= 0 ||
       !formData.contactName.trim() ||
       !formData.email.trim() ||
       !formData.phone.trim() ||
@@ -518,8 +516,6 @@ export default function CheckoutPage({ lang, setLang }) {
         releaseDate,
         releaseTime,
         city: '',
-        audienceSize: formData.customers.trim(),
-        estimatedCustomers: formData.customers.trim(),
         comment: formData.comments.trim(),
         rewardDelivery,
         benefitInventory,
@@ -563,7 +559,7 @@ export default function CheckoutPage({ lang, setLang }) {
           releaseTime,
           unlockAt: unlockAt.toISOString(),
           endAt: endAt.toISOString(),
-          maxClaims: Math.max(Number(payload.estimatedCustomers || 0), 5000),
+          maxClaims: 999999,
           benefitInventory: payload.benefitInventory,
           rewardDelivery: payload.rewardDelivery,
           defaultLang: payload.defaultLang || lang || 'en',
@@ -671,11 +667,7 @@ export default function CheckoutPage({ lang, setLang }) {
             />
             {fieldError('campaignEndDate') && <small>{text.common.required}</small>}
           </label>
-          <label>
-            {pageText.fields.customers} *
-            <input name="customers" value={formData.customers} onChange={handleChange} placeholder={pageText.placeholders.customers} inputMode="numeric" />
-            {triedSubmit && (!formData.customers.trim() || Number(formData.customers) <= 0) && <small>{text.common.required}</small>}
-          </label>
+          
           <label>
             {pageText.fields.contactName} *
             <input name="contactName" value={formData.contactName} onChange={handleChange} placeholder={pageText.placeholders.contactName} />
