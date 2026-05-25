@@ -186,6 +186,8 @@ export default function JoinPage({ lang, setLang }) {
   const [joined, setJoined] = useState(false);
   const [consent, setConsent] = useState(false);
   const [ownershipCertificate, setOwnershipCertificate] = useState(null);
+  const [benefitWindow, setBenefitWindow] = useState(null);
+  const [benefitWindowStatus, setBenefitWindowStatus] = useState('open');
   const [benefitInventory, setBenefitInventory] = useState(null);
 
   const titleLine = useMemo(() => {
@@ -314,8 +316,13 @@ export default function JoinPage({ lang, setLang }) {
 
     if (joinRes.ok) {
       const joinData = await joinRes.json();
+      setBenefitWindow(joinData?.benefitWindow || null);
+      setBenefitWindowStatus(joinData?.benefitWindowStatus || joinData?.benefitWindow?.status || 'open');
+
       if (joinData?.ownershipCertificate) {
         setOwnershipCertificate(joinData.ownershipCertificate);
+      } else {
+        setOwnershipCertificate(null);
       }
     }
 
@@ -323,8 +330,54 @@ export default function JoinPage({ lang, setLang }) {
     setChoice('joined');
   };
 
+  const formatBenefitWindowDate = (value) => {
+    if (!value) return '';
+    try {
+      return new Intl.DateTimeFormat(lang || undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      }).format(new Date(value));
+    } catch {
+      return String(value);
+    }
+  };
+
+  const renderBenefitWindowMessage = () => {
+    if (!benefitWindow || benefitWindowStatus === 'open') return null;
+
+    const opensAt = formatBenefitWindowDate(benefitWindow.campaignStart);
+    const closesAt = formatBenefitWindowDate(benefitWindow.campaignEnd);
+
+    const copy = {
+      not_open: {
+        title: j.benefitNotOpenTitle || 'Bonus campaign not yet open',
+        body: j.benefitNotOpenBody || 'You can scan and receive your benefit from {start} until {end}.',
+      },
+      closed: {
+        title: j.benefitClosedTitle || 'Sorry, you were too late',
+        body: j.benefitClosedBody || 'This bonus campaign closed on {end}.',
+      },
+    }[benefitWindowStatus];
+
+    if (!copy) return null;
+
+    return (
+      <div className="window-message">
+        <h3>{copy.title}</h3>
+        <p>
+          {copy.body
+            .replace('{start}', opensAt || '-')
+            .replace('{end}', closesAt || '-')}
+        </p>
+      </div>
+    );
+  };
+
   const renderReward = () => {
     if (status === 'loading') return <p className="muted center">{j.loading}</p>;
+    const benefitWindowMessage = renderBenefitWindowMessage();
+    if (benefitWindowMessage) return benefitWindowMessage;
+
     if (status === 'locked') {
       return (
         <p className="muted center">
