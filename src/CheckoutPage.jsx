@@ -481,8 +481,9 @@ export default function CheckoutPage({ lang, setLang }) {
       const artistLogo = formData.stackLogo.trim();
       const releaseDate = formData.releaseDate || new Date().toISOString().slice(0, 10);
       const releaseTime = formData.releaseTime || '06:00';
+      const campaignEndDate = formData.campaignEndDate || releaseDate;
       const unlockAt = new Date(`${releaseDate}T${releaseTime}:00`);
-      const endAt = new Date(unlockAt.getTime() + 24 * 60 * 60 * 1000);
+      const endAt = new Date(`${campaignEndDate}T23:59:59.999`);
 
       const rewardDelivery = {
         company: formData.rewardCompany.trim(),
@@ -500,8 +501,8 @@ export default function CheckoutPage({ lang, setLang }) {
         goldTotal: Number(formData.goldTotal || 0),
         silverTotal: Number(formData.silverTotal || 0),
         standardUnlimited: true,
-        campaignStart: releaseDate,
-        campaignEnd: formData.campaignEndDate,
+        campaignStart: `${releaseDate}T${releaseTime}:00`,
+        campaignEnd: `${campaignEndDate}T23:59:59.999`,
       };
 
       const payload = {
