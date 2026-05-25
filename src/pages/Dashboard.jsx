@@ -3101,7 +3101,13 @@ export default function Dashboard({ lang: appLang, setLang }) {
                     <div className={`bonus-scan-card tier-${tier}`} key={tier}>
                       <span>{text[tier]}</span>
                       <strong>
-                        {tier === 'general' ? (text.remaining || 'Resten') : Number(eventData?.tierLimits?.[tier] || eventData?.bonusLimits?.[tier] || tierSplit[tier] || 0)}
+                        {tier === 'general'
+                          ? (text.remaining || 'Resten')
+                          : Number(
+                              tier === 'gold'
+                                ? eventData?.benefitInventory?.goldTotal || eventData?.tierLimits?.gold || eventData?.bonusLimits?.gold || tierSplit.gold || 0
+                                : eventData?.benefitInventory?.silverTotal || eventData?.tierLimits?.silver || eventData?.bonusLimits?.silver || tierSplit.silver || 0
+                            )}
                       </strong>
                     </div>
                   ))}
