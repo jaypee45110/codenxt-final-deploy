@@ -2954,7 +2954,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
             <section className="panel report-panel compact-report claims-panel">
               <h2 className="panel-title">Reward Claims</h2>
               <p className="report-copy">
-                Registered email and postal reward claims for this campaign.
+                Registered reward claims for this campaign.
               </p>
 
               <div className="button-row report-buttons">

@@ -103,10 +103,6 @@ export default function CertificatePage({ lang }) {
 
   const claimReady =
     claimant.fullName.trim() &&
-    claimant.address.trim() &&
-    claimant.postalCode.trim() &&
-    claimant.country.trim() &&
-    claimant.phone.trim() &&
     claimant.email.trim();
 
   const mailSubject = encodeURIComponent(`codePerks reward claim ${certificateId}`);
@@ -117,10 +113,6 @@ export default function CertificatePage({ lang }) {
     `Campaign / perk: ${data.releaseTitle || data.stackName || 'codePerks reward'}\n\n` +
     `Claimant\n` +
     `Full name: ${claimant.fullName}\n` +
-    `Address: ${claimant.address}\n` +
-    `ZIP / Postal code: ${claimant.postalCode}\n` +
-    `Country: ${claimant.country}\n` +
-    `Phone: ${claimant.phone}\n` +
     `Email: ${claimant.email}\n`
   );
 
@@ -206,39 +198,20 @@ export default function CertificatePage({ lang }) {
 
         <section className="certificate-card">
           <h2>Reward Delivery Information</h2>
-          <p className="muted">Use this information to claim your reward by email or ordinary post.</p>
+          <p className="muted">Use this contact to claim your reward.</p>
 
           <div className="delivery-list">
-            <div><span>Company</span><strong>{rewardDelivery.company || 'Not registered'}</strong></div>
-            <div><span>Responsible person</span><strong>{rewardDelivery.responsiblePerson || 'Not registered'}</strong></div>
-            <div><span>Address</span><strong>{rewardDelivery.address1 || 'Not registered'}</strong></div>
-            <div><span>Address line 2</span><strong>{rewardDelivery.address2 || 'Not registered'}</strong></div>
-            <div><span>ZIP / Postal code</span><strong>{rewardDelivery.postalCode || 'Not registered'}</strong></div>
-            <div><span>Country</span><strong>{rewardDelivery.country || 'Not registered'}</strong></div>
-            <div><span>Phone</span><strong>{rewardDelivery.phone || 'Not registered'}</strong></div>
-            <div><span>Email</span><strong>{rewardDelivery.email || 'Not registered'}</strong></div>
+            <div><span>Delivery contact</span><strong>{rewardDelivery.responsiblePerson || 'Not registered'}</strong></div>
+            <div><span>Delivery email</span><strong>{rewardDelivery.email || 'Not registered'}</strong></div>
           </div>
         </section>
 
         <section className="certificate-card">
           <h2>Claim your reward</h2>
-          <div className="claim-toggle">
-            <button type="button" className={claimMethod === 'email' ? 'active' : ''} onClick={() => setClaimMethod('email')}>Email</button>
-            <button type="button" className={claimMethod === 'post' ? 'active' : ''} onClick={() => setClaimMethod('post')}>Ordinary post</button>
+          <div className="claim-box">
+            <p>Send an email with your Certificate ID and Event code to:</p>
+            <strong>{rewardDelivery.email || 'Reward email not registered'}</strong>
           </div>
-
-          {claimMethod === 'email' ? (
-            <div className="claim-box">
-              <p>Send an email with your Certificate ID and Event code to:</p>
-              <strong>{rewardDelivery.email || 'Reward email not registered'}</strong>
-            </div>
-          ) : (
-            <div className="claim-box">
-              <p>Send your claim by ordinary post to:</p>
-              <strong>{rewardDelivery.responsiblePerson || 'Delivery contact not registered'}</strong>
-              <span>{rewardDelivery.email || ''}</span>
-            </div>
-          )}
         </section>
 
         <section className="certificate-card claimant-card">
@@ -252,64 +225,30 @@ export default function CertificatePage({ lang }) {
             </label>
 
             <label>
-              Address *
-              <input name="address" value={claimant.address} onChange={handleClaimantChange} placeholder="Street address" />
-            </label>
-
-            <label>
-              ZIP / Postal code *
-              <input name="postalCode" value={claimant.postalCode} onChange={handleClaimantChange} placeholder="ZIP / Postal code" />
-            </label>
-
-            <label>
-              Country *
-              <input name="country" value={claimant.country} onChange={handleClaimantChange} placeholder="Country" />
-            </label>
-
-            <label>
-              Phone *
-              <input name="phone" value={claimant.phone} onChange={handleClaimantChange} placeholder="Phone" />
-            </label>
-
-            <label>
               Email *
               <input type="email" name="email" value={claimant.email} onChange={handleClaimantChange} placeholder="Email" />
             </label>
           </div>
 
-          {claimMethod === 'email' ? (
-            <a
-              className={`claim-submit ${claimReady && rewardDelivery.email ? '' : 'disabled'}`}
-              href={claimEmailHref}
-              onClick={async (event) => {
-                if (!claimReady || !rewardDelivery.email) {
-                  event.preventDefault();
-                  setClaimStatus('Please complete all required fields first.');
-                  return;
-                }
-
+          <a
+            className={`claim-submit ${claimReady && rewardDelivery.email ? '' : 'disabled'}`}
+            href={claimEmailHref}
+            onClick={async (event) => {
+              if (!claimReady || !rewardDelivery.email) {
                 event.preventDefault();
-                const ok = await registerRewardClaim('email');
-                if (ok) {
-                  window.location.assign(claimEmailHref);
-                }
-              }}
-            >
-              SEND CLAIM BY EMAIL
-            </a>
-          ) : (
-            <div className="claim-box postal-note">
-              <p>Print or copy your claim details and send them by ordinary post together with your Certificate ID.</p>
-              <button
-                type="button"
-                className="postal-register-button"
-                onClick={() => registerRewardClaim('post')}
-                disabled={!claimReady}
-              >
-                REGISTER POSTAL CLAIM
-              </button>
-            </div>
-          )}
+                setClaimStatus('Please complete name and email first.');
+                return;
+              }
+
+              event.preventDefault();
+              const ok = await registerRewardClaim('email');
+              if (ok) {
+                window.location.assign(claimEmailHref);
+              }
+            }}
+          >
+            SEND CLAIM BY EMAIL
+          </a>
 
           {claimStatus ? <p className="claim-status">{claimStatus}</p> : null}
         </section>
