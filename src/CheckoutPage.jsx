@@ -436,8 +436,8 @@ export default function CheckoutPage({ lang, setLang }) {
       return;
     }
 
-    if (file.size > 900 * 1024) {
-      setLogoError('Logoen er for stor. Bruk helst under 900 KB.');
+    if (file.size > 2 * 1024 * 1024) {
+      setLogoError('Logoen er for stor. Bruk helst under 2 MB.');
       return;
     }
 
