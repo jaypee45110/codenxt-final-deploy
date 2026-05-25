@@ -484,8 +484,11 @@ export default function CheckoutPage({ lang, setLang }) {
       const releaseDate = formData.releaseDate || new Date().toISOString().slice(0, 10);
       const releaseTime = formData.releaseTime || '06:00';
       const campaignEndDate = formData.campaignEndDate || releaseDate;
+      const campaignEndTime = formData.campaignEndTime || '23:00';
+      const claimWindowHours = Math.max(0, Number(formData.claimWindowHours || 24));
+
       const unlockAt = new Date(`${releaseDate}T${releaseTime}:00`);
-      const endAt = new Date(`${campaignEndDate}T23:59:59.999`);
+      const endAt = new Date(`${campaignEndDate}T${campaignEndTime}:00`);
 
       const rewardDelivery = {
         company: formData.rewardCompany.trim(),
