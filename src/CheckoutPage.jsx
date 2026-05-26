@@ -639,13 +639,13 @@ export default function CheckoutPage({ lang, setLang }) {
       <section className="panel checkout-card">
         <div className="input-grid checkout-grid">
           <label>
-            [2] {pageText.fields.stackName} *
+            <span className="field-label"><span className="field-badge">1</span>{pageText.fields.stackName} *</span>
             <input name="stackName" value={formData.stackName} onChange={handleChange} placeholder={pageText.placeholders.stackName} />
             {fieldError('stackName') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            [4] {pageText.fields.logo} (PNG/JPG) *
+            <span className="field-label"><span className="field-badge">2</span>Logo (PNG/JPG) *</span>
             <input
               type="file"
               accept="image/png,image/jpeg"
@@ -656,34 +656,34 @@ export default function CheckoutPage({ lang, setLang }) {
             {triedSubmit && !formData.stackLogo && <small>{text.common.required}</small>}
           </label>
           <label>
-            [1] {pageText.fields.companyName} *
+            <span className="field-label"><span className="field-badge">3</span>{pageText.fields.companyName} *</span>
             <input name="companyName" value={formData.companyName} onChange={handleChange} placeholder={pageText.placeholders.companyName} />
             {fieldError('companyName') && <small>{text.common.required}</small>}
           </label>
           <label>
-            [3] {pageText.fields.releaseTitle} *
+            <span className="field-label"><span className="field-badge">4</span>{pageText.fields.releaseTitle} *</span>
             <input name="releaseTitle" value={formData.releaseTitle} onChange={handleChange} placeholder={pageText.placeholders.releaseTitle} />
             {fieldError('releaseTitle') && <small>{text.common.required}</small>}
           </label>
           <label>
-            [5] {pageText.fields.platform} *
+            <span className="field-label"><span className="field-badge">5</span>{pageText.fields.platform} *</span>
             <input name="platform" value={formData.platform} onChange={handleChange} placeholder={pageText.placeholders.platform} />
             {fieldError('platform') && <small>{text.common.required}</small>}
           </label>
           <label>
-            [6] {pageText.fields.releaseDate} *
+            <span className="field-label"><span className="field-badge">6</span>{pageText.fields.releaseDate} *</span>
             <input type="date" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
             {fieldError('releaseDate') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            [7] {pageText.fields.releaseTime} *
+            <span className="field-label"><span className="field-badge">7</span>{pageText.fields.releaseTime} *</span>
             <input type="time" name="releaseTime" value={formData.releaseTime} onChange={handleChange} />
             {fieldError('releaseTime') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            [8] {pageText.fields.bonusActive} *
+            <span className="field-label"><span className="field-badge">8</span>{pageText.fields.bonusActive} *</span>
             <input
               type="date"
               name="campaignEndDate"
@@ -694,22 +694,22 @@ export default function CheckoutPage({ lang, setLang }) {
           </label>
           
           <label>
-            [11] {pageText.fields.contactName} *
+            <span className="field-label"><span className="field-badge">9</span>{pageText.fields.contactName} *</span>
             <input name="contactName" value={formData.contactName} onChange={handleChange} placeholder={pageText.placeholders.contactName} />
             {fieldError('contactName') && <small>{text.common.required}</small>}
           </label>
           <label>
-            [12] {pageText.fields.email} *
+            <span className="field-label"><span className="field-badge">10</span>{pageText.fields.email} *</span>
             <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={pageText.placeholders.email} />
             {fieldError('email') && <small>{text.common.required}</small>}
           </label>
           <label>
-            [13] {pageText.fields.phone} *
+            <span className="field-label"><span className="field-badge">11</span>{pageText.fields.phone} *</span>
             <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder={pageText.placeholders.phone} />
             {fieldError('phone') && <small>{text.common.required}</small>}
           </label>
           <label className="wide">
-            [14] Ekstra notat
+            <span className="field-label"><span className="field-badge">12</span>Ekstra notat</span>
             <textarea name="comments" value={formData.comments} onChange={handleChange} placeholder={pageText.placeholders.comments} />
             
           </label>
@@ -723,19 +723,19 @@ export default function CheckoutPage({ lang, setLang }) {
 
             <div className="input-grid checkout-grid">
               <label>
-                [15] {{ no: 'GULL-hentested', en: 'GOLD pickup location', de: 'GOLD Abholort', fr: 'Lieu de retrait OR', es: 'Lugar de recogida ORO' }[lang] || 'GOLD pickup location'} *
+                <span className="field-label"><span className="field-badge">13</span>{{ no: 'GULL-hentested', en: 'GOLD pickup location', de: 'GOLD Abholort', fr: 'Lieu de retrait OR', es: 'Lugar de recogida ORO' }[lang] || 'GOLD pickup location'} *</span>
                 <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
                 {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
 
               <label>
-                [16] {{ no: 'SØLV-hentested', en: 'SILVER pickup location', de: 'SILBER Abholort', fr: 'Lieu de retrait ARGENT', es: 'Lugar de recogida PLATA' }[lang] || 'SILVER pickup location'} *
+                <span className="field-label"><span className="field-badge">14</span>{{ no: 'SØLV-hentested', en: 'SILVER pickup location', de: 'SILBER Abholort', fr: 'Lieu de retrait ARGENT', es: 'Lugar de recogida PLATA' }[lang] || 'SILVER pickup location'} *</span>
                 <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
                 {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
 
               <label>
-                [17] {{ no: 'GENERELL-hentested', en: 'GENERAL pickup location', de: 'STANDARD Abholort', fr: 'Lieu de retrait GÉNÉRAL', es: 'Lugar de recogida GENERAL' }[lang] || 'GENERAL pickup location'} *
+                <span className="field-label"><span className="field-badge">15</span>{{ no: 'GENERELL-hentested', en: 'GENERAL pickup location', de: 'STANDARD Abholort', fr: 'Lieu de retrait GÉNÉRAL', es: 'Lugar de recogida GENERAL' }[lang] || 'GENERAL pickup location'} *</span>
                 <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
                 {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
@@ -750,7 +750,7 @@ export default function CheckoutPage({ lang, setLang }) {
 
             <div className="input-grid checkout-grid">
               <label>
-                [18] {benefitInventoryText.gold} *
+                <span className="field-label"><span className="field-badge">16</span>{benefitInventoryText.gold} *</span>
                 <input
                   name="goldTotal"
                   value={formData.goldTotal}
@@ -762,7 +762,7 @@ export default function CheckoutPage({ lang, setLang }) {
               </label>
 
               <label>
-                [19] {benefitInventoryText.silver} *
+                <span className="field-label"><span className="field-badge">17</span>{benefitInventoryText.silver} *</span>
                 <input
                   name="silverTotal"
                   value={formData.silverTotal}
@@ -774,7 +774,7 @@ export default function CheckoutPage({ lang, setLang }) {
               </label>
 
               <label>
-                [20] {benefitInventoryText.standard}
+                <span className="field-label"><span className="field-badge">18</span>{benefitInventoryText.standard}</span>
                 <input value={benefitInventoryText.unlimited} readOnly />
               </label>
 
@@ -801,13 +801,13 @@ export default function CheckoutPage({ lang, setLang }) {
             <div className="input-grid checkout-grid">
 
               <label>
-                [21] {rewardDeliveryText.responsible} *
+                <span className="field-label"><span className="field-badge">19</span>{rewardDeliveryText.responsible} *</span>
                 <input name="rewardResponsible" value={formData.rewardResponsible} onChange={handleChange} placeholder={rewardDeliveryText.responsible} />
                 {fieldError('rewardResponsible') && <small>{text.common.required}</small>}
               </label>
 
               <label>
-                [22] {rewardDeliveryText.email} *
+                <span className="field-label"><span className="field-badge">20</span>{rewardDeliveryText.email} *</span>
                 <input type="email" name="rewardEmail" value={formData.rewardEmail} onChange={handleChange} placeholder={rewardDeliveryText.email} />
                 {fieldError('rewardEmail') && <small>{text.common.required}</small>}
               </label>
@@ -842,6 +842,30 @@ export default function CheckoutPage({ lang, setLang }) {
         </button>
       </section>
           <style>{`
+
+        .field-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          line-height: 1.2;
+        }
+
+        .field-badge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 22px;
+          height: 22px;
+          min-width: 22px;
+          border-radius: 999px;
+          background: linear-gradient(180deg, #f2f2f2, #cfcfcf);
+          color: #050505;
+          font-size: 12px;
+          font-weight: 900;
+          letter-spacing: 0;
+          box-shadow: 0 1px 2px rgba(0,0,0,.35);
+        }
+
         .checkout-required-note {
           margin: 18px 0 10px;
           color: rgba(255,255,255,0.68);
