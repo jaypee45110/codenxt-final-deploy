@@ -408,6 +408,17 @@ export default function JoinPage({ lang, setLang }) {
       );
     }
 
+    const expectedTier = assignedTier || bonusTier || '';
+    const actualTier = reward?.tier || '';
+
+    if (expectedTier && actualTier && actualTier !== expectedTier) {
+      return (
+        <p className="muted center">
+          {j.rewardPending || 'Your verified benefit will be shown on the claim certificate after you join.'}
+        </p>
+      );
+    }
+
     if (reward.type === 'image') return <img src={reward.url} alt={reward.title || ''} className="join-media" />;
     if (reward.type === 'video') return <video src={reward.url} controls playsInline className="join-media" />;
     if (reward.type === 'audio') return <audio src={reward.url} controls className="join-audio" />;
