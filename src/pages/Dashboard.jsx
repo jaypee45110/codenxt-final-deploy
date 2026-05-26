@@ -1376,10 +1376,32 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
 
   const activeDraft = bonusDrafts[activeTier];
-  const canSaveBeneficio = Boolean(activeDraft?.url || activeDraft?.file);
+  const canSaveBeneficio = Boolean(activeDraft?.url || activeDraft?.file || (activeDraft?.type === 'text' && activeDraft?.title));
   const conversionRate = makeConversion(report.joins, report.uniqueScans);
+
+  const formatDateOnly = (value) => {
+    if (!value) return '';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return String(value).slice(0, 10);
+    return parsed.toLocaleDateString(lang || undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
+  const campaignStart = eventData?.benefitInventory?.campaignStart || eventData.publishDate || eventData.startAt || '';
+  const campaignEnd = eventData?.benefitInventory?.campaignEnd || eventData.endAt || '';
+  const campaignPeriod = campaignStart || campaignEnd
+    ? `${formatDateOnly(campaignStart)} → ${formatDateOnly(campaignEnd)}`
+    : '';
+
+  const campaignPeriodLabel = {
+    no: 'Kampanjeperiode',
+    en: 'Campaign period',
+    de: 'Kampagnenzeitraum',
+    fr: 'Période de campagne',
+    es: 'Periodo de campaña',
+  }[lang] || 'Campaign period';
+
   const infoCards = [
-    [text.publishDate, eventData.publishDate],
+    [campaignPeriodLabel, campaignPeriod],
     [text.expectedMembers, eventData.expectedMembers],
     [text.company, eventData.companyName],
     [text.releaseCode, eventData.eventCode],
