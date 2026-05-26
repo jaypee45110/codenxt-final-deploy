@@ -79,7 +79,7 @@ export default function CheckoutPage({ lang, setLang }) {
       selectedFile: 'Valgt fil',
       termsText: 'codePerks brukes til QR- og lenkebasert tilgang, digitale fordeler, kunderespons og direkte oppfølging via codeNXT.',
       accept: 'Jeg godtar vilkårene for codePerks.',
-      continue: 'OPPRETT MEDLEMSFORDEL',
+      continue: 'OPPRETT BONUSKAMPANJE',
       creating: 'Oppretter bonuskampanje...',
       submitError: 'Kunne ikke opprette bonuskampanjen. Prøv igjen.',
     },
