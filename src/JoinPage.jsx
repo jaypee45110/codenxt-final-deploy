@@ -289,17 +289,7 @@ export default function JoinPage({ lang, setLang }) {
         const tier = scanData?.tier || 'general';
         setBonusTier(tier);
 
-        if (data?.id) {
-          const rewardRes = await fetch(`${API_BASE}/reward/${data.id}?tier=${tier}&vertical=codeperks`);
-          if (rewardRes.ok) {
-            const rewardData = await rewardRes.json();
-            setReward(rewardData || null);
-          } else {
-            setReward(null);
-          }
-        } else {
-          setReward(null);
-        }
+        setReward(null);
 
         const campaignLang = data?.defaultLang || data?.lang || data?.language || release?.defaultLang || release?.lang || release?.language || '';
         if (campaignLang && setLang) {
