@@ -449,8 +449,8 @@ export default function JoinPage({ lang, setLang }) {
     return null;
   };
 
-  const assignedTier = ownershipCertificate?.benefitTier || ownershipCertificate?.tier || bonusTier;
-  const tierText = b[assignedTier] || b.general;
+  const assignedTier = ownershipCertificate?.benefitTier || ownershipCertificate?.tier || '';
+  const tierText = assignedTier ? (b[assignedTier] || b.general) : (b.verifiedBenefit || 'VERIFIED BENEFIT');
   const releaseDate = release.releaseDate ? String(release.releaseDate).slice(0, 10) : '';
   const pageLogo = release.pageLogo || '/codePerks-logo.png?v=3';
 
@@ -1030,7 +1030,7 @@ export default function JoinPage({ lang, setLang }) {
 
         <section className="bonus-claim">
           <p className="line-one">{b.headlineLine1 || b.listened}</p>
-          <p className="line-three">{b.headlineLine2 || `${tierText} ${b.bonus}`}</p>
+          <p className="line-three">{assignedTier ? `${tierText} ${b.bonus}` : (b.verifiedBenefit || 'VERIFIED BENEFIT')}</p>
         </section>
 
         <section className="release-block">
@@ -1058,7 +1058,7 @@ export default function JoinPage({ lang, setLang }) {
         ) : null}
 
         <section className="bonus-content">
-          <p className="bonus-content-title">{tierText} {b.bonus}</p>
+          <p className="bonus-content-title">{assignedTier ? `${tierText} ${b.bonus}` : (b.verifiedBenefit || 'VERIFIED BENEFIT')}</p>
           <div className="reward-stage">{renderReward()}</div>
         </section>
 
