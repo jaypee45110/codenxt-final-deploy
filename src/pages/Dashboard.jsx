@@ -1401,12 +1401,11 @@ export default function Dashboard({ lang: appLang, setLang }) {
   }[lang] || 'Campaign period';
 
   const infoCards = [
-    [campaignPeriodLabel, campaignPeriod],
-    [text.expectedMembers, eventData.expectedMembers],
-    [text.company, eventData.companyName],
-    [text.releaseCode, eventData.eventCode],
-    [text.platform, eventData.platform],
-    [text.customerLink, joinUrl],
+    [`① ${campaignPeriodLabel}`, campaignPeriod],
+    [`② ${text.company}`, eventData.companyName],
+    [`③ ${text.releaseCode}`, eventData.eventCode],
+    [`④ ${text.platform}`, eventData.platform],
+    [`⑤ ${text.customerLink}`, joinUrl],
   ];
   const metricCards = [
     [text.scans, report.totalScans.toLocaleString()],
@@ -2941,7 +2940,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           <div className="main-grid">
             <div className="left-page">
             <section className="panel presentation-panel">
-              <h2 className="panel-title">{text.presentation}</h2>
+              <h2 className="panel-title">⑥ {text.presentation}</h2>
               <div className="slide">
                 <img className="slide-bg" src={badgeBase} alt="" aria-hidden="true" />
                 <div className="qr-box">
@@ -2963,7 +2962,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
               <div className="status">{imageStatus}</div>
             </section>
             <section className="panel report-panel compact-report">
-              <h2 className="panel-title">{text.report}</h2>
+              <h2 className="panel-title">⑦ {text.report}</h2>
               <p className="report-copy">
                 {text.reportHelp} CSV-filen kan brukes til enkel oppfølging av InSide-tilganger, skanninger og bonusrespons.
               </p>
@@ -2982,7 +2981,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
             </section>
 
             <section className="panel report-panel compact-report claims-panel">
-              <h2 className="panel-title">Reward Claims</h2>
+              <h2 className="panel-title">⑧ Reward Claims</h2>
               <p className="report-copy">
                 Registered reward claims for this campaign.
               </p>
@@ -3027,7 +3026,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
             <section className="panel bonus-panel">
               <div className="bonus-header">
-                <h2 className="panel-title">{text.bonus}</h2>
+                <h2 className="panel-title">⑨ {text.bonus}</h2>
               </div>
 
               <div className="bonus-editor">
