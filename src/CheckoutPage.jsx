@@ -852,6 +852,7 @@ export default function CheckoutPage({ lang, setLang }) {
         }
 
         .checkout-card .field-label .field-badge,
+        .checkout-card .field-label .field-badge,
         .field-badge {
           display: inline-flex !important;
           align-items: center !important;
