@@ -100,13 +100,18 @@ export default function CertificatePage({ lang }) {
     claimant.fullName.trim() &&
     claimant.email.trim();
 
+  const certificateTier = certificateValidation.benefitTier || certificateValidation.tier || data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || '';
+  const certificateBonusDetails = data?.bonusDetails?.[certificateTier] || null;
+
   const mailSubject = encodeURIComponent(`codePerks reward claim ${certificateId}`);
   const mailBody = encodeURIComponent(
     `Reward claim\n\n` +
     `Certificate ID: ${certificateId}\n` +
     `Event code: ${eventCode}\n` +
-    `Category: ${certificateValidation.benefitTier || certificateValidation.tier || data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || 'Not specified'}\n` +
-    `Redeem at: ${data.redemptionLocation || 'Not registered'}\n` +
+    `Category: ${certificateTier || 'Not specified'}\n` +
+    `Reward: ${certificateBonusDetails?.reward || 'Not registered'}\n` +
+    `Redeem at: ${certificateBonusDetails?.redemptionLocation || data.redemptionLocation || 'Not registered'}\n` +
+    `Instructions: ${certificateBonusDetails?.instructions || 'None'}\n` +
     `Campaign / perk: ${data.releaseTitle || data.stackName || 'codePerks reward'}\n\n` +
     `Claimant\n` +
     `Full name: ${claimant.fullName}\n` +
@@ -191,8 +196,16 @@ export default function CertificatePage({ lang }) {
               <strong>{data.releaseTitle || data.stackName || 'codePerks reward'}</strong>
             </div>
             <div>
+              <span>Bonus</span>
+              <strong>{certificateBonusDetails?.reward || 'Not registered'}</strong>
+            </div>
+            <div>
               <span>Redeem at</span>
-              <strong>{data.redemptionLocation || 'Not registered'}</strong>
+              <strong>{certificateBonusDetails?.redemptionLocation || data.redemptionLocation || 'Not registered'}</strong>
+            </div>
+            <div>
+              <span>Instructions</span>
+              <strong>{certificateBonusDetails?.instructions || 'None'}</strong>
             </div>
           </div>
         </section>
