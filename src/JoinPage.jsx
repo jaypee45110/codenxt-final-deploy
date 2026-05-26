@@ -16,7 +16,7 @@ const bonusCopy = {
     silver: 'SØLV',
     general: 'GENERELL',
     insideTitle: 'codePerks-info',
-    insideText: 'Få relevant informasjon om denne fordelen direkte på telefonen.'
+    insideText: 'Få relevant informasjon om denne fordelen direkte på telefonen.',
     phone: 'Mobilnummer',
     confirm: 'KOM INSIDE',
     joined: 'VELKOMMEN INSIDE',

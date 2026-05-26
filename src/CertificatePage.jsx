@@ -16,7 +16,7 @@ const certificateText = {
   no: {
     kicker: 'VERIFISERT REWARD-SERTIFIKAT',
     title: 'Reward Claim Certificate',
-    intro: 'Dette sertifikatet bekrefter fordelen din og viser hvordan den kan hentes eller kreves.'
+    intro: 'Dette sertifikatet bekrefter fordelen din og viser hvordan den kan hentes eller kreves.',
     valid: 'GYLDIG',
     notVerified: 'IKKE VERIFISERT',
     verifying: 'VERIFISERER',
