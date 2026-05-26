@@ -45,13 +45,13 @@ export default function CheckoutPage({ lang, setLang }) {
   const c = text.checkout;
   const pageTextByLang = {
     no: {
-      title: 'Sett opp medlemsfordelen',
-      subtitle: 'Koble kundemoment, medlemsfordel og bedrift direkte til kunden.',
+      title: 'Sett opp bonuskampanjen',
+      subtitle: 'Koble kampanje, bonus og innløsing direkte til kunden.',
       fields: {
-        stackName: 'Medlemsfordel',
+        stackName: 'Bonus',
         logo: 'Illustrasjon',
         companyName: 'Bedrift',
-        releaseTitle: 'Type medlemsfordel',
+        releaseTitle: 'Bonustype',
         platform: 'Kampanjemedium',
         releaseDate: 'Startdato',
         releaseTime: 'Kampanjens starttidspunkt',
@@ -66,7 +66,7 @@ export default function CheckoutPage({ lang, setLang }) {
       placeholders: {
         stackName: 'VIP-fordel, kundeklubb, åpningstilbud ...',
         companyName: 'Bedriftens navn',
-        releaseTitle: 'VIP, lojalitet, kupong, invitasjon, lansering ...',
+        releaseTitle: 'VIP, bonus, kupong, invitasjon, lansering ...',
         platform: 'Internavis, TV, nettside, butikk, klubb, kampanje ...',
         customers: '2500',
         contactName: 'Fullt navn',
@@ -80,8 +80,8 @@ export default function CheckoutPage({ lang, setLang }) {
       termsText: 'codePerks brukes til QR- og lenkebasert tilgang, digitale fordeler, kunderespons og direkte oppfølging via codeNXT.',
       accept: 'Jeg godtar vilkårene for codePerks.',
       continue: 'OPPRETT MEDLEMSFORDEL',
-      creating: 'Oppretter medlemsfordel...',
-      submitError: 'Kunne ikke opprette medlemsfordelen. Prøv igjen.',
+      creating: 'Oppretter bonuskampanje...',
+      submitError: 'Kunne ikke opprette bonuskampanjen. Prøv igjen.',
     },
     en: {
       title: 'Set up your perk',
@@ -103,9 +103,9 @@ export default function CheckoutPage({ lang, setLang }) {
         comments: 'Hentested for innløsing av bonus',
       },
       placeholders: {
-        stackName: 'VIP perk, loyalty reward, opening offer ...',
+        stackName: 'VIP perk, reward, opening offer ...',
         companyName: 'Company name',
-        releaseTitle: 'VIP, loyalty, coupon, invitation, launch ...',
+        releaseTitle: 'VIP, reward, coupon, invitation, launch ...',
         platform: 'Internal newsletter, TV, website, store, club, campaign ...',
         customers: '2500',
         contactName: 'Full name',

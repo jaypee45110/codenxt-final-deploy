@@ -161,7 +161,7 @@ export default function CertificatePage({ lang }) {
           <img src="/codePerks-logo.png?v=3" alt="codePerks logo" className="certificate-logo" />
           <div className="certificate-kicker">VERIFIED REWARD CERTIFICATE</div>
           <h1>Reward Claim Certificate</h1>
-          <p>This certificate verifies your codePerks member benefit and gives you the information needed to claim your reward.</p>
+          <p>This certificate verifies your codePerks reward and gives you the information needed to claim it.</p>
         </div>
 
         <section className="certificate-card verified">
