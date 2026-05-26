@@ -2215,23 +2215,28 @@ export default function Dashboard({ lang: appLang, setLang }) {
             gap: 8px;
           }
 
-          .panel-number-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            min-width: 22px;
-            border-radius: 999px;
+          .panel-number-badge,
+.panel-title .panel-number-badge,
+.eyebrow .panel-number-badge {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 22px !important;
+            height: 22px !important;
+            min-width: 22px !important;
+            border-radius: 999px !important;
             background: #d9d9d9 !important;
             color: #000000 !important;
+            fill: #000000 !important;
+            stroke: #000000 !important;
             -webkit-text-fill-color: #000000 !important;
-            font-size: 12px;
-            font-weight: 900;
-            line-height: 1;
-            letter-spacing: 0;
             text-shadow: none !important;
-            box-shadow: 0 1px 2px rgba(0,0,0,.35);
+            opacity: 1 !important;
+            font-size: 12px !important;
+            font-weight: 900 !important;
+            line-height: 1 !important;
+            letter-spacing: 0 !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,.35) !important;
           }
 
 
