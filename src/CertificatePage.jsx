@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 const API_BASE = 'https://codenxt-backend-production.up.railway.app';
 
@@ -11,8 +12,80 @@ function readJson(key) {
   }
 }
 
-export default function CertificatePage({ lang }) {
+const certificateText = {
+  no: {
+    kicker: 'VERIFISERT REWARD-SERTIFIKAT',
+    title: 'Reward Claim Certificate',
+    intro: 'Dette sertifikatet bekrefter din codePerks-fordel og viser informasjonen du trenger for å kreve den.',
+    valid: 'GYLDIG',
+    notVerified: 'IKKE VERIFISERT',
+    verifying: 'VERIFISERER',
+    certificateId: 'Sertifikat-ID',
+    eventCode: 'Kampanjekode',
+    issued: 'Utstedt',
+    backendValidation: 'Verifisering',
+    campaignPerk: 'Kampanje / fordel',
+    bonus: 'Bonus',
+    notRegistered: 'Ikke registrert',
+    redeemAt: 'Hentested',
+    instructions: 'Instruksjoner',
+    none: 'Ingen',
+    deliveryInfo: 'Informasjon om utlevering',
+    deliveryHelp: 'Bruk denne kontakten for å kreve fordelen.',
+    deliveryContact: 'Kontaktperson',
+    deliveryEmail: 'E-post',
+    claimTitle: 'Krev fordelen',
+    claimHelp: 'Send en e-post med Sertifikat-ID og Kampanjekode til:',
+    claimDetails: 'Opplysninger om mottaker',
+    claimDetailsHelp: 'Fyll inn navn og e-post slik at fordelen kan verifiseres og utleveres.',
+    fullName: 'Fullt navn',
+    email: 'E-post',
+    sendClaim: 'SEND KRAV PÅ E-POST',
+    back: 'Tilbake til fordel',
+    missingFields: 'Fyll inn navn og e-post først.',
+    registered: 'E-postkrav registrert.',
+    registerError: 'Kunne ikke registrere krav. Prøv igjen.',
+  },
+  en: {
+    kicker: 'VERIFIED REWARD CERTIFICATE',
+    title: 'Reward Claim Certificate',
+    intro: 'This certificate verifies your codePerks reward and gives you the information needed to claim it.',
+    valid: 'VALID',
+    notVerified: 'NOT VERIFIED',
+    verifying: 'VERIFYING',
+    certificateId: 'Certificate ID',
+    eventCode: 'Event code',
+    issued: 'Issued',
+    backendValidation: 'Backend validation',
+    campaignPerk: 'Campaign / perk',
+    bonus: 'Bonus',
+    notRegistered: 'Not registered',
+    redeemAt: 'Redeem at',
+    instructions: 'Instructions',
+    none: 'None',
+    deliveryInfo: 'Reward Delivery Information',
+    deliveryHelp: 'Use this contact to claim your reward.',
+    deliveryContact: 'Delivery contact',
+    deliveryEmail: 'Delivery email',
+    claimTitle: 'Claim your reward',
+    claimHelp: 'Send an email with your Certificate ID and Event code to:',
+    claimDetails: 'Your reward claim details',
+    claimDetailsHelp: 'Enter your personal details so the reward can be verified and delivered.',
+    fullName: 'Full name',
+    email: 'Email',
+    sendClaim: '{c.sendClaim}',
+    back: '{c.back}',
+    missingFields: 'Please complete name and email first.',
+    registered: 'Email claim registered.',
+    registerError: 'Could not register claim. Please try again.',
+  },
+};
+
+
+export default function CertificatePage({ lang: initialLang = 'no' }) {
   const { eventCode, certificateId } = useParams();
+  const [lang, setLang] = useState(initialLang || 'no');
+  const c = certificateText[lang] || certificateText.en;
   const eventData = useMemo(() => readJson('codenxt_event'), []);
   const latestEvent = useMemo(() => readJson('codeperks_latest_event'), []);
   const [serverEvent, setServerEvent] = useState({});
@@ -148,10 +221,10 @@ export default function CertificatePage({ lang }) {
     `Reward claim\n\n` +
     `Certificate ID: ${certificateId}\n` +
     `Event code: ${eventCode}\n` +
-    `Category: ${certificateTier || 'Not specified'}\n` +
-    `Reward: ${certificateRewardTitle || 'Not registered'}\n` +
-    `Redeem at: ${certificateBonusDetails?.redemptionLocation || data.redemptionLocation || 'Not registered'}\n` +
-    `Instructions: ${certificateBonusDetails?.instructions || 'None'}\n` +
+    `Category: ${certificateTier || c.notRegistered}\n` +
+    `Reward: ${certificateRewardTitle || c.notRegistered}\n` +
+    `Redeem at: ${certificateBonusDetails?.redemptionLocation || data.redemptionLocation || c.notRegistered}\n` +
+    `Instructions: ${certificateBonusDetails?.instructions || c.none}\n` +
     `Campaign / perk: ${data.releaseTitle || data.stackName || 'codePerks reward'}\n\n` +
     `Claimant\n` +
     `Full name: ${claimant.fullName}\n` +
@@ -165,7 +238,7 @@ export default function CertificatePage({ lang }) {
 
   async function registerRewardClaim(type) {
     if (!claimReady) {
-      setClaimStatus('Please complete all required fields first.');
+      setClaimStatus(c.missingFields);
       return false;
     }
 
@@ -188,11 +261,11 @@ export default function CertificatePage({ lang }) {
       if (!response.ok || !json.ok) {
         throw new Error(json.error || `Could not register claim (${response.status})`);
       }
-      setClaimStatus('Email claim registered.');
+      setClaimStatus(c.registered);
       return true;
     } catch (error) {
       console.error('Reward claim registration failed:', error);
-      setClaimStatus(error?.message || 'Could not register claim. Please try again.');
+      setClaimStatus(error?.message || c.registerError);
       return false;
     }
   }
@@ -203,84 +276,85 @@ export default function CertificatePage({ lang }) {
     <main className="certificate-page">
       <section className="certificate-shell">
         <div className="certificate-top">
+          <LanguageSwitcher lang={lang} onChange={setLang} />
           <img src="/codePerks-logo.png?v=3" alt="codePerks logo" className="certificate-logo" />
-          <div className="certificate-kicker">VERIFIED REWARD CERTIFICATE</div>
-          <h1>Reward Claim Certificate</h1>
-          <p>This certificate verifies your codePerks reward and gives you the information needed to claim it.</p>
+          <div className="certificate-kicker">{c.kicker}</div>
+          <h1>{c.title}</h1>
+          <p>{c.intro}</p>
         </div>
 
         <section className="certificate-card verified">
           <div className={`status-pill ${certificateValidation.valid ? 'valid' : 'invalid'}`}>
-            {certificateValidation.checked ? (certificateValidation.valid ? 'VALID' : 'NOT VERIFIED') : 'VERIFYING'}
+            {certificateValidation.checked ? (certificateValidation.valid ? c.valid : c.notVerified) : c.verifying}
           </div>
 
           <div className="certificate-grid">
             <div>
-              <span>Certificate ID</span>
+              <span>{c.certificateId}</span>
               <strong>{certificateId}</strong>
             </div>
             <div>
-              <span>Event code</span>
+              <span>{c.eventCode}</span>
               <strong>{eventCode}</strong>
             </div>
             <div>
-              <span>Issued</span>
+              <span>{c.issued}</span>
               <strong>{issuedDate}</strong>
             </div>
             <div>
-              <span>Backend validation</span>
+              <span>{c.backendValidation}</span>
               <strong>{certificateValidation.checked ? certificateValidation.status : 'checking'}</strong>
             </div>
             <div>
-              <span>Campaign / perk</span>
+              <span>{c.campaignPerk}</span>
               <strong>{data.releaseTitle || data.stackName || 'codePerks reward'}</strong>
             </div>
             <div>
-              <span>Bonus</span>
-              <strong>{certificateRewardTitle || 'Not registered'}</strong>
+              <span>{c.bonus}</span>
+              <strong>{certificateRewardTitle || c.notRegistered}</strong>
             </div>
             <div>
-              <span>Redeem at</span>
-              <strong>{certificateBonusDetails?.redemptionLocation || data.redemptionLocation || 'Not registered'}</strong>
+              <span>{c.redeemAt}</span>
+              <strong>{certificateBonusDetails?.redemptionLocation || data.redemptionLocation || c.notRegistered}</strong>
             </div>
             <div>
-              <span>Instructions</span>
-              <strong>{certificateBonusDetails?.instructions || 'None'}</strong>
+              <span>{c.instructions}</span>
+              <strong>{certificateBonusDetails?.instructions || c.none}</strong>
             </div>
           </div>
         </section>
 
         <section className="certificate-card">
-          <h2>Reward Delivery Information</h2>
-          <p className="muted">Use this contact to claim your reward.</p>
+          <h2>{c.deliveryInfo}</h2>
+          <p className="muted">{c.deliveryHelp}</p>
 
           <div className="delivery-list">
-            <div><span>Delivery contact</span><strong>{rewardDelivery.responsiblePerson || 'Not registered'}</strong></div>
-            <div><span>Delivery email</span><strong>{rewardDelivery.email || 'Not registered'}</strong></div>
+            <div><span>{c.deliveryContact}</span><strong>{rewardDelivery.responsiblePerson || c.notRegistered}</strong></div>
+            <div><span>{c.deliveryEmail}</span><strong>{rewardDelivery.email || c.notRegistered}</strong></div>
           </div>
         </section>
 
         <section className="certificate-card">
-          <h2>Claim your reward</h2>
+          <h2>{c.claimTitle}</h2>
           <div className="claim-box">
-            <p>Send an email with your Certificate ID and Event code to:</p>
-            <strong>{rewardDelivery.email || 'Reward email not registered'}</strong>
+            <p>{c.claimHelp}</p>
+            <strong>{rewardDelivery.email || c.notRegistered}</strong>
           </div>
         </section>
 
         <section className="certificate-card claimant-card">
-          <h2>Your reward claim details</h2>
-          <p className="muted">Enter your personal details so the reward can be verified and delivered.</p>
+          <h2>{c.claimDetails}</h2>
+          <p className="muted">{c.claimDetailsHelp}</p>
 
           <div className="claimant-grid">
             <label>
-              Full name *
-              <input name="fullName" value={claimant.fullName} onChange={handleClaimantChange} placeholder="Full name" />
+              {c.fullName} *
+              <input name="fullName" value={claimant.fullName} onChange={handleClaimantChange} placeholder={c.fullName} />
             </label>
 
             <label>
-              Email *
-              <input type="email" name="email" value={claimant.email} onChange={handleClaimantChange} placeholder="Email" />
+              {c.email} *
+              <input type="email" name="email" value={claimant.email} onChange={handleClaimantChange} placeholder={c.email} />
             </label>
           </div>
 
@@ -290,7 +364,7 @@ export default function CertificatePage({ lang }) {
             onClick={async (event) => {
               if (!claimReady || !rewardDelivery.email) {
                 event.preventDefault();
-                setClaimStatus('Please complete name and email first.');
+                setClaimStatus(c.missingFields);
                 return;
               }
 
@@ -301,14 +375,14 @@ export default function CertificatePage({ lang }) {
               }
             }}
           >
-            SEND CLAIM BY EMAIL
+            {c.sendClaim}
           </a>
 
           {claimStatus ? <p className="claim-status">{claimStatus}</p> : null}
         </section>
 
         <Link className="back-link" to={`/join/${eventCode}`}>
-          Back to reward
+          {c.back}
         </Link>
       </section>
 
@@ -331,6 +405,11 @@ export default function CertificatePage({ lang }) {
         .certificate-top {
           text-align: center;
           margin-bottom: 22px;
+        }
+
+        .certificate-top .language-switcher {
+          margin: 0 auto 18px;
+          justify-content: center;
         }
 
         .certificate-logo {
