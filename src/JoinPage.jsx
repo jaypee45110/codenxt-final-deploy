@@ -451,6 +451,30 @@ export default function JoinPage({ lang, setLang }) {
 
   const assignedTier = ownershipCertificate?.benefitTier || ownershipCertificate?.tier || '';
   const tierText = assignedTier ? (b[assignedTier] || b.general) : (b.verifiedBenefit || 'VERIFIED BENEFIT');
+
+  useEffect(() => {
+    let alive = true;
+
+    async function loadAssignedTierReward() {
+      try {
+        if (!release?.id || !assignedTier) return;
+
+        const rewardRes = await fetch(`${API_BASE}/reward/${encodeURIComponent(release.id)}?tier=${encodeURIComponent(assignedTier)}&vertical=codeperks`);
+        if (!rewardRes.ok) return;
+
+        const rewardData = await rewardRes.json().catch(() => null);
+        if (alive && rewardData) setReward(rewardData);
+      } catch (error) {
+        console.warn('Could not load assigned tier reward:', error);
+      }
+    }
+
+    loadAssignedTierReward();
+
+    return () => {
+      alive = false;
+    };
+  }, [release?.id, assignedTier]);
   const normalizedDetailsTier = assignedTier === 'standard' ? 'standard' : assignedTier;
   const currentBonusDetails =
     release?.bonusDetails?.[normalizedDetailsTier] ||
@@ -583,6 +607,48 @@ export default function JoinPage({ lang, setLang }) {
           letter-spacing: 0.12em;
           text-transform: uppercase;
         }
+
+
+        .claim-location-box {
+          display: grid !important;
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          gap: 12px !important;
+          margin-top: 16px !important;
+          padding: 14px !important;
+          border-radius: 16px !important;
+          background: rgba(0,0,0,.24) !important;
+          border: 1px solid rgba(226,196,122,.24) !important;
+        }
+
+        .claim-location-box span,
+        .claim-location-box strong {
+          display: block !important;
+        }
+
+        .claim-location-box span {
+          margin-bottom: 6px !important;
+          color: #e2c47a !important;
+          -webkit-text-fill-color: #e2c47a !important;
+          font-size: 11px !important;
+          font-weight: 950 !important;
+          letter-spacing: .09em !important;
+          text-transform: uppercase !important;
+        }
+
+        .claim-location-box strong {
+          color: #f3e4bf !important;
+          -webkit-text-fill-color: #f3e4bf !important;
+          font-size: 14px !important;
+          line-height: 1.35 !important;
+          word-break: break-word !important;
+        }
+
+        @media (max-width: 520px) {
+          .claim-location-box {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
 
         .inside-box {
           margin-top: 24px;
