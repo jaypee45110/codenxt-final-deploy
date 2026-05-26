@@ -722,34 +722,19 @@ export default function CheckoutPage({ lang, setLang }) {
 
             <div className="input-grid checkout-grid">
               <label>
-                Gullbonus *
-                <input name="goldReward" value={formData.goldReward} onChange={handleChange} placeholder="Meet & Greet med artisten" />
-                {fieldError('goldReward') && <small>{text.common.required}</small>}
-              </label>
-              <label>
-                Hentested gull *
+                {{ no: 'GULL-hentested', en: 'GOLD pickup location', de: 'GOLD Abholort', fr: 'Lieu de retrait OR', es: 'Lugar de recogida ORO' }[lang] || 'GOLD pickup location'} *
                 <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
                 {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
 
               <label>
-                Sølvbonus *
-                <input name="silverReward" value={formData.silverReward} onChange={handleChange} placeholder="Gratis spa" />
-                {fieldError('silverReward') && <small>{text.common.required}</small>}
-              </label>
-              <label>
-                Hentested sølv *
+                {{ no: 'SØLV-hentested', en: 'SILVER pickup location', de: 'SILBER Abholort', fr: 'Lieu de retrait ARGENT', es: 'Lugar de recogida PLATA' }[lang] || 'SILVER pickup location'} *
                 <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
                 {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
 
               <label>
-                Generell bonus *
-                <input name="standardReward" value={formData.standardReward} onChange={handleChange} placeholder="Signert t-skjorte" />
-                {fieldError('standardReward') && <small>{text.common.required}</small>}
-              </label>
-              <label>
-                Hentested generell *
+                {{ no: 'GENERELL-hentested', en: 'GENERAL pickup location', de: 'STANDARD Abholort', fr: 'Lieu de retrait GÉNÉRAL', es: 'Lugar de recogida GENERAL' }[lang] || 'GENERAL pickup location'} *
                 <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
                 {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
