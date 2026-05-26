@@ -82,6 +82,12 @@ export default function CertificatePage({ lang }) {
     };
   }, [eventCode, certificateId]);
 
+  const [certificateValidation, setCertificateValidation] = useState({
+    checked: false,
+    valid: false,
+    status: 'checking',
+  });
+
   useEffect(() => {
     let alive = true;
 
@@ -108,12 +114,6 @@ export default function CertificatePage({ lang }) {
       alive = false;
     };
   }, [certificateValidation.eventId, certificateValidation.benefitTier, certificateValidation.tier, data.id]);
-
-  const [certificateValidation, setCertificateValidation] = useState({
-    checked: false,
-    valid: false,
-    status: 'checking',
-  });
   const [claimStatus, setClaimStatus] = useState('');
   const [claimant, setClaimant] = useState({
     fullName: '',
