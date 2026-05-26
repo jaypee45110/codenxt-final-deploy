@@ -19,6 +19,12 @@ const emptyForm = {
   comments: '',
   goldReward: '',
   goldRedemptionLocation: '',
+  silverReward: '',
+  silverRedemptionLocation: '',
+  standardReward: '',
+  standardRedemptionLocation: '',
+  goldReward: '',
+  goldRedemptionLocation: '',
   goldInstructions: '',
   silverReward: '',
   silverRedemptionLocation: '',
@@ -413,6 +419,12 @@ export default function CheckoutPage({ lang, setLang }) {
       !formData.silverRedemptionLocation.trim() ||
       !formData.standardReward.trim() ||
       !formData.standardRedemptionLocation.trim() ||
+      !formData.goldReward.trim() ||
+      !formData.goldRedemptionLocation.trim() ||
+      !formData.silverReward.trim() ||
+      !formData.silverRedemptionLocation.trim() ||
+      !formData.standardReward.trim() ||
+      !formData.standardRedemptionLocation.trim() ||
       !formData.rewardResponsible.trim() ||
       !formData.rewardEmail.trim() ||
       !formData.goldTotal.trim() ||
@@ -499,6 +511,32 @@ export default function CheckoutPage({ lang, setLang }) {
       const rewardDelivery = {
         responsiblePerson: formData.rewardResponsible.trim(),
         email: formData.rewardEmail.trim(),
+      };
+
+      const sharedClaimInstruction = {
+        no: 'Vis tilsendt QR-kode',
+        en: 'Show the QR code sent to you',
+        de: 'Zeige den zugesandten QR-Code',
+        fr: 'Présentez le QR code qui vous a été envoyé',
+        es: 'Muestra el código QR que se te ha enviado',
+      }[lang] || 'Show the QR code sent to you';
+
+      const bonusDetails = {
+        gold: {
+          reward: formData.goldReward.trim(),
+          redemptionLocation: formData.goldRedemptionLocation.trim(),
+          instructions: sharedClaimInstruction,
+        },
+        silver: {
+          reward: formData.silverReward.trim(),
+          redemptionLocation: formData.silverRedemptionLocation.trim(),
+          instructions: sharedClaimInstruction,
+        },
+        standard: {
+          reward: formData.standardReward.trim(),
+          redemptionLocation: formData.standardRedemptionLocation.trim(),
+          instructions: sharedClaimInstruction,
+        },
       };
 
       const bonusDetails = {
@@ -775,6 +813,48 @@ export default function CheckoutPage({ lang, setLang }) {
               <label className="wide">
                 Instruksjon generell
                 <textarea name="standardInstructions" value={formData.standardInstructions} onChange={handleChange} placeholder="Vis sertifikatet ved merchandise-standen." />
+              </label>
+            </div>
+          </div>
+
+          <div className="terms-box bonus-details-box" style={{ marginTop: "28px" }}>
+            <h3 style={{marginBottom:'8px'}}>Bonusdetaljer per kategori</h3>
+            <p style={{marginBottom:'18px',opacity:.8}}>
+              Legg inn hva brukeren får og hvor bonusen hentes. Instruksjon settes automatisk: Vis tilsendt QR-kode.
+            </p>
+
+            <div className="input-grid checkout-grid">
+              <label>
+                Gullbonus *
+                <input name="goldReward" value={formData.goldReward} onChange={handleChange} placeholder="Meet & Greet med artisten" />
+                {fieldError('goldReward') && <small>{text.common.required}</small>}
+              </label>
+              <label>
+                Hentested gull *
+                <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
+                {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                Sølvbonus *
+                <input name="silverReward" value={formData.silverReward} onChange={handleChange} placeholder="Gratis spa" />
+                {fieldError('silverReward') && <small>{text.common.required}</small>}
+              </label>
+              <label>
+                Hentested sølv *
+                <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
+                {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
+              </label>
+
+              <label>
+                Generell bonus *
+                <input name="standardReward" value={formData.standardReward} onChange={handleChange} placeholder="Signert t-skjorte" />
+                {fieldError('standardReward') && <small>{text.common.required}</small>}
+              </label>
+              <label>
+                Hentested generell *
+                <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
+                {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
             </div>
           </div>
