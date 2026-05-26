@@ -110,6 +110,7 @@ export default function CertificatePage({ lang }) {
     `Reward claim\n\n` +
     `Certificate ID: ${certificateId}\n` +
     `Event code: ${eventCode}\n` +
+    `Category: ${data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || 'Not specified'}\n` +
     `Campaign / perk: ${data.releaseTitle || data.stackName || 'codePerks reward'}\n\n` +
     `Claimant\n` +
     `Full name: ${claimant.fullName}\n` +

@@ -445,7 +445,8 @@ export default function JoinPage({ lang, setLang }) {
     return null;
   };
 
-  const tierText = b[bonusTier] || b.general;
+  const assignedTier = ownershipCertificate?.benefitTier || ownershipCertificate?.tier || bonusTier;
+  const tierText = b[assignedTier] || b.general;
   const releaseDate = release.releaseDate ? String(release.releaseDate).slice(0, 10) : '';
   const pageLogo = release.pageLogo || '/codePerks-logo.png?v=3';
 
