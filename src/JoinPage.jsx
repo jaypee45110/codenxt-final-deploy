@@ -451,6 +451,11 @@ export default function JoinPage({ lang, setLang }) {
 
   const assignedTier = ownershipCertificate?.benefitTier || ownershipCertificate?.tier || '';
   const tierText = assignedTier ? (b[assignedTier] || b.general) : (b.verifiedBenefit || 'VERIFIED BENEFIT');
+  const normalizedDetailsTier = assignedTier === 'standard' ? 'standard' : assignedTier;
+  const currentBonusDetails =
+    release?.bonusDetails?.[normalizedDetailsTier] ||
+    (assignedTier === 'standard' ? release?.bonusDetails?.general : null) ||
+    null;
   const releaseDate = release.releaseDate ? String(release.releaseDate).slice(0, 10) : '';
   const pageLogo = release.pageLogo || '/codePerks-logo.png?v=3';
 
