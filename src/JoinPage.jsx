@@ -475,6 +475,30 @@ export default function JoinPage({ lang, setLang }) {
       alive = false;
     };
   }, [release?.id, assignedTier]);
+
+  useEffect(() => {
+    let alive = true;
+
+    async function loadAssignedTierReward() {
+      try {
+        if (!release?.id || !assignedTier) return;
+
+        const rewardRes = await fetch(`${API_BASE}/reward/${encodeURIComponent(release.id)}?tier=${encodeURIComponent(assignedTier)}&vertical=codeperks`);
+        if (!rewardRes.ok) return;
+
+        const rewardData = await rewardRes.json().catch(() => null);
+        if (alive && rewardData) setReward(rewardData);
+      } catch (error) {
+        console.warn('Could not load assigned tier reward:', error);
+      }
+    }
+
+    loadAssignedTierReward();
+
+    return () => {
+      alive = false;
+    };
+  }, [release?.id, assignedTier]);
   const normalizedDetailsTier = assignedTier === 'standard' ? 'standard' : assignedTier;
   const currentBonusDetails =
     release?.bonusDetails?.[normalizedDetailsTier] ||
