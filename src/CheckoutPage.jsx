@@ -23,15 +23,6 @@ const emptyForm = {
   silverRedemptionLocation: '',
   standardReward: '',
   standardRedemptionLocation: '',
-  goldReward: '',
-  goldRedemptionLocation: '',
-  goldInstructions: '',
-  silverReward: '',
-  silverRedemptionLocation: '',
-  silverInstructions: '',
-  standardReward: '',
-  standardRedemptionLocation: '',
-  standardInstructions: '',
   logoFileName: '',
   stackLogo: '',
   bonusWindow: '24h',
@@ -413,12 +404,6 @@ export default function CheckoutPage({ lang, setLang }) {
       !formData.contactName.trim() ||
       !formData.email.trim() ||
       !formData.phone.trim() ||
-      !formData.goldReward.trim() ||
-      !formData.goldRedemptionLocation.trim() ||
-      !formData.silverReward.trim() ||
-      !formData.silverRedemptionLocation.trim() ||
-      !formData.standardReward.trim() ||
-      !formData.standardRedemptionLocation.trim() ||
       !formData.goldReward.trim() ||
       !formData.goldRedemptionLocation.trim() ||
       !formData.silverReward.trim() ||
