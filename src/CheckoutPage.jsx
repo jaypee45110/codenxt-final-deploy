@@ -423,7 +423,7 @@ export default function CheckoutPage({ lang, setLang }) {
   };
 
   const handleLogoUpload = async (event) => {
-    const file = event.target.files?.;
+    const file = event.target.files?.[0];
     setLogoError('');
 
     if (!file) return;

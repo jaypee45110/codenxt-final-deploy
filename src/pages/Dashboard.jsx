@@ -3099,7 +3099,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
                             : undefined
                         }
                         onChange={(event) => {
-                          const file = event.target.files?.;
+                          const file = event.target.files?.[0];
                           updateBeneficioDraft(activeTier, {
                             file,
                             fileName: file?.name || '',
