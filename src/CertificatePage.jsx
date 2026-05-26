@@ -16,6 +16,7 @@ export default function CertificatePage({ lang }) {
   const eventData = useMemo(() => readJson('codenxt_event'), []);
   const latestEvent = useMemo(() => readJson('codeperks_latest_event'), []);
   const [serverEvent, setServerEvent] = useState({});
+  const [certificateReward, setCertificateReward] = useState(null);
   const data = { ...latestEvent, ...eventData, ...serverEvent };
   const rewardDelivery = data.rewardDelivery || {};
 
@@ -81,6 +82,33 @@ export default function CertificatePage({ lang }) {
     };
   }, [eventCode, certificateId]);
 
+  useEffect(() => {
+    let alive = true;
+
+    async function loadCertificateReward() {
+      try {
+        const eventId = certificateValidation.eventId || data.id || '';
+        const tier = certificateValidation.benefitTier || certificateValidation.tier || '';
+
+        if (!eventId || !tier) return;
+
+        const response = await fetch(`${API_BASE}/reward/${encodeURIComponent(eventId)}?tier=${encodeURIComponent(tier)}&vertical=codeperks`);
+        if (!response.ok) return;
+
+        const json = await response.json().catch(() => null);
+        if (alive) setCertificateReward(json || null);
+      } catch (error) {
+        console.warn('Could not load certificate reward:', error);
+      }
+    }
+
+    loadCertificateReward();
+
+    return () => {
+      alive = false;
+    };
+  }, [certificateValidation.eventId, certificateValidation.benefitTier, certificateValidation.tier, data.id]);
+
   const [certificateValidation, setCertificateValidation] = useState({
     checked: false,
     valid: false,
@@ -105,7 +133,15 @@ export default function CertificatePage({ lang }) {
     claimant.email.trim();
 
   const certificateTier = certificateValidation.benefitTier || certificateValidation.tier || data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || '';
-  const certificateBonusDetails = data?.bonusDetails?.[certificateTier] || null;
+  const certificateBonusDetails =
+    data?.bonusDetails?.[certificateTier] ||
+    (certificateTier === 'standard' ? data?.bonusDetails?.general : null) ||
+    null;
+  const certificateRewardTitle =
+    certificateReward?.title ||
+    certificateReward?.content ||
+    certificateBonusDetails?.reward ||
+    '';
 
   const mailSubject = encodeURIComponent(`codePerks reward claim ${certificateId}`);
   const mailBody = encodeURIComponent(
@@ -113,7 +149,7 @@ export default function CertificatePage({ lang }) {
     `Certificate ID: ${certificateId}\n` +
     `Event code: ${eventCode}\n` +
     `Category: ${certificateTier || 'Not specified'}\n` +
-    `Reward: ${certificateBonusDetails?.reward || 'Not registered'}\n` +
+    `Reward: ${certificateRewardTitle || 'Not registered'}\n` +
     `Redeem at: ${certificateBonusDetails?.redemptionLocation || data.redemptionLocation || 'Not registered'}\n` +
     `Instructions: ${certificateBonusDetails?.instructions || 'None'}\n` +
     `Campaign / perk: ${data.releaseTitle || data.stackName || 'codePerks reward'}\n\n` +
@@ -201,7 +237,7 @@ export default function CertificatePage({ lang }) {
             </div>
             <div>
               <span>Bonus</span>
-              <strong>{certificateBonusDetails?.reward || 'Not registered'}</strong>
+              <strong>{certificateRewardTitle || 'Not registered'}</strong>
             </div>
             <div>
               <span>Redeem at</span>
