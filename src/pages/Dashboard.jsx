@@ -17,7 +17,7 @@ const QR_BOX_STYLE = {
 const API_BASE = 'https://codenxt-backend-production.up.railway.app';
 const STORAGE_KEYS = ['codenxt_event', 'codeperks_latest_event'];
 const BONUS_TIERS = ['gold', 'silver', 'general'];
-const BONUS_TYPES = ['pdf', 'image', 'audio', 'video', 'url'];
+const BONUS_TYPES = ['text', 'pdf', 'image', 'audio', 'video', 'url'];
 const DEFAULT_TIER_SPLIT = { gold: 100, silver: 200, general: 700 };
 
 const dashboardCopy = {
@@ -744,7 +744,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
   const saveBeneficio = useCallback(async () => {
     const draft = bonusDrafts[activeTier];
-    if (!eventData.eventCode || (!draft.url && !draft.file)) return;
+
+    if (
+      !eventData.eventCode ||
+      (
+        draft.type !== 'text' &&
+        !draft.url &&
+        !draft.file
+      )
+    ) return;
     setBeneficioSaving(true);
     setBeneficioMessage('');
 
@@ -3027,24 +3035,54 @@ export default function Dashboard({ lang: appLang, setLang }) {
                   </label>
 
                   <label>
-                    <span className="label">{text.fileOrUrl}</span>
-                    {activeDraft.type === 'url' ? (
-                      <input value={activeDraft.url} placeholder="https://..." onChange={(event) => updateBeneficioDraft(activeTier, { url: event.target.value })} />
+                    <span className="label">
+                      {activeDraft.type === 'text'
+                        ? 'Bonus text'
+                        : text.fileOrUrl}
+                    </span>
+
+                    {activeDraft.type === 'text' ? (
+                      <input
+                        value={activeDraft.title || ''}
+                        placeholder="Meet & Greet Åge & Sambandet"
+                        onChange={(event) =>
+                          updateBeneficioDraft(activeTier, {
+                            title: event.target.value,
+                          })
+                        }
+                      />
+                    ) : activeDraft.type === 'url' ? (
+                      <input
+                        value={activeDraft.url}
+                        placeholder="https://..."
+                        onChange={(event) =>
+                          updateBeneficioDraft(activeTier, {
+                            url: event.target.value,
+                          })
+                        }
+                      />
                     ) : (
                       <input
                         key={`${activeTier}-${activeDraft.type}`}
                         type="file"
                         aria-label={text.chooseFile}
                         accept={
-                          activeDraft.type === 'pdf' ? 'application/pdf'
-                            : activeDraft.type === 'image' ? 'image/*'
-                              : activeDraft.type === 'audio' ? 'audio/*'
-                                : activeDraft.type === 'video' ? 'video/*'
-                                  : undefined
+                          activeDraft.type === 'pdf'
+                            ? 'application/pdf'
+                            : activeDraft.type === 'image'
+                            ? 'image/*'
+                            : activeDraft.type === 'audio'
+                            ? 'audio/*'
+                            : activeDraft.type === 'video'
+                            ? 'video/*'
+                            : undefined
                         }
                         onChange={(event) => {
                           const file = event.target.files?.[0];
-                          updateBeneficioDraft(activeTier, { file, fileName: file?.name || '' });
+                          updateBeneficioDraft(activeTier, {
+                            file,
+                            fileName: file?.name || '',
+                          });
                         }}
                       />
                     )}
