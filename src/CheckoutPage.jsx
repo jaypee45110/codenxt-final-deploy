@@ -639,13 +639,13 @@ export default function CheckoutPage({ lang, setLang }) {
       <section className="panel checkout-card">
         <div className="input-grid checkout-grid">
           <label>
-            <span className="field-label"><span className="field-badge">1</span>{pageText.fields.stackName} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>1</span>{pageText.fields.stackName} *</span>
             <input name="stackName" value={formData.stackName} onChange={handleChange} placeholder={pageText.placeholders.stackName} />
             {fieldError('stackName') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            <span className="field-label"><span className="field-badge">2</span>Logo (PNG/JPG) *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>2</span>Logo (PNG/JPG) *</span>
             <input
               type="file"
               accept="image/png,image/jpeg"
@@ -656,34 +656,34 @@ export default function CheckoutPage({ lang, setLang }) {
             {triedSubmit && !formData.stackLogo && <small>{text.common.required}</small>}
           </label>
           <label>
-            <span className="field-label"><span className="field-badge">3</span>{pageText.fields.companyName} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>3</span>{pageText.fields.companyName} *</span>
             <input name="companyName" value={formData.companyName} onChange={handleChange} placeholder={pageText.placeholders.companyName} />
             {fieldError('companyName') && <small>{text.common.required}</small>}
           </label>
           <label>
-            <span className="field-label"><span className="field-badge">4</span>{pageText.fields.releaseTitle} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>4</span>{pageText.fields.releaseTitle} *</span>
             <input name="releaseTitle" value={formData.releaseTitle} onChange={handleChange} placeholder={pageText.placeholders.releaseTitle} />
             {fieldError('releaseTitle') && <small>{text.common.required}</small>}
           </label>
           <label>
-            <span className="field-label"><span className="field-badge">5</span>{pageText.fields.platform} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>5</span>{pageText.fields.platform} *</span>
             <input name="platform" value={formData.platform} onChange={handleChange} placeholder={pageText.placeholders.platform} />
             {fieldError('platform') && <small>{text.common.required}</small>}
           </label>
           <label>
-            <span className="field-label"><span className="field-badge">6</span>{pageText.fields.releaseDate} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>6</span>{pageText.fields.releaseDate} *</span>
             <input type="date" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
             {fieldError('releaseDate') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            <span className="field-label"><span className="field-badge">7</span>{pageText.fields.releaseTime} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>7</span>{pageText.fields.releaseTime} *</span>
             <input type="time" name="releaseTime" value={formData.releaseTime} onChange={handleChange} />
             {fieldError('releaseTime') && <small>{text.common.required}</small>}
           </label>
 
           <label>
-            <span className="field-label"><span className="field-badge">8</span>{pageText.fields.bonusActive} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>8</span>{pageText.fields.bonusActive} *</span>
             <input
               type="date"
               name="campaignEndDate"
@@ -694,22 +694,22 @@ export default function CheckoutPage({ lang, setLang }) {
           </label>
           
           <label>
-            <span className="field-label"><span className="field-badge">9</span>{pageText.fields.contactName} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>9</span>{pageText.fields.contactName} *</span>
             <input name="contactName" value={formData.contactName} onChange={handleChange} placeholder={pageText.placeholders.contactName} />
             {fieldError('contactName') && <small>{text.common.required}</small>}
           </label>
           <label>
-            <span className="field-label"><span className="field-badge">10</span>{pageText.fields.email} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>10</span>{pageText.fields.email} *</span>
             <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={pageText.placeholders.email} />
             {fieldError('email') && <small>{text.common.required}</small>}
           </label>
           <label>
-            <span className="field-label"><span className="field-badge">11</span>{pageText.fields.phone} *</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>11</span>{pageText.fields.phone} *</span>
             <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder={pageText.placeholders.phone} />
             {fieldError('phone') && <small>{text.common.required}</small>}
           </label>
           <label className="wide">
-            <span className="field-label"><span className="field-badge">12</span>Ekstra notat</span>
+            <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>12</span>Ekstra notat</span>
             <textarea name="comments" value={formData.comments} onChange={handleChange} placeholder={pageText.placeholders.comments} />
             
           </label>
@@ -723,19 +723,19 @@ export default function CheckoutPage({ lang, setLang }) {
 
             <div className="input-grid checkout-grid">
               <label>
-                <span className="field-label"><span className="field-badge">13</span>{{ no: 'GULL-hentested', en: 'GOLD pickup location', de: 'GOLD Abholort', fr: 'Lieu de retrait OR', es: 'Lugar de recogida ORO' }[lang] || 'GOLD pickup location'} *</span>
+                <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>13</span>{{ no: 'GULL-hentested', en: 'GOLD pickup location', de: 'GOLD Abholort', fr: 'Lieu de retrait OR', es: 'Lugar de recogida ORO' }[lang] || 'GOLD pickup location'} *</span>
                 <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
                 {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
 
               <label>
-                <span className="field-label"><span className="field-badge">14</span>{{ no: 'SØLV-hentested', en: 'SILVER pickup location', de: 'SILBER Abholort', fr: 'Lieu de retrait ARGENT', es: 'Lugar de recogida PLATA' }[lang] || 'SILVER pickup location'} *</span>
+                <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>14</span>{{ no: 'SØLV-hentested', en: 'SILVER pickup location', de: 'SILBER Abholort', fr: 'Lieu de retrait ARGENT', es: 'Lugar de recogida PLATA' }[lang] || 'SILVER pickup location'} *</span>
                 <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
                 {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
 
               <label>
-                <span className="field-label"><span className="field-badge">15</span>{{ no: 'GENERELL-hentested', en: 'GENERAL pickup location', de: 'STANDARD Abholort', fr: 'Lieu de retrait GÉNÉRAL', es: 'Lugar de recogida GENERAL' }[lang] || 'GENERAL pickup location'} *</span>
+                <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>15</span>{{ no: 'GENERELL-hentested', en: 'GENERAL pickup location', de: 'STANDARD Abholort', fr: 'Lieu de retrait GÉNÉRAL', es: 'Lugar de recogida GENERAL' }[lang] || 'GENERAL pickup location'} *</span>
                 <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
                 {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
               </label>
@@ -750,7 +750,7 @@ export default function CheckoutPage({ lang, setLang }) {
 
             <div className="input-grid checkout-grid">
               <label>
-                <span className="field-label"><span className="field-badge">16</span>{benefitInventoryText.gold} *</span>
+                <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>16</span>{benefitInventoryText.gold} *</span>
                 <input
                   name="goldTotal"
                   value={formData.goldTotal}
@@ -762,7 +762,7 @@ export default function CheckoutPage({ lang, setLang }) {
               </label>
 
               <label>
-                <span className="field-label"><span className="field-badge">17</span>{benefitInventoryText.silver} *</span>
+                <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>17</span>{benefitInventoryText.silver} *</span>
                 <input
                   name="silverTotal"
                   value={formData.silverTotal}
@@ -774,7 +774,7 @@ export default function CheckoutPage({ lang, setLang }) {
               </label>
 
               <label>
-                <span className="field-label"><span className="field-badge">18</span>{benefitInventoryText.standard}</span>
+                <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>18</span>{benefitInventoryText.standard}</span>
                 <input value={benefitInventoryText.unlimited} readOnly />
               </label>
 
@@ -801,13 +801,13 @@ export default function CheckoutPage({ lang, setLang }) {
             <div className="input-grid checkout-grid">
 
               <label>
-                <span className="field-label"><span className="field-badge">19</span>{rewardDeliveryText.responsible} *</span>
+                <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>19</span>{rewardDeliveryText.responsible} *</span>
                 <input name="rewardResponsible" value={formData.rewardResponsible} onChange={handleChange} placeholder={rewardDeliveryText.responsible} />
                 {fieldError('rewardResponsible') && <small>{text.common.required}</small>}
               </label>
 
               <label>
-                <span className="field-label"><span className="field-badge">20</span>{rewardDeliveryText.email} *</span>
+                <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>20</span>{rewardDeliveryText.email} *</span>
                 <input type="email" name="rewardEmail" value={formData.rewardEmail} onChange={handleChange} placeholder={rewardDeliveryText.email} />
                 {fieldError('rewardEmail') && <small>{text.common.required}</small>}
               </label>
@@ -851,23 +851,25 @@ export default function CheckoutPage({ lang, setLang }) {
           color: inherit;
         }
 
+        .checkout-card .field-label .field-badge,
         .field-badge {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 22px;
-          height: 22px;
-          min-width: 22px;
-          border-radius: 999px;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 22px !important;
+          height: 22px !important;
+          min-width: 22px !important;
+          border-radius: 999px !important;
           background: #d9d9d9 !important;
           color: #000000 !important;
           fill: #000000 !important;
-          font-size: 12px;
-          font-weight: 900;
-          line-height: 1;
+          font-size: 12px !important;
+          font-weight: 900 !important;
+          line-height: 1 !important;
+          letter-spacing: 0 !important;
           text-shadow: none !important;
           -webkit-text-fill-color: #000000 !important;
-          box-shadow: 0 1px 2px rgba(0,0,0,.35);
+          box-shadow: 0 1px 2px rgba(0,0,0,.35) !important;
         }
 
         .checkout-required-note {
