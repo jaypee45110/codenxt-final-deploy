@@ -92,20 +92,20 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'Velg PNG eller JPG',
       noFile: 'Ingen fil valgt',
       selectedFile: 'Valgt fil',
-      termsText: 'codePerks brukes til QR- og lenkebasert tilgang, digitale fordeler, kunderespons og direkte oppfølging via codeNXT.',
-      accept: 'Jeg godtar vilkårene for codePerks.',
+      termsText: 'codeBonuss brukes til QR- og lenkebasert tilgang, digitale fordeler, kunderespons og direkte oppfølging via codeNXT.',
+      accept: 'Jeg godtar vilkårene for codeBonuss.',
       continue: 'OPPRETT BONUSKAMPANJE',
       creating: 'Oppretter bonuskampanje...',
       submitError: 'Kunne ikke opprette bonuskampanjen. Prøv igjen.',
     },
     en: {
-      title: 'Set up your perk',
-      subtitle: 'Connect a customer moment, perk and company directly to the customer.',
+      title: 'Set up your bonus',
+      subtitle: 'Connect a customer moment, bonus and company directly to the customer.',
       fields: {
-        stackName: 'Perk / offer',
+        stackName: 'Bonus / offer',
         logo: 'Illustration',
         companyName: 'Company',
-        releaseTitle: 'Perk type',
+        releaseTitle: 'Bonus type',
         platform: 'Campaign medium',
         releaseDate: 'Start date',
         releaseTime: 'Campaign start time',
@@ -118,7 +118,7 @@ export default function CheckoutPage({ lang, setLang }) {
         comments: 'Hentested for innløsing av bonus',
       },
       placeholders: {
-        stackName: 'VIP perk, reward, opening offer ...',
+        stackName: 'VIP bonus, reward, opening offer ...',
         companyName: 'Company name',
         releaseTitle: 'VIP, reward, coupon, invitation, launch ...',
         platform: 'Internal newsletter, TV, website, store, club, campaign ...',
@@ -126,16 +126,16 @@ export default function CheckoutPage({ lang, setLang }) {
         contactName: 'Full name',
         email: 'name@company.com',
         phone: '+44 ...',
-        comments: 'Describe the perk, offer or reward the customer receives.',
+        comments: 'Describe the bonus, offer or reward the customer receives.',
       },
       chooseFile: 'Choose PNG or JPG',
       noFile: 'No file chosen',
       selectedFile: 'Selected file',
-      termsText: 'codePerks is used for QR and link-based access, digital perks, customer response and direct follow-up via codeNXT.',
-      accept: 'I accept the codePerks terms.',
+      termsText: 'codeBonuss is used for QR and link-based access, digital bonuss, customer response and direct follow-up via codeNXT.',
+      accept: 'I accept the codeBonuss terms.',
       continue: 'CREATE A PERK',
-      creating: 'Creating perk...',
-      submitError: 'Could not create the perk. Please try again.',
+      creating: 'Creating bonus...',
+      submitError: 'Could not create the bonus. Please try again.',
     },
     de: {
       title: 'Kundenvorteil einrichten',
@@ -170,8 +170,8 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'PNG oder JPG wählen',
       noFile: 'Keine Datei gewählt',
       selectedFile: 'Gewählte Datei',
-      termsText: 'codePerks wird für QR- und Link-Zugang, digitale Kundenvorteile, Kundenreaktionen und direkte Nachverfolgung über codeNXT genutzt.',
-      accept: 'Ich akzeptiere die Bedingungen für codePerks.',
+      termsText: 'codeBonuss wird für QR- und Link-Zugang, digitale Kundenvorteile, Kundenreaktionen und direkte Nachverfolgung über codeNXT genutzt.',
+      accept: 'Ich akzeptiere die Bedingungen für codeBonuss.',
       continue: 'KUNDENVORTEIL ERSTELLEN',
       creating: 'Kundenvorteil wird erstellt...',
       submitError: 'Der Kundenvorteil konnte nicht erstellt werden. Bitte versuchen Sie es erneut.',
@@ -209,8 +209,8 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'Choisir PNG ou JPG',
       noFile: 'Aucun fichier choisi',
       selectedFile: 'Fichier choisi',
-      termsText: 'codePerks sert à gérer l’accès par QR et lien, les avantages numériques, la réponse client et le suivi direct via codeNXT.',
-      accept: 'J’accepte les conditions de codePerks.',
+      termsText: 'codeBonuss sert à gérer l’accès par QR et lien, les avantages numériques, la réponse client et le suivi direct via codeNXT.',
+      accept: 'J’accepte les conditions de codeBonuss.',
       continue: 'CRÉER UN AVANTAGE',
       creating: 'Création de l’avantage...',
       submitError: 'Impossible de créer l’avantage. Veuillez réessayer.',
@@ -248,8 +248,8 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'Elegir PNG o JPG',
       noFile: 'Ningún archivo elegido',
       selectedFile: 'Archivo elegido',
-      termsText: 'codePerks se usa para acceso por QR y enlace, beneficios digitales, respuesta de clientes y seguimiento directo vía codeNXT.',
-      accept: 'Acepto las condiciones de codePerks.',
+      termsText: 'codeBonuss se usa para acceso por QR y enlace, beneficios digitales, respuesta de clientes y seguimiento directo vía codeNXT.',
+      accept: 'Acepto las condiciones de codeBonuss.',
       continue: 'CREAR BENEFICIO',
       creating: 'Creando beneficio...',
       submitError: 'No se pudo crear el beneficio. Inténtalo de nuevo.',
@@ -399,7 +399,7 @@ export default function CheckoutPage({ lang, setLang }) {
   const [logoError, setLogoError] = useState('');
 
   useEffect(() => {
-    document.title = 'Checkout - codePerks';
+    document.title = 'Checkout - codeBonuss';
   }, []);
 
   const missingRequired = useMemo(() => {
@@ -551,8 +551,8 @@ export default function CheckoutPage({ lang, setLang }) {
       };
 
       const payload = {
-        vertical: 'codeperks',
-        productName: 'codePerks',
+        vertical: 'codebonuss',
+        productName: 'codeBonuss',
         engine: 'codeNXT',
         eventCode: releaseCode,
         code: releaseCode,
@@ -578,7 +578,7 @@ export default function CheckoutPage({ lang, setLang }) {
         stackLogo: artistLogo,
         artistLogo,
         logoTooLarge: false,
-        selectedTypes: ['codePerks release'],
+        selectedTypes: ['codeBonuss release'],
         termsAccepted,
         shortLink: `${window.location.origin}/join/${releaseCode}`,
         bonusWindow: '24h',
@@ -589,7 +589,7 @@ export default function CheckoutPage({ lang, setLang }) {
       };
 
       console.log('CODEPERKS_EVENT_PAYLOAD', {
-        vertical: 'codeperks',
+        vertical: 'codebonuss',
         code: releaseCode,
         benefitInventory: payload.benefitInventory,
       });
@@ -598,7 +598,7 @@ export default function CheckoutPage({ lang, setLang }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          vertical: 'codeperks',
+          vertical: 'codebonuss',
           code: releaseCode,
           name: payload.stackName,
           stackName: payload.stackName,
@@ -608,7 +608,7 @@ export default function CheckoutPage({ lang, setLang }) {
           venue: payload.platform || 'Customer channel',
           platform: payload.platform,
           city: '',
-          badgeConfig: { template: 'codeperks' },
+          badgeConfig: { template: 'codebonuss' },
           startAt: unlockAt.toISOString(),
           releaseDate,
           releaseTime,
@@ -636,12 +636,12 @@ export default function CheckoutPage({ lang, setLang }) {
       payload.dashboardAccessKey = dashboardAccessKey;
       payload.shortLink = `${window.location.origin}/join/${finalEventCode}`;
       if (dashboardAccessKey) {
-        sessionStorage.setItem('codeperks_admin_key', dashboardAccessKey);
+        sessionStorage.setItem('codebonuss_admin_key', dashboardAccessKey);
       }
 
       localStorage.setItem('codenxt_event', JSON.stringify(payload));
       localStorage.setItem('codenxt_active_event_code', finalEventCode);
-      localStorage.setItem('codeperks_latest_event', JSON.stringify(payload));
+      localStorage.setItem('codebonuss_latest_event', JSON.stringify(payload));
 
       navigate('/campaign-created', {
         state: { ...payload, lang },
@@ -657,7 +657,7 @@ export default function CheckoutPage({ lang, setLang }) {
   return (
     <main className="page-shell checkout-page">
       <header className="landing-header">
-        <img src="/codePerks-logo.png?v=3" alt="codePerks logo" className="landing-logo" />
+        <img src="/codeBonuss-logo.png?v=3" alt="codeBonuss logo" className="landing-logo" />
         <div className="landing-powered">{text.common.powered}</div>
         <LanguageSwitcher lang={lang} onChange={setLang} />
       </header>
@@ -749,60 +749,6 @@ export default function CheckoutPage({ lang, setLang }) {
           <div className="terms-box bonus-details-box" style={{ marginTop: "28px" }}>
             <h3 style={{marginBottom:'8px'}}>Bonusdetaljer per kategori</h3>
             <p style={{marginBottom:'18px',opacity:.8}}>
-              Legg inn hva brukeren får, hvor bonusen hentes, og eventuell praktisk instruksjon.
-            </p>
-
-            <div className="input-grid checkout-grid">
-              <label>
-                Gullbonus *
-                <input name="goldReward" value={formData.goldReward} onChange={handleChange} placeholder="Meet & Greet med artisten" />
-                {fieldError('goldReward') && <small>{text.common.required}</small>}
-              </label>
-              <label>
-                Hentested gull *
-                <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
-                {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
-              </label>
-              <label className="wide">
-                Instruksjon gull
-                <textarea name="goldInstructions" value={formData.goldInstructions} onChange={handleChange} placeholder="Møt ved backstage-inngangen innen 30 minutter etter konserten." />
-              </label>
-
-              <label>
-                Sølvbonus *
-                <input name="silverReward" value={formData.silverReward} onChange={handleChange} placeholder="Gratis spa" />
-                {fieldError('silverReward') && <small>{text.common.required}</small>}
-              </label>
-              <label>
-                Hentested sølv *
-                <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
-                {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
-              </label>
-              <label className="wide">
-                Instruksjon sølv
-                <textarea name="silverInstructions" value={formData.silverInstructions} onChange={handleChange} placeholder="Vis sertifikatet i spa-resepsjonen." />
-              </label>
-
-              <label>
-                Generell bonus *
-                <input name="standardReward" value={formData.standardReward} onChange={handleChange} placeholder="Signert t-skjorte" />
-                {fieldError('standardReward') && <small>{text.common.required}</small>}
-              </label>
-              <label>
-                Hentested generell *
-                <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
-                {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
-              </label>
-              <label className="wide">
-                Instruksjon generell
-                <textarea name="standardInstructions" value={formData.standardInstructions} onChange={handleChange} placeholder="Vis sertifikatet ved merchandise-standen." />
-              </label>
-            </div>
-          </div>
-
-          <div className="terms-box bonus-details-box" style={{ marginTop: "28px" }}>
-            <h3 style={{marginBottom:'8px'}}>Bonusdetaljer per kategori</h3>
-            <p style={{marginBottom:'18px',opacity:.8}}>
               Legg inn hva brukeren får og hvor bonusen hentes. Instruksjon settes automatisk: Vis tilsendt QR-kode.
             </p>
 
@@ -841,8 +787,6 @@ export default function CheckoutPage({ lang, setLang }) {
               </label>
             </div>
           </div>
-
-
 
           <div className="terms-box benefit-inventory-box" style={{ marginTop: "28px" }}>
             <h3 style={{marginBottom:'8px'}}>{benefitInventoryText.title}</h3>
