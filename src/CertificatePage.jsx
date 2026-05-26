@@ -103,9 +103,6 @@ export default function CertificatePage({ lang }) {
   const certificateTier = certificateValidation.benefitTier || certificateValidation.tier || data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || '';
   const certificateBonusDetails = data?.bonusDetails?.[certificateTier] || null;
 
-  const certificateTier = certificateValidation.benefitTier || certificateValidation.tier || data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || '';
-  const certificateBonusDetails = data?.bonusDetails?.[certificateTier] || null;
-
   const mailSubject = encodeURIComponent(`codePerks reward claim ${certificateId}`);
   const mailBody = encodeURIComponent(
     `Reward claim\n\n` +

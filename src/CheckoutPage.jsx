@@ -539,23 +539,6 @@ export default function CheckoutPage({ lang, setLang }) {
         },
       };
 
-      const bonusDetails = {
-        gold: {
-          reward: formData.goldReward.trim(),
-          redemptionLocation: formData.goldRedemptionLocation.trim(),
-          instructions: formData.goldInstructions.trim(),
-        },
-        silver: {
-          reward: formData.silverReward.trim(),
-          redemptionLocation: formData.silverRedemptionLocation.trim(),
-          instructions: formData.silverInstructions.trim(),
-        },
-        standard: {
-          reward: formData.standardReward.trim(),
-          redemptionLocation: formData.standardRedemptionLocation.trim(),
-          instructions: formData.standardInstructions.trim(),
-        },
-      };
 
       const benefitInventory = {
         mode: 'progressive_scarcity',
