@@ -65,7 +65,7 @@ export default function CheckoutPage({ lang, setLang }) {
         bonusActive24h: 'Velg sluttdato for kampanjen',
         customers: 'Forventet antall deltakere',
         contactName: 'Kontaktperson',
-        email: 'Delivery-ansvarlig e-post',
+        email: 'E-post',
         phone: 'Telefon',
         comments: 'Hentested for innløsing av bonus',
       },
@@ -104,7 +104,7 @@ export default function CheckoutPage({ lang, setLang }) {
         bonusActive24h: 'Choose campaign end date',
         customers: 'Expected participants',
         contactName: 'Contact person',
-        email: 'Delivery Contact Email',
+        email: 'Email',
         phone: 'Phone',
         comments: 'Hentested for innløsing av bonus',
       },
@@ -320,7 +320,7 @@ export default function CheckoutPage({ lang, setLang }) {
       postalCode: 'Postnummer',
       country: 'Land',
       phone: 'Telefon',
-      email: 'Delivery-ansvarlig e-post',
+      email: 'E-post',
     },
     en: {
       title: 'Reward Delivery Information',
@@ -332,7 +332,7 @@ export default function CheckoutPage({ lang, setLang }) {
       postalCode: 'ZIP / Postal Code',
       country: 'Country',
       phone: 'Phone',
-      email: 'Delivery Contact Email',
+      email: 'Email',
     },
     de: {
       title: 'Informationen zur Vorteilszustellung',
@@ -368,7 +368,7 @@ export default function CheckoutPage({ lang, setLang }) {
       postalCode: 'Código postal',
       country: 'País',
       phone: 'Teléfono',
-      email: 'Delivery Contact Email',
+      email: 'Email',
     },
   }[lang] || {
     title: 'Reward Delivery Information',
@@ -380,7 +380,7 @@ export default function CheckoutPage({ lang, setLang }) {
     postalCode: 'ZIP / Postal Code',
     country: 'Country',
     phone: 'Phone',
-    email: 'Delivery Contact Email',
+    email: 'Email',
   };
   const [formData, setFormData] = useState(emptyForm);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -404,11 +404,8 @@ export default function CheckoutPage({ lang, setLang }) {
       !formData.contactName.trim() ||
       !formData.email.trim() ||
       !formData.phone.trim() ||
-      !formData.goldReward.trim() ||
       !formData.goldRedemptionLocation.trim() ||
-      !formData.silverReward.trim() ||
       !formData.silverRedemptionLocation.trim() ||
-      !formData.standardReward.trim() ||
       !formData.standardRedemptionLocation.trim() ||
       !formData.rewardResponsible.trim() ||
       !formData.rewardEmail.trim() ||
@@ -498,29 +495,18 @@ export default function CheckoutPage({ lang, setLang }) {
         email: formData.rewardEmail.trim(),
       };
 
-      const sharedClaimInstruction = {
-        no: 'Vis tilsendt QR-kode',
-        en: 'Show the QR code sent to you',
-        de: 'Zeige den zugesandten QR-Code',
-        fr: 'Présentez le QR code qui vous a été envoyé',
-        es: 'Muestra el código QR que se te ha enviado',
-      }[lang] || 'Show the QR code sent to you';
-
       const bonusDetails = {
         gold: {
-          reward: formData.goldReward.trim(),
+          reward: '',
           redemptionLocation: formData.goldRedemptionLocation.trim(),
-          instructions: sharedClaimInstruction,
         },
         silver: {
-          reward: formData.silverReward.trim(),
+          reward: '',
           redemptionLocation: formData.silverRedemptionLocation.trim(),
-          instructions: sharedClaimInstruction,
         },
         standard: {
-          reward: formData.standardReward.trim(),
+          reward: '',
           redemptionLocation: formData.standardRedemptionLocation.trim(),
-          instructions: sharedClaimInstruction,
         },
       };
 
