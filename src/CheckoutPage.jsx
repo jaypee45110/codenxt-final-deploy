@@ -860,11 +860,13 @@ export default function CheckoutPage({ lang, setLang }) {
           min-width: 22px;
           border-radius: 999px;
           background: #d9d9d9 !important;
-          color: #000 !important;
+          color: #000000 !important;
+          fill: #000000 !important;
           font-size: 12px;
           font-weight: 900;
           line-height: 1;
           text-shadow: none !important;
+          -webkit-text-fill-color: #000000 !important;
           box-shadow: 0 1px 2px rgba(0,0,0,.35);
         }
 
