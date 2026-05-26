@@ -715,9 +715,9 @@ export default function CheckoutPage({ lang, setLang }) {
         </div>
 
           <div className="terms-box bonus-details-box" style={{ marginTop: "28px" }}>
-            <h3 style={{marginBottom:'8px'}}>Bonusdetaljer per kategori</h3>
+            <h3 style={{marginBottom:'8px'}}>Hentested per kategori</h3>
             <p style={{marginBottom:'18px',opacity:.8}}>
-              Legg inn hva brukeren får og hvor bonusen hentes. Instruksjon settes automatisk: Vis tilsendt QR-kode.
+              Oppgi hvor hver kategori innløses. Bonusinnholdet legges inn senere i Dashboard. Instruksjon settes automatisk: Vis tilsendt QR-kode.
             </p>
 
             <div className="input-grid checkout-grid">
