@@ -56,6 +56,10 @@ export default function CertificatePage({ lang }) {
           valid: Boolean(response.ok && json.valid),
           status: json.status || (json.valid ? 'active' : 'not_found'),
           reason: json.reason || json.error || '',
+          tier: json.tier || '',
+          benefitTier: json.benefitTier || '',
+          eventId: json.eventId || '',
+          ownershipCertificate: json.ownershipCertificate || null,
         });
       } catch (error) {
         console.warn('Certificate validation failed:', error);
