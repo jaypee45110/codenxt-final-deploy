@@ -476,7 +476,7 @@ export default function JoinPage({ lang, setLang }) {
         const rewardData = await rewardRes.json().catch(() => null);
 
         if (alive) {
-          setReward(rewardData && rewardData.title ? rewardData : null);
+          setReward(rewardData && (rewardData.title || rewardData.content || rewardData.url) ? rewardData : null);
         }
       } catch (error) {
         console.warn('Could not load assigned tier reward:', error);
