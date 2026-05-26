@@ -80,8 +80,8 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'Velg PNG eller JPG',
       noFile: 'Ingen fil valgt',
       selectedFile: 'Valgt fil',
-      termsText: 'codeBonuss brukes til QR- og lenkebasert tilgang, digitale fordeler, kunderespons og direkte oppfølging via codeNXT.',
-      accept: 'Jeg godtar vilkårene for codeBonuss.',
+      termsText: 'codePerks brukes til QR- og lenkebasert tilgang, digitale fordeler, kunderespons og direkte oppfølging via codeNXT.',
+      accept: 'Jeg godtar vilkårene for codePerks.',
       continue: 'OPPRETT BONUSKAMPANJE',
       creating: 'Oppretter bonuskampanje...',
       submitError: 'Kunne ikke opprette bonuskampanjen. Prøv igjen.',
@@ -119,8 +119,8 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'Choose PNG or JPG',
       noFile: 'No file chosen',
       selectedFile: 'Selected file',
-      termsText: 'codeBonuss is used for QR and link-based access, digital bonuss, customer response and direct follow-up via codeNXT.',
-      accept: 'I accept the codeBonuss terms.',
+      termsText: 'codePerks is used for QR and link-based access, digital bonuss, customer response and direct follow-up via codeNXT.',
+      accept: 'I accept the codePerks terms.',
       continue: 'CREATE A PERK',
       creating: 'Creating bonus...',
       submitError: 'Could not create the bonus. Please try again.',
@@ -158,8 +158,8 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'PNG oder JPG wählen',
       noFile: 'Keine Datei gewählt',
       selectedFile: 'Gewählte Datei',
-      termsText: 'codeBonuss wird für QR- und Link-Zugang, digitale Kundenvorteile, Kundenreaktionen und direkte Nachverfolgung über codeNXT genutzt.',
-      accept: 'Ich akzeptiere die Bedingungen für codeBonuss.',
+      termsText: 'codePerks wird für QR- und Link-Zugang, digitale Kundenvorteile, Kundenreaktionen und direkte Nachverfolgung über codeNXT genutzt.',
+      accept: 'Ich akzeptiere die Bedingungen für codePerks.',
       continue: 'KUNDENVORTEIL ERSTELLEN',
       creating: 'Kundenvorteil wird erstellt...',
       submitError: 'Der Kundenvorteil konnte nicht erstellt werden. Bitte versuchen Sie es erneut.',
@@ -197,8 +197,8 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'Choisir PNG ou JPG',
       noFile: 'Aucun fichier choisi',
       selectedFile: 'Fichier choisi',
-      termsText: 'codeBonuss sert à gérer l’accès par QR et lien, les avantages numériques, la réponse client et le suivi direct via codeNXT.',
-      accept: 'J’accepte les conditions de codeBonuss.',
+      termsText: 'codePerks sert à gérer l’accès par QR et lien, les avantages numériques, la réponse client et le suivi direct via codeNXT.',
+      accept: 'J’accepte les conditions de codePerks.',
       continue: 'CRÉER UN AVANTAGE',
       creating: 'Création de l’avantage...',
       submitError: 'Impossible de créer l’avantage. Veuillez réessayer.',
@@ -236,8 +236,8 @@ export default function CheckoutPage({ lang, setLang }) {
       chooseFile: 'Elegir PNG o JPG',
       noFile: 'Ningún archivo elegido',
       selectedFile: 'Archivo elegido',
-      termsText: 'codeBonuss se usa para acceso por QR y enlace, beneficios digitales, respuesta de clientes y seguimiento directo vía codeNXT.',
-      accept: 'Acepto las condiciones de codeBonuss.',
+      termsText: 'codePerks se usa para acceso por QR y enlace, beneficios digitales, respuesta de clientes y seguimiento directo vía codeNXT.',
+      accept: 'Acepto las condiciones de codePerks.',
       continue: 'CREAR BENEFICIO',
       creating: 'Creando beneficio...',
       submitError: 'No se pudo crear el beneficio. Inténtalo de nuevo.',
@@ -387,7 +387,7 @@ export default function CheckoutPage({ lang, setLang }) {
   const [logoError, setLogoError] = useState('');
 
   useEffect(() => {
-    document.title = 'Checkout - codeBonuss';
+    document.title = 'Checkout - codePerks';
   }, []);
 
   const missingRequired = useMemo(() => {
@@ -519,8 +519,8 @@ export default function CheckoutPage({ lang, setLang }) {
       };
 
       const payload = {
-        vertical: 'codebonuss',
-        productName: 'codeBonuss',
+        vertical: 'codeperks',
+        productName: 'codePerks',
         engine: 'codeNXT',
         eventCode: releaseCode,
         code: releaseCode,
@@ -546,7 +546,7 @@ export default function CheckoutPage({ lang, setLang }) {
         stackLogo: artistLogo,
         artistLogo,
         logoTooLarge: false,
-        selectedTypes: ['codeBonuss release'],
+        selectedTypes: ['codePerks release'],
         termsAccepted,
         shortLink: `${window.location.origin}/join/${releaseCode}`,
         bonusWindow: '24h',
@@ -557,7 +557,7 @@ export default function CheckoutPage({ lang, setLang }) {
       };
 
       console.log('CODEPERKS_EVENT_PAYLOAD', {
-        vertical: 'codebonuss',
+        vertical: 'codeperks',
         code: releaseCode,
         benefitInventory: payload.benefitInventory,
       });
@@ -566,7 +566,7 @@ export default function CheckoutPage({ lang, setLang }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          vertical: 'codebonuss',
+          vertical: 'codeperks',
           code: releaseCode,
           name: payload.stackName,
           stackName: payload.stackName,
@@ -576,7 +576,7 @@ export default function CheckoutPage({ lang, setLang }) {
           venue: payload.platform || 'Customer channel',
           platform: payload.platform,
           city: '',
-          badgeConfig: { template: 'codebonuss' },
+          badgeConfig: { template: 'codeperks' },
           startAt: unlockAt.toISOString(),
           releaseDate,
           releaseTime,
@@ -586,6 +586,7 @@ export default function CheckoutPage({ lang, setLang }) {
           benefitInventory: payload.benefitInventory,
           rewardDelivery: payload.rewardDelivery,
           redemptionLocation: payload.redemptionLocation,
+          bonusDetails: payload.bonusDetails,
           defaultLang: payload.defaultLang || lang || 'en',
           lang: payload.defaultLang || lang || 'en',
           language: payload.defaultLang || lang || 'en',
@@ -604,12 +605,12 @@ export default function CheckoutPage({ lang, setLang }) {
       payload.dashboardAccessKey = dashboardAccessKey;
       payload.shortLink = `${window.location.origin}/join/${finalEventCode}`;
       if (dashboardAccessKey) {
-        sessionStorage.setItem('codebonuss_admin_key', dashboardAccessKey);
+        sessionStorage.setItem('codeperks_admin_key', dashboardAccessKey);
       }
 
       localStorage.setItem('codenxt_event', JSON.stringify(payload));
       localStorage.setItem('codenxt_active_event_code', finalEventCode);
-      localStorage.setItem('codebonuss_latest_event', JSON.stringify(payload));
+      localStorage.setItem('codeperks_latest_event', JSON.stringify(payload));
 
       navigate('/campaign-created', {
         state: { ...payload, lang },
@@ -625,7 +626,7 @@ export default function CheckoutPage({ lang, setLang }) {
   return (
     <main className="page-shell checkout-page">
       <header className="landing-header">
-        <img src="/codeBonuss-logo.png?v=3" alt="codeBonuss logo" className="landing-logo" />
+        <img src="/codePerks-logo.png?v=3" alt="codePerks logo" className="landing-logo" />
         <div className="landing-powered">{text.common.powered}</div>
         <LanguageSwitcher lang={lang} onChange={setLang} />
       </header>
