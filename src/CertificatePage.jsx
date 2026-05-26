@@ -82,14 +82,9 @@ export default function CertificatePage({ lang }) {
     valid: false,
     status: 'checking',
   });
-  const [claimMethod, setClaimMethod] = useState('email');
   const [claimStatus, setClaimStatus] = useState('');
   const [claimant, setClaimant] = useState({
     fullName: '',
-    address: '',
-    postalCode: '',
-    country: '',
-    phone: '',
     email: '',
   });
 
@@ -110,7 +105,7 @@ export default function CertificatePage({ lang }) {
     `Reward claim\n\n` +
     `Certificate ID: ${certificateId}\n` +
     `Event code: ${eventCode}\n` +
-    `Category: ${data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || 'Not specified'}\n` +
+    `Category: ${certificateValidation.benefitTier || certificateValidation.tier || data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || 'Not specified'}\n` +
     `Campaign / perk: ${data.releaseTitle || data.stackName || 'codePerks reward'}\n\n` +
     `Claimant\n` +
     `Full name: ${claimant.fullName}\n` +
@@ -118,7 +113,7 @@ export default function CertificatePage({ lang }) {
   );
 
   const claimEmailHref =
-    claimMethod === 'email' && rewardDelivery.email && claimReady
+    rewardDelivery.email && claimReady
       ? `mailto:${rewardDelivery.email}?subject=${mailSubject}&body=${mailBody}`
       : '#';
 
@@ -147,7 +142,7 @@ export default function CertificatePage({ lang }) {
       if (!response.ok || !json.ok) {
         throw new Error(json.error || `Could not register claim (${response.status})`);
       }
-      setClaimStatus(type === 'post' ? 'Postal claim registered.' : 'Email claim registered.');
+      setClaimStatus('Email claim registered.');
       return true;
     } catch (error) {
       console.error('Reward claim registration failed:', error);
