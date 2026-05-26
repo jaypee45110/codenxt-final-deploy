@@ -340,6 +340,10 @@ export default function JoinPage({ lang, setLang }) {
 
       if (joinData?.ownershipCertificate) {
         setOwnershipCertificate(joinData.ownershipCertificate);
+
+        if (joinData.ownershipCertificate.benefitTier) {
+          setBonusTier(joinData.ownershipCertificate.benefitTier);
+        }
       } else {
         setOwnershipCertificate(null);
       }
