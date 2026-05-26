@@ -423,7 +423,7 @@ export default function CheckoutPage({ lang, setLang }) {
   };
 
   const handleLogoUpload = async (event) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files?.;
     setLogoError('');
 
     if (!file) return;
@@ -848,6 +848,7 @@ export default function CheckoutPage({ lang, setLang }) {
           align-items: center;
           gap: 8px;
           line-height: 1.2;
+          color: inherit;
         }
 
         .field-badge {
@@ -858,11 +859,13 @@ export default function CheckoutPage({ lang, setLang }) {
           height: 22px;
           min-width: 22px;
           border-radius: 999px;
-          background: linear-gradient(180deg, #f2f2f2, #cfcfcf);
-          color: #050505;
+          background: #d9d9d9 !important;
+          color: #000000 !important;
           font-size: 12px;
           font-weight: 900;
           letter-spacing: 0;
+          line-height: 1;
+          text-shadow: none !important;
           box-shadow: 0 1px 2px rgba(0,0,0,.35);
         }
 
