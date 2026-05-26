@@ -400,7 +400,7 @@ export default function JoinPage({ lang, setLang }) {
         </p>
       );
     }
-    if (!reward) {
+    if (!ownershipCertificate || !assignedTier || !reward) {
       return (
         <p className="muted center">
           {j.rewardPending || 'Your verified benefit will be shown on the claim certificate after you join.'}
