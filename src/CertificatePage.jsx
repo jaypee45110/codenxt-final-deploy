@@ -35,7 +35,7 @@ const certificateText = {
     deliveryContact: 'Kontaktperson',
     deliveryEmail: 'E-post',
     claimTitle: 'Krev / hent fordelen',
-    claimHelp: 'Send en e-post med sertifikat-ID og kampanjekode til:'
+    claimHelp: 'Send en e-post med sertifikat-ID og kampanjekode til:',
     claimDetails: 'Opplysninger om mottaker',
     claimDetailsHelp: 'Fyll inn navn og e-post slik at fordelen kan verifiseres og utleveres.',
     fullName: 'Fullt navn',
@@ -68,7 +68,7 @@ const certificateText = {
     deliveryContact: 'Delivery contact',
     deliveryEmail: 'Delivery email',
     claimTitle: 'Claim / redeem your benefit',
-    claimHelp: 'Send an email with your Certificate ID and campaign code to:'
+    claimHelp: 'Send an email with your Certificate ID and campaign code to:',
     claimDetails: 'Your reward claim details',
     claimDetailsHelp: 'Enter your personal details so the reward can be verified and delivered.',
     fullName: 'Full name',

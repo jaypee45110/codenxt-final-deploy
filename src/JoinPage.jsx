@@ -25,7 +25,7 @@ const bonusCopy = {
     privacyLink: 'Personvernpolicy',
     ownershipKicker: 'VERIFISERT FORDEL',
     ownershipLabel: 'Sertifikat-ID',
-    ownershipDescription: 'Denne fordelen er registrert og kan verifiseres i codePerks-nettverket.'
+    ownershipDescription: 'Denne fordelen er registrert og kan verifiseres i codePerks-nettverket.',
     ownershipIssued: 'Utstedt',
     claimReward: 'SE / KREV FORDEL',
     availableBenefits: 'TILGJENGELIGE FORDELER',
