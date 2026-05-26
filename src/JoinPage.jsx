@@ -457,13 +457,26 @@ export default function JoinPage({ lang, setLang }) {
 
     async function loadAssignedTierReward() {
       try {
-        if (!release?.id || !assignedTier) return;
+        const rewardEventId =
+          ownershipCertificate?.eventId ||
+          release?.id ||
+          release?.eventId ||
+          '';
 
-        const rewardRes = await fetch(`${API_BASE}/reward/${encodeURIComponent(release.id)}?tier=${encodeURIComponent(assignedTier)}&vertical=codeperks`);
+        const rewardTier = assignedTier || bonusTier || '';
+
+        if (!rewardEventId || !rewardTier) return;
+
+        setReward(null);
+
+        const rewardRes = await fetch(`${API_BASE}/reward/${encodeURIComponent(rewardEventId)}?tier=${encodeURIComponent(rewardTier)}&vertical=codeperks`);
         if (!rewardRes.ok) return;
 
         const rewardData = await rewardRes.json().catch(() => null);
-        if (alive && rewardData) setReward(rewardData);
+
+        if (alive) {
+          setReward(rewardData && rewardData.title ? rewardData : null);
+        }
       } catch (error) {
         console.warn('Could not load assigned tier reward:', error);
       }
@@ -474,7 +487,7 @@ export default function JoinPage({ lang, setLang }) {
     return () => {
       alive = false;
     };
-  }, [release?.id, assignedTier]);
+  }, [ownershipCertificate?.eventId, release?.id, release?.eventId, assignedTier, bonusTier]);
 
   useEffect(() => {
     let alive = true;
