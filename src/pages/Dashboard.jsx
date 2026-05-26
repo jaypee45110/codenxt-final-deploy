@@ -89,9 +89,9 @@ const dashboardCopy = {
     bonusActive24h: '${esc(text.bonusActive24h || text.bonusDistribution24h || "Beneficio aktiv: 24 timer etter release")}',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Ikke tilgjengelig',
-    verifiedNetworkEyebrow: 'Verified Benefit Network',
-    verifiedNetworkTitle: 'Hver medlemsfordel får sitt eget sertifikatspor.',
-    verifiedNetworkText: 'Hver utstedte fordel kan kobles til Certificate ID, utstedelsesdato, claim-status og fulfillment-logg. Dette gjør codePerks til et verifiserbart system for medlemsfordeler.',
+    verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
+    verifiedNetworkTitle: 'Hver fordel får sitt eget sertifikatspor.',
+    verifiedNetworkText: 'Hver utstedte fordel kan kobles til Certificate ID, utstedelsesdato, claim-status og fulfillment-logg. Dette gjør codePerks til et verifiserbart system for fordeler.',
     verifiedIssued: 'Utstedt',
     verifiedMembers: 'Registrerte',
     verifiedStatus: 'Status',
@@ -162,9 +162,9 @@ const dashboardCopy = {
     bonusActive24h: 'Beneficio active: 24 hours after release',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Unavailable',
-    verifiedNetworkEyebrow: 'Verified Benefit Network',
-    verifiedNetworkTitle: 'Every member benefit gets its own certificate trail.',
-    verifiedNetworkText: 'Each issued benefit can be connected to a Certificate ID, issue date, claim status and fulfillment record. This makes codePerks a verifiable guest benefit system.',
+    verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
+    verifiedNetworkTitle: 'Every verified benefit gets its own certificate trail.',
+    verifiedNetworkText: 'Each issued benefit can be connected to a Certificate ID, issue date, claim status and fulfillment record. This makes codePerks a verifiable benefit system.',
     verifiedIssued: 'Issued',
     verifiedMembers: 'Registered',
     verifiedStatus: 'Status',
@@ -235,7 +235,7 @@ const dashboardCopy = {
     bonusActive24h: 'Beneficio aktiv: 24 Stunden nach Kampagnenstart',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Nicht verfuegbar',
-    verifiedNetworkEyebrow: 'Verified Benefit Network',
+    verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
     verifiedNetworkTitle: 'Jeder verifizierte Vorteil erhaelt seine eigene Zertifikatsspur.',
     verifiedNetworkText: 'Jeder ausgegebene Vorteil kann mit Certificate ID, Ausgabedatum, Claim-Status und Fulfillment-Protokoll verbunden werden. So wird codePerks zu einem verifizierbaren System fuer verifizierte Vorteile.',
     verifiedIssued: 'Ausgegeben',
@@ -308,9 +308,9 @@ const dashboardCopy = {
     bonusActive24h: 'Beneficio actif : 24 heures après le début',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Indisponible',
-    verifiedNetworkEyebrow: 'Verified Benefit Network',
-    verifiedNetworkTitle: 'Chaque avantage verifie recoit sa propre trace de certificat.',
-    verifiedNetworkText: 'Chaque avantage emis peut etre relie a un Certificate ID, une date d emission, un statut de claim et un journal de fulfillment. codePerks devient ainsi un systeme verifiable pour les avantages membres.',
+    verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
+    verifiedNetworkTitle: 'Chaque avantage vérifié reçoit sa propre trace de certificat.',
+    verifiedNetworkText: 'Chaque avantage émis peut être relié à un Certificate ID, une date d’émission, un statut de claim et un journal de fulfillment. codePerks devient ainsi un système vérifiable pour les avantages.',
     verifiedIssued: 'Emis',
     verifiedMembers: 'Enregistrés',
     verifiedStatus: 'Statut',
@@ -381,7 +381,7 @@ const dashboardCopy = {
     bonusActive24h: 'Beneficio activo: 24 horas despues del lanzamiento',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'No disponible',
-    verifiedNetworkEyebrow: 'Verified Benefit Network',
+    verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
     verifiedNetworkTitle: 'Cada beneficio verificado obtiene su propio rastro de certificado.',
     verifiedNetworkText: 'Cada beneficio emitido puede conectarse a un Certificate ID, fecha de emision, estado de claim y registro de fulfillment. Asi codePerks se convierte en un sistema verificable de beneficios para miembros.',
     verifiedIssued: 'Emitidos',
@@ -1400,6 +1400,45 @@ export default function Dashboard({ lang: appLang, setLang }) {
     es: 'Periodo de campaña',
   }[lang] || 'Campaign period';
 
+  const dashboardPanelLabels = {
+    verifiedBenefit: {
+      no: 'Verifisert fordel',
+      en: 'Verified benefit',
+      de: 'Verifizierter Vorteil',
+      fr: 'Avantage vérifié',
+      es: 'Beneficio verificado',
+    },
+    keyFigures: {
+      no: 'Nøkkeltall',
+      en: 'Key figures',
+      de: 'Kennzahlen',
+      fr: 'Chiffres clés',
+      es: 'Cifras clave',
+    },
+    rewardClaims: {
+      no: 'Innløste fordeler',
+      en: 'Reward Claims',
+      de: 'Eingelöste Vorteile',
+      fr: 'Avantages réclamés',
+      es: 'Beneficios reclamados',
+    },
+    verifiedNetwork: {
+      no: 'Verifisert fordelsnettverk',
+      en: 'Verified Benefit Network',
+      de: 'Verifiziertes Vorteilsnetzwerk',
+      fr: 'Réseau d’avantages vérifié',
+      es: 'Red verificada de beneficios',
+    },
+  };
+
+  const panelLabel = (number, label) => (
+    <span className="panel-label-with-badge">
+      <span className="panel-number-badge">{number}</span>
+      {label}
+    </span>
+  );
+
+
   const infoCards = [
     [`${campaignPeriodLabel}`, campaignPeriod],
     [`${text.company}`, eventData.companyName],
@@ -2168,6 +2207,33 @@ export default function Dashboard({ lang: appLang, setLang }) {
               display: none !important;
             }
           }
+
+
+          .panel-label-with-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+          }
+
+          .panel-number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            border-radius: 999px;
+            background: #d9d9d9 !important;
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
+            font-size: 12px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 0;
+            text-shadow: none !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,.35);
+          }
+
 
           .left-page {
             display: grid;
@@ -2940,7 +3006,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           <div className="main-grid">
             <div className="left-page">
             <section className="panel presentation-panel">
-              <h2 className="panel-title">{text.presentation}</h2>
+              <h2 className="panel-title">{panelLabel(1, text.presentation)}</h2>
               <div className="slide">
                 <img className="slide-bg" src={badgeBase} alt="" aria-hidden="true" />
                 <div className="qr-box">
@@ -2962,7 +3028,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
               <div className="status">{imageStatus}</div>
             </section>
             <section className="panel report-panel compact-report">
-              <h2 className="panel-title">{text.report}</h2>
+              <h2 className="panel-title">{panelLabel(3, dashboardPanelLabels.keyFigures[lang] || dashboardPanelLabels.keyFigures.en)}</h2>
               <p className="report-copy">
                 {text.reportHelp} CSV-filen kan brukes til enkel oppfølging av InSide-tilganger, skanninger og bonusrespons.
               </p>
@@ -2981,7 +3047,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
             </section>
 
             <section className="panel report-panel compact-report claims-panel">
-              <h2 className="panel-title">Reward Claims</h2>
+              <h2 className="panel-title">{panelLabel(4, dashboardPanelLabels.rewardClaims[lang] || dashboardPanelLabels.rewardClaims.en)}</h2>
               <p className="report-copy">
                 Registered reward claims for this campaign.
               </p>
@@ -3026,7 +3092,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
             <section className="panel bonus-panel">
               <div className="bonus-header">
-                <h2 className="panel-title">{text.bonus}</h2>
+                <h2 className="panel-title">{panelLabel(2, dashboardPanelLabels.verifiedBenefit[lang] || dashboardPanelLabels.verifiedBenefit.en)}</h2>
               </div>
 
               <div className="bonus-editor">
@@ -3210,7 +3276,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
               <div className="verification-panel">
                 <div className="verification-copy">
-                  <span className="eyebrow">{text.verifiedNetworkEyebrow}</span>
+                  <span className="eyebrow">{panelLabel(5, dashboardPanelLabels.verifiedNetwork[lang] || dashboardPanelLabels.verifiedNetwork.en)}</span>
                   <h3>{text.verifiedNetworkTitle}</h3>
                   <p>{text.verifiedNetworkText}</p>
                 </div>
