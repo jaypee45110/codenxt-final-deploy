@@ -16,7 +16,7 @@ const certificateText = {
   no: {
     kicker: 'VERIFISERT REWARD-SERTIFIKAT',
     title: 'Reward Claim Certificate',
-    intro: 'Dette sertifikatet bekrefter din codePerks-fordel og viser informasjonen du trenger for å kreve den.',
+    intro: 'Dette sertifikatet bekrefter fordelen din og viser hvordan den kan hentes eller kreves.'
     valid: 'GYLDIG',
     notVerified: 'IKKE VERIFISERT',
     verifying: 'VERIFISERER',
@@ -25,7 +25,7 @@ const certificateText = {
     issued: 'Utstedt',
     backendValidation: 'Verifisering',
     campaignPerk: 'Kampanje / fordel',
-    bonus: 'Bonus',
+    bonus: 'Fordel',
     notRegistered: 'Ikke registrert',
     redeemAt: 'Hentested',
     instructions: 'Instruksjoner',
@@ -34,13 +34,13 @@ const certificateText = {
     deliveryHelp: 'Bruk denne kontakten for å kreve fordelen.',
     deliveryContact: 'Kontaktperson',
     deliveryEmail: 'E-post',
-    claimTitle: 'Krev fordelen',
-    claimHelp: 'Send en e-post med Sertifikat-ID og Kampanjekode til:',
+    claimTitle: 'Krev / hent fordelen',
+    claimHelp: 'Send en e-post med sertifikat-ID og kampanjekode til:'
     claimDetails: 'Opplysninger om mottaker',
     claimDetailsHelp: 'Fyll inn navn og e-post slik at fordelen kan verifiseres og utleveres.',
     fullName: 'Fullt navn',
     email: 'E-post',
-    sendClaim: 'SEND KRAV PÅ E-POST',
+    sendClaim: 'SEND KRAV VIA E-POST',
     back: 'Tilbake til fordel',
     missingFields: 'Fyll inn navn og e-post først.',
     registered: 'E-postkrav registrert.',
@@ -58,7 +58,7 @@ const certificateText = {
     issued: 'Issued',
     backendValidation: 'Backend validation',
     campaignPerk: 'Campaign / perk',
-    bonus: 'Bonus',
+    bonus: 'Fordel',
     notRegistered: 'Not registered',
     redeemAt: 'Redeem at',
     instructions: 'Instructions',
@@ -67,8 +67,8 @@ const certificateText = {
     deliveryHelp: 'Use this contact to claim your reward.',
     deliveryContact: 'Delivery contact',
     deliveryEmail: 'Delivery email',
-    claimTitle: 'Claim your reward',
-    claimHelp: 'Send an email with your Certificate ID and Event code to:',
+    claimTitle: 'Claim / redeem your benefit',
+    claimHelp: 'Send an email with your Certificate ID and campaign code to:'
     claimDetails: 'Your reward claim details',
     claimDetailsHelp: 'Enter your personal details so the reward can be verified and delivered.',
     fullName: 'Full name',
@@ -218,17 +218,17 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
 
   const mailSubject = encodeURIComponent(`codePerks reward claim ${certificateId}`);
   const mailBody = encodeURIComponent(
-    `Reward claim\n\n` +
+    `${c.claimTitle}\n\n` +
     `Certificate ID: ${certificateId}\n` +
-    `Event code: ${eventCode}\n` +
-    `Category: ${certificateTier || c.notRegistered}\n` +
-    `Reward: ${certificateRewardTitle || c.notRegistered}\n` +
-    `Redeem at: ${certificateBonusDetails?.redemptionLocation || data.redemptionLocation || c.notRegistered}\n` +
-    `Instructions: ${certificateBonusDetails?.instructions || c.none}\n` +
-    `Campaign / perk: ${data.releaseTitle || data.stackName || 'codePerks reward'}\n\n` +
-    `Claimant\n` +
-    `Full name: ${claimant.fullName}\n` +
-    `Email: ${claimant.email}\n`
+    `${c.eventCode}: ${eventCode}\n` +
+    `Kategori: ${certificateTier || c.notRegistered}\n` +
+    `${c.bonus}: ${certificateRewardTitle || c.notRegistered}\n` +
+    `${c.redeemAt}: ${certificateBonusDetails?.redemptionLocation || data.redemptionLocation || c.notRegistered}\n` +
+    `${c.instructions}: ${certificateBonusDetails?.instructions || c.none}\n` +
+    `${c.campaignPerk}: ${data.releaseTitle || data.stackName || 'codePerks'}\n\n` +
+    `Mottaker\n` +
+    `${c.fullName}: ${claimant.fullName}\n` +
+    `${c.email}: ${claimant.email}\n`
   );
 
   const claimEmailHref =

@@ -11,12 +11,12 @@ const bonusCopy = {
     headlineLine1: 'LÅS OPP OG FÅ',
     headlineLine2: 'EKSKLUSIVT INNHOLD',listened: 'LÅS OPP OG FÅ',
     andGet: 'OG FÅR',
-    bonus: 'EKSKLUSIVT INNHOLD',
+    bonus: 'VERIFISERT FORDEL',
     gold: 'GULL',
     silver: 'SØLV',
     general: 'GENERELL',
-    insideTitle: 'codePerks Info',
-    insideText: 'Få eksklusive oppdateringer, bonusinnhold og tidlig tilgang direkte til telefonen din.',
+    insideTitle: 'codePerks-info',
+    insideText: 'Få relevant informasjon om denne fordelen direkte på telefonen.'
     phone: 'Mobilnummer',
     confirm: 'KOM INSIDE',
     joined: 'VELKOMMEN INSIDE',
@@ -25,9 +25,9 @@ const bonusCopy = {
     privacyLink: 'Personvernpolicy',
     ownershipKicker: 'VERIFISERT FORDEL',
     ownershipLabel: 'Sertifikat-ID',
-    ownershipDescription: 'Denne verifiserte fordelen er permanent registrert i codePerks-nettverket.',
+    ownershipDescription: 'Denne fordelen er registrert og kan verifiseres i codePerks-nettverket.'
     ownershipIssued: 'Utstedt',
-    claimReward: 'SE / KREV REWARD',
+    claimReward: 'SE / KREV FORDEL',
     availableBenefits: 'TILGJENGELIGE FORDELER',
     left: 'IGJEN',
     fullyClaimed: 'FULLT TILDELT',
@@ -46,7 +46,7 @@ const bonusCopy = {
     gold: 'GOLD',
     silver: 'SILVER',
     general: 'GENERAL',
-    insideTitle: 'codePerks Info',
+    insideTitle: 'codePerks-info',
     insideText: 'Receive exclusive updates, bonus content, and early access directly to your phone.',
     phone: 'Mobile number',
     confirm: 'COME INSIDE',
@@ -77,7 +77,7 @@ const bonusCopy = {
     gold: 'GOLD',
     silver: 'SILBER',
     general: 'ALLGEMEIN',
-    insideTitle: 'codePerks Info',
+    insideTitle: 'codePerks-info',
     insideText: 'Erhalte exklusive Updates, Bonusinhalte und frühen Zugang direkt auf dein Telefon.',
     phone: 'Mobilnummer',
     confirm: 'KOMM INSIDE',
@@ -107,7 +107,7 @@ const bonusCopy = {
     gold: 'OR',
     silver: 'ARGENT',
     general: 'GÉNÉRAL',
-    insideTitle: 'codePerks Info',
+    insideTitle: 'codePerks-info',
     insideText: 'Recevez des mises à jour exclusives, du contenu bonus et un accès anticipé directement sur votre téléphone.',
     phone: 'Numéro mobile',
     confirm: 'ENTRER INSIDE',
@@ -132,7 +132,7 @@ const bonusCopy = {
     gold: 'ORO',
     silver: 'PLATA',
     general: 'GENERAL',
-    insideTitle: 'codePerks Info',
+    insideTitle: 'codePerks-info',
     insideText: 'Recibe actualizaciones exclusivas, contenido adicional y acceso anticipado directamente en tu teléfono.',
     phone: 'Número móvil',
     confirm: 'ENTRAR INSIDE',
@@ -403,7 +403,7 @@ export default function JoinPage({ lang, setLang }) {
     if (!ownershipCertificate || !assignedTier || !reward) {
       return (
         <p className="muted center">
-          {j.rewardPending || 'Your verified benefit will be shown on the claim certificate after you join.'}
+          {j.rewardPending || 'Fordelen vises på sertifikatet etter registrering.'}
         </p>
       );
     }
@@ -414,7 +414,7 @@ export default function JoinPage({ lang, setLang }) {
     if (expectedTier && actualTier && actualTier !== expectedTier) {
       return (
         <p className="muted center">
-          {j.rewardPending || 'Your verified benefit will be shown on the claim certificate after you join.'}
+          {j.rewardPending || 'Fordelen vises på sertifikatet etter registrering.'}
         </p>
       );
     }
