@@ -61,7 +61,7 @@ export default function CheckoutPage({ lang, setLang }) {
         contactName: 'Kontaktperson',
         email: 'Delivery-ansvarlig e-post',
         phone: 'Telefon',
-        comments: 'Medlemsfordel / notater',
+        comments: 'Hentested for innløsing av bonus',
       },
       placeholders: {
         stackName: 'VIP-fordel, kundeklubb, åpningstilbud ...',
@@ -100,7 +100,7 @@ export default function CheckoutPage({ lang, setLang }) {
         contactName: 'Contact person',
         email: 'Delivery Contact Email',
         phone: 'Phone',
-        comments: 'Perk content / notes',
+        comments: 'Hentested for innløsing av bonus',
       },
       placeholders: {
         stackName: 'VIP perk, loyalty reward, opening offer ...',
@@ -178,7 +178,7 @@ export default function CheckoutPage({ lang, setLang }) {
         contactName: 'Contact',
         email: 'E-mail',
         phone: 'Téléphone',
-        comments: 'Avantage client / notes',
+        comments: 'Hentested for innløsing av bonus',
       },
       placeholders: {
         stackName: 'Avantage VIP, club client, offre d’ouverture ...',
@@ -217,7 +217,7 @@ export default function CheckoutPage({ lang, setLang }) {
         contactName: 'Persona de contacto',
         email: 'E-mail',
         phone: 'Teléfono',
-        comments: 'Beneficio / notas',
+        comments: 'Hentested for innløsing av bonus',
       },
       placeholders: {
         stackName: 'Beneficio VIP, club de clientes, oferta de apertura ...',
@@ -517,6 +517,7 @@ export default function CheckoutPage({ lang, setLang }) {
         releaseTime,
         city: '',
         comment: formData.comments.trim(),
+        redemptionLocation: formData.comments.trim(),
         rewardDelivery,
         benefitInventory,
         logoFileName: formData.logoFileName,
@@ -562,6 +563,7 @@ export default function CheckoutPage({ lang, setLang }) {
           maxClaims: 999999,
           benefitInventory: payload.benefitInventory,
           rewardDelivery: payload.rewardDelivery,
+          redemptionLocation: payload.redemptionLocation,
           defaultLang: payload.defaultLang || lang || 'en',
           lang: payload.defaultLang || lang || 'en',
           language: payload.defaultLang || lang || 'en',

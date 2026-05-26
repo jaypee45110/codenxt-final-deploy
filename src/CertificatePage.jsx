@@ -106,6 +106,7 @@ export default function CertificatePage({ lang }) {
     `Certificate ID: ${certificateId}\n` +
     `Event code: ${eventCode}\n` +
     `Category: ${certificateValidation.benefitTier || certificateValidation.tier || data.benefitTier || data.tier || data.ownershipCertificate?.benefitTier || 'Not specified'}\n` +
+    `Redeem at: ${data.redemptionLocation || 'Not registered'}\n` +
     `Campaign / perk: ${data.releaseTitle || data.stackName || 'codePerks reward'}\n\n` +
     `Claimant\n` +
     `Full name: ${claimant.fullName}\n` +
@@ -188,6 +189,10 @@ export default function CertificatePage({ lang }) {
             <div>
               <span>Campaign / perk</span>
               <strong>{data.releaseTitle || data.stackName || 'codePerks reward'}</strong>
+            </div>
+            <div>
+              <span>Redeem at</span>
+              <strong>{data.redemptionLocation || 'Not registered'}</strong>
             </div>
           </div>
         </section>

@@ -1060,6 +1060,12 @@ export default function JoinPage({ lang, setLang }) {
         <section className="bonus-content">
           <p className="bonus-content-title">{assignedTier ? `${tierText} ${b.bonus}` : (b.verifiedBenefit || 'VERIFIED BENEFIT')}</p>
           <div className="reward-stage">{renderReward()}</div>
+          {release.redemptionLocation ? (
+            <div className="claim-location-box">
+              <span>HENTESTED FOR BONUS</span>
+              <strong>{release.redemptionLocation}</strong>
+            </div>
+          ) : null}
         </section>
 
         <section className="inside-box">
