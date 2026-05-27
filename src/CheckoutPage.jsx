@@ -562,24 +562,43 @@ export default function CheckoutPage({ lang, setLang }) {
     if (!value) return;
 
     let invalid = false;
+    let message = '';
 
-    if (type === 'date') invalid = !isValidDateValue(value);
-    if (type === 'time') invalid = !isValidTimeValue(value);
-    if (type === 'email') invalid = !isValidEmailValue(value);
-    if (type === 'phone') invalid = !isValidPhoneValue(value);
+    if (type === 'date' && !isValidDateValue(value)) {
+      invalid = true;
+      message = getFormatMessage('date');
+    }
+    if (type === 'time' && !isValidTimeValue(value)) {
+      invalid = true;
+      message = getFormatMessage('time');
+    }
+    if (type === 'email' && !isValidEmailValue(value)) {
+      invalid = true;
+      message = getFormatMessage('email');
+    }
+    if (type === 'phone' && !isValidPhoneValue(value)) {
+      invalid = true;
+      message = getFormatMessage('phone');
+    }
 
     if (invalid) {
       setTriedSubmit(true);
+      event.target.setCustomValidity(message);
+      event.target.reportValidity();
 
       setFormData((prev) => ({
         ...prev,
         [field]: '',
       }));
 
+      event.target.value = '';
+
       setTimeout(() => {
         event.target.focus();
-        event.target.reportValidity?.();
-      }, 0);
+        event.target.setCustomValidity('');
+      }, 50);
+    } else {
+      event.target.setCustomValidity('');
     }
   };
 
