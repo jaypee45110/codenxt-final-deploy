@@ -357,6 +357,13 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
           eventCode,
           certificateId,
           claimant,
+          tier: certificateTier,
+          benefitTier: certificateTier,
+          eventId: certificateValidation.eventId || data.id || '',
+          rewardTitle: certificateRewardTitle || certificateBonusDetails?.reward || '',
+          redemptionLocation: certificateBonusDetails?.redemptionLocation || data.redemptionLocation || '',
+          redemptionDeadline: certificateBonusDetails?.redemptionDeadline || '',
+          redemptionInstructions: certificateBonusDetails?.instructions || '',
         }),
       });
 
