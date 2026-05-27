@@ -495,31 +495,31 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const formatMessages = {
     no: {
-      date: 'Bruk formatet ÅÅÅÅ-MM-DD, f.eks. 2026-06-01.',
+      date: 'Bruk formatet DD/MM/ÅÅÅÅ, f.eks. 01/06/2026.',
       time: 'Bruk formatet TT:MM, f.eks. 18:30.',
       email: 'Skriv en gyldig e-postadresse med @.',
       phone: 'Telefonnummer må starte med landskode, f.eks. +47.',
     },
     en: {
-      date: 'Use YYYY-MM-DD, for example 2026-06-01.',
+      date: 'Use DD/MM/YYYY, for example 01/06/2026.',
       time: 'Use HH:MM, for example 18:30.',
       email: 'Enter a valid email address with @.',
       phone: 'Phone number must start with a country code, for example +47.',
     },
     de: {
-      date: 'Bitte das Format JJJJ-MM-TT verwenden, z.B. 2026-06-01.',
+      date: 'Bitte das Format TT/MM/JJJJ verwenden, z.B. 01/06/2026.',
       time: 'Bitte das Format HH:MM verwenden, z.B. 18:30.',
       email: 'Bitte eine gültige E-Mail-Adresse mit @ eingeben.',
       phone: 'Telefonnummer muss mit Landesvorwahl beginnen, z.B. +49.',
     },
     fr: {
-      date: 'Utilisez le format AAAA-MM-JJ, par exemple 2026-06-01.',
+      date: 'Utilisez le format JJ/MM/AAAA, par exemple 01/06/2026.',
       time: 'Utilisez le format HH:MM, par exemple 18:30.',
       email: 'Saisissez une adresse e-mail valide avec @.',
       phone: 'Le numéro doit commencer par un indicatif pays, par exemple +33.',
     },
     es: {
-      date: 'Use el formato AAAA-MM-DD, por ejemplo 2026-06-01.',
+      date: 'Use el formato DD/MM/AAAA, por ejemplo 01/06/2026.',
       time: 'Use el formato HH:MM, por ejemplo 18:30.',
       email: 'Introduzca un e-mail válido con @.',
       phone: 'El teléfono debe empezar con código de país, por ejemplo +34.',
@@ -853,7 +853,7 @@ export default function CheckoutPage({ lang, setLang }) {
           </label>
           <label>
             <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>6</span>{pageText.fields.releaseDate} *</span>
-            <input type="text" inputMode="numeric" placeholder="2026-06-01" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
+            <input type="text" inputMode="numeric" placeholder="01/06/2026" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
             {fieldError('releaseDate') && <small>{text.common.required}</small>}
           </label>
 
@@ -867,7 +867,7 @@ export default function CheckoutPage({ lang, setLang }) {
           <label>
             <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>8</span>{pageText.fields.bonusActive} *</span>
             <input
-              type="text" inputMode="numeric" placeholder="2026-06-01"
+              type="text" inputMode="numeric" placeholder="01/06/2026"
               name="campaignEndDate"
               value={formData.campaignEndDate}
               onChange={handleChange}
@@ -913,7 +913,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
                 {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="text" inputMode="numeric" placeholder="2026-06-01" name="goldRedemptionDeadline" value={formData.goldRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('goldRedemptionDeadline', 'date')} />
+                <input type="text" inputMode="numeric" placeholder="01/06/2026" name="goldRedemptionDeadline" value={formData.goldRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('goldRedemptionDeadline', 'date')} />
                 {formatError('goldRedemptionDeadline', 'date') && <small>{formatError('goldRedemptionDeadline', 'date')}</small>}
                 {fieldError('goldRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
@@ -927,7 +927,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
                 {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="text" inputMode="numeric" placeholder="2026-06-01" name="silverRedemptionDeadline" value={formData.silverRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('silverRedemptionDeadline', 'date')} />
+                <input type="text" inputMode="numeric" placeholder="01/06/2026" name="silverRedemptionDeadline" value={formData.silverRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('silverRedemptionDeadline', 'date')} />
                 {formatError('silverRedemptionDeadline', 'date') && <small>{formatError('silverRedemptionDeadline', 'date')}</small>}
                 {fieldError('silverRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
@@ -941,7 +941,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
                 {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="text" inputMode="numeric" placeholder="2026-06-01" name="standardRedemptionDeadline" value={formData.standardRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('standardRedemptionDeadline', 'date')} />
+                <input type="text" inputMode="numeric" placeholder="01/06/2026" name="standardRedemptionDeadline" value={formData.standardRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('standardRedemptionDeadline', 'date')} />
                 {formatError('standardRedemptionDeadline', 'date') && <small>{formatError('standardRedemptionDeadline', 'date')}</small>}
                 {fieldError('standardRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
