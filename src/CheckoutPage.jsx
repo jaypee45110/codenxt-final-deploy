@@ -881,7 +881,6 @@ export default function CheckoutPage({ lang, setLang }) {
               value={formData.campaignEndDate}
               onChange={handleChange}
             />
-            {formatError('campaignEndDate', 'date') && <small>{formatError('campaignEndDate', 'date')}</small>}
             {fieldError('campaignEndDate') && <small>{text.common.required}</small>}
           </label>
           
