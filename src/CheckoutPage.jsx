@@ -18,8 +18,11 @@ const emptyForm = {
   phone: '',
   comments: '',
   goldRedemptionLocation: '',
+  goldRedemptionDeadline: '',
   silverRedemptionLocation: '',
+  silverRedemptionDeadline: '',
   standardRedemptionLocation: '',
+  standardRedemptionDeadline: '',
   logoFileName: '',
   stackLogo: '',
   bonusWindow: '24h',
@@ -402,8 +405,11 @@ export default function CheckoutPage({ lang, setLang }) {
       !formData.email.trim() ||
       !formData.phone.trim() ||
       !formData.goldRedemptionLocation.trim() ||
+      !formData.goldRedemptionDeadline ||
       !formData.silverRedemptionLocation.trim() ||
+      !formData.silverRedemptionDeadline ||
       !formData.standardRedemptionLocation.trim() ||
+      !formData.standardRedemptionDeadline ||
       !formData.rewardResponsible.trim() ||
       !formData.rewardEmail.trim() ||
       !formData.goldTotal.trim() ||
@@ -496,14 +502,17 @@ export default function CheckoutPage({ lang, setLang }) {
         gold: {
           reward: '',
           redemptionLocation: formData.goldRedemptionLocation.trim(),
+          redemptionDeadline: formData.goldRedemptionDeadline,
         },
         silver: {
           reward: '',
           redemptionLocation: formData.silverRedemptionLocation.trim(),
+          redemptionDeadline: formData.silverRedemptionDeadline,
         },
         standard: {
           reward: '',
           redemptionLocation: formData.standardRedemptionLocation.trim(),
+          redemptionDeadline: formData.standardRedemptionDeadline,
         },
       };
 
@@ -726,18 +735,27 @@ export default function CheckoutPage({ lang, setLang }) {
                 <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>13</span>{{ no: 'GULL-hentested', en: 'GOLD pickup location', de: 'GOLD Abholort', fr: 'Lieu de retrait OR', es: 'Lugar de recogida ORO' }[lang] || 'GOLD pickup location'} *</span>
                 <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
                 {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
+                <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
+                <input type="date" name="goldRedemptionDeadline" value={formData.goldRedemptionDeadline} onChange={handleChange} />
+                {fieldError('goldRedemptionDeadline') && <small>{text.common.required}</small>}
               </label>
 
               <label>
                 <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>14</span>{{ no: 'SØLV-hentested', en: 'SILVER pickup location', de: 'SILBER Abholort', fr: 'Lieu de retrait ARGENT', es: 'Lugar de recogida PLATA' }[lang] || 'SILVER pickup location'} *</span>
                 <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
                 {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
+                <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
+                <input type="date" name="silverRedemptionDeadline" value={formData.silverRedemptionDeadline} onChange={handleChange} />
+                {fieldError('silverRedemptionDeadline') && <small>{text.common.required}</small>}
               </label>
 
               <label>
                 <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>15</span>{{ no: 'GENERELL-hentested', en: 'GENERAL pickup location', de: 'STANDARD Abholort', fr: 'Lieu de retrait GÉNÉRAL', es: 'Lugar de recogida GENERAL' }[lang] || 'GENERAL pickup location'} *</span>
                 <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
                 {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
+                <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
+                <input type="date" name="standardRedemptionDeadline" value={formData.standardRedemptionDeadline} onChange={handleChange} />
+                {fieldError('standardRedemptionDeadline') && <small>{text.common.required}</small>}
               </label>
             </div>
           </div>
