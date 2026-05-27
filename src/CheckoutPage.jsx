@@ -451,17 +451,25 @@ export default function CheckoutPage({ lang, setLang }) {
   ]);
 
   const sanitizeDateInput = (value) => {
-    const clean = String(value || '').replace(/[^0-9/]/g, '').slice(0, 10);
-    const parts = clean.split('/');
+    const digits = String(value || '').replace(/\D/g, '').slice(0, 8);
 
-    if (parts[0] && Number(parts[0]) > 31) return '';
-    if (parts[1] && Number(parts[1]) > 12) return '';
-    if (parts[2] && parts[2].length === 4) {
-      const year = Number(parts[2]);
-      if (year < 2026 || year > 2035) return '';
+    let formatted = digits;
+    if (digits.length > 4) {
+      formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+    } else if (digits.length > 2) {
+      formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
     }
 
-    return clean;
+    const parts = formatted.split('/');
+    const day = parts[0] ? Number(parts[0]) : 0;
+    const month = parts[1] ? Number(parts[1]) : 0;
+    const year = parts[2] && parts[2].length === 4 ? Number(parts[2]) : null;
+
+    if (parts[0]?.length === 2 && (day < 1 || day > 31)) return '';
+    if (parts[1]?.length === 2 && (month < 1 || month > 12)) return '';
+    if (year !== null && (year < 2026 || year > 2035)) return '';
+
+    return formatted;
   };
 
   const handleChange = (event) => {
