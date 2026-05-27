@@ -623,7 +623,10 @@ export default function CheckoutPage({ lang, setLang }) {
     const invalidCheck = hardValidationChecks.find(([field, type]) => {
       const value = String(formData[field] || '').trim();
       if (!value) return true;
-      if (type === 'date') return !isValidDateValue(value);
+      if (type === 'date') {
+        const year = Number(value.slice(0, 4));
+        return !isValidDateValue(value) || year < 2026 || year > 2035;
+      }
       if (type === 'time') return !isValidTimeValue(value);
       if (type === 'email') return !isValidEmailValue(value);
       if (type === 'phone') return !isValidPhoneValue(value);
@@ -850,7 +853,7 @@ export default function CheckoutPage({ lang, setLang }) {
           </label>
           <label>
             <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>6</span>{pageText.fields.releaseDate} *</span>
-            <input type="date" min="2026-01-01" max="2035-12-31" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
+            <input type="text" inputMode="numeric" placeholder="2026-06-01" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
             {fieldError('releaseDate') && <small>{text.common.required}</small>}
           </label>
 
@@ -864,7 +867,7 @@ export default function CheckoutPage({ lang, setLang }) {
           <label>
             <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>8</span>{pageText.fields.bonusActive} *</span>
             <input
-              type="date" min="2026-01-01" max="2035-12-31"
+              type="text" inputMode="numeric" placeholder="2026-06-01"
               name="campaignEndDate"
               value={formData.campaignEndDate}
               onChange={handleChange}
@@ -910,7 +913,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
                 {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="date" min="2026-01-01" max="2035-12-31" name="goldRedemptionDeadline" value={formData.goldRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('goldRedemptionDeadline', 'date')} />
+                <input type="text" inputMode="numeric" placeholder="2026-06-01" name="goldRedemptionDeadline" value={formData.goldRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('goldRedemptionDeadline', 'date')} />
                 {formatError('goldRedemptionDeadline', 'date') && <small>{formatError('goldRedemptionDeadline', 'date')}</small>}
                 {fieldError('goldRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
@@ -924,7 +927,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
                 {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="date" min="2026-01-01" max="2035-12-31" name="silverRedemptionDeadline" value={formData.silverRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('silverRedemptionDeadline', 'date')} />
+                <input type="text" inputMode="numeric" placeholder="2026-06-01" name="silverRedemptionDeadline" value={formData.silverRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('silverRedemptionDeadline', 'date')} />
                 {formatError('silverRedemptionDeadline', 'date') && <small>{formatError('silverRedemptionDeadline', 'date')}</small>}
                 {fieldError('silverRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
@@ -938,7 +941,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
                 {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="date" min="2026-01-01" max="2035-12-31" name="standardRedemptionDeadline" value={formData.standardRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('standardRedemptionDeadline', 'date')} />
+                <input type="text" inputMode="numeric" placeholder="2026-06-01" name="standardRedemptionDeadline" value={formData.standardRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('standardRedemptionDeadline', 'date')} />
                 {formatError('standardRedemptionDeadline', 'date') && <small>{formatError('standardRedemptionDeadline', 'date')}</small>}
                 {fieldError('standardRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
