@@ -442,9 +442,32 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const canContinue = !missingRequired && termsAccepted && !submitting;
 
+  const dateFields = new Set([
+    'releaseDate',
+    'campaignEndDate',
+    'goldRedemptionDeadline',
+    'silverRedemptionDeadline',
+    'standardRedemptionDeadline',
+  ]);
+
+  const sanitizeDateInput = (value) => {
+    const clean = String(value || '').replace(/[^0-9/]/g, '').slice(0, 10);
+    const parts = clean.split('/');
+
+    if (parts[0] && Number(parts[0]) > 31) return '';
+    if (parts[1] && Number(parts[1]) > 12) return '';
+    if (parts[2] && parts[2].length === 4) {
+      const year = Number(parts[2]);
+      if (year < 2026 || year > 2035) return '';
+    }
+
+    return clean;
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const nextValue = dateFields.has(name) ? sanitizeDateInput(value) : value;
+    setFormData((prev) => ({ ...prev, [name]: nextValue }));
   };
 
   const handleLogoUpload = async (event) => {
