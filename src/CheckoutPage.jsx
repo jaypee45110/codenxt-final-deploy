@@ -560,14 +560,26 @@ export default function CheckoutPage({ lang, setLang }) {
   const keepFocusIfInvalid = (field, type) => (event) => {
     const value = String(event.target.value || '').trim();
     if (!value) return;
+
     let invalid = false;
+
     if (type === 'date') invalid = !isValidDateValue(value);
     if (type === 'time') invalid = !isValidTimeValue(value);
     if (type === 'email') invalid = !isValidEmailValue(value);
     if (type === 'phone') invalid = !isValidPhoneValue(value);
+
     if (invalid) {
       setTriedSubmit(true);
-      setTimeout(() => event.target.focus(), 0);
+
+      setFormData((prev) => ({
+        ...prev,
+        [field]: '',
+      }));
+
+      setTimeout(() => {
+        event.target.focus();
+        event.target.reportValidity?.();
+      }, 0);
     }
   };
 
