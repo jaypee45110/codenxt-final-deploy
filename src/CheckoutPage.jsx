@@ -654,10 +654,7 @@ export default function CheckoutPage({ lang, setLang }) {
     const invalidCheck = hardValidationChecks.find(([field, type]) => {
       const value = String(formData[field] || '').trim();
       if (!value) return true;
-      if (type === 'date') {
-        const year = Number(value.slice(0, 4));
-        return !isValidDateValue(value) || year < 2026 || year > 2035;
-      }
+      if (type === 'date') return !isValidDateValue(value);
       if (type === 'time') return !isValidTimeValue(value);
       if (type === 'email') return !isValidEmailValue(value);
       if (type === 'phone') return !isValidPhoneValue(value);
@@ -684,10 +681,13 @@ export default function CheckoutPage({ lang, setLang }) {
 
     try {
       const artistLogo = formData.stackLogo.trim();
-      const releaseDate = formData.releaseDate || new Date().toISOString().slice(0, 10);
+      const releaseDate = parseEuropeanDate(formData.releaseDate);
       const releaseTime = formData.releaseTime || '06:00';
-      const campaignEndDate = formData.campaignEndDate || releaseDate;
+      const campaignEndDate = parseEuropeanDate(formData.campaignEndDate);
       const campaignEndTime = formData.campaignEndTime || '23:00';
+      const goldRedemptionDeadline = parseEuropeanDate(formData.goldRedemptionDeadline);
+      const silverRedemptionDeadline = parseEuropeanDate(formData.silverRedemptionDeadline);
+      const standardRedemptionDeadline = parseEuropeanDate(formData.standardRedemptionDeadline);
       const claimWindowHours = Math.max(0, Number(formData.claimWindowHours || 24));
 
       const unlockAt = new Date(`${releaseDate}T${releaseTime}:00`);
@@ -702,19 +702,19 @@ export default function CheckoutPage({ lang, setLang }) {
         gold: {
           reward: '',
           redemptionLocation: formData.goldRedemptionLocation.trim(),
-          redemptionDeadline: formData.goldRedemptionDeadline,
+          redemptionDeadline: goldRedemptionDeadline,
           redemptionDeadlineTime: formData.goldRedemptionDeadlineTime,
         },
         silver: {
           reward: '',
           redemptionLocation: formData.silverRedemptionLocation.trim(),
-          redemptionDeadline: formData.silverRedemptionDeadline,
+          redemptionDeadline: silverRedemptionDeadline,
           redemptionDeadlineTime: formData.silverRedemptionDeadlineTime,
         },
         standard: {
           reward: '',
           redemptionLocation: formData.standardRedemptionLocation.trim(),
-          redemptionDeadline: formData.standardRedemptionDeadline,
+          redemptionDeadline: standardRedemptionDeadline,
           redemptionDeadlineTime: formData.standardRedemptionDeadlineTime,
         },
       };
