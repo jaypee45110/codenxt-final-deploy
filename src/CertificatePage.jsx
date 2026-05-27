@@ -357,6 +357,8 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
           eventCode,
           certificateId,
           claimant,
+          campaignName: data.releaseTitle || data.stackName || data.name || eventCode,
+          companyName: data.companyName || data.venue || '',
           tier: certificateTier,
           benefitTier: certificateTier,
           eventId: certificateValidation.eventId || data.id || '',
