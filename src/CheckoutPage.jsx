@@ -947,6 +947,16 @@ export default function CheckoutPage({ lang, setLang }) {
 
 
         <div className="terms-box checkout-terms">
+          <p style={{ marginBottom: "14px", lineHeight: 1.55, opacity: 0.92 }}>
+            {{
+              no: 'Kontroller at all informasjon er korrekt før du oppretter kampanjen. Opplysninger om dato, klokkeslett, kontaktinformasjon, innløsning og hentesteder styrer sertifikat, QR-koder, e-post og behandling av kampanjedeltakere.',
+              en: 'Please verify that all information is correct before creating the campaign. Dates, times, contact information, redemption details and pickup locations control certificates, QR codes, email delivery and participant handling.',
+              de: 'Bitte überprüfen Sie alle Angaben sorgfältig, bevor Sie die Kampagne erstellen. Datum, Uhrzeit, Kontaktinformationen und Einlösedetails steuern Zertifikate, QR-Codes, E-Mail-Zustellung und die Behandlung der Teilnehmer.',
+              fr: 'Veuillez vérifier attentivement toutes les informations avant de créer la campagne. Les dates, horaires, coordonnées et informations de retrait contrôlent les certificats, QR codes, e-mails et le traitement des participants.',
+              es: 'Verifique cuidadosamente toda la información antes de crear la campaña. Las fechas, horarios, datos de contacto y detalles de entrega controlan certificados, códigos QR, correos electrónicos y la gestión de participantes.'
+            }[lang] || 'Please verify that all information is correct before creating the campaign.'}
+          </p>
+
           <p>{pageText.termsText}</p>
           <label className="check-row">
             <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} />
