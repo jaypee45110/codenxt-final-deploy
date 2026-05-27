@@ -419,7 +419,7 @@ export default function JoinPage({ lang, setLang }) {
     if (!ownershipCertificate || !assignedTier || !reward) {
       return (
         <p className="muted center">
-          {j.rewardPending || 'Fordelen vises på sertifikatet etter registrering.'}
+          {j.rewardPending}
         </p>
       );
     }
@@ -430,7 +430,7 @@ export default function JoinPage({ lang, setLang }) {
     if (expectedTier && actualTier && actualTier !== expectedTier) {
       return (
         <p className="muted center">
-          {j.rewardPending || 'Fordelen vises på sertifikatet etter registrering.'}
+          {j.rewardPending}
         </p>
       );
     }
