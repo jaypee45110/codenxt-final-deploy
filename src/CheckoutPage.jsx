@@ -19,10 +19,13 @@ const emptyForm = {
   comments: '',
   goldRedemptionLocation: '',
   goldRedemptionDeadline: '',
+  goldRedemptionDeadlineTime: '23:59',
   silverRedemptionLocation: '',
   silverRedemptionDeadline: '',
+  silverRedemptionDeadlineTime: '23:59',
   standardRedemptionLocation: '',
   standardRedemptionDeadline: '',
+  standardRedemptionDeadlineTime: '23:59',
   logoFileName: '',
   stackLogo: '',
   bonusWindow: '24h',
@@ -406,10 +409,13 @@ export default function CheckoutPage({ lang, setLang }) {
       !formData.phone.trim() ||
       !formData.goldRedemptionLocation.trim() ||
       !formData.goldRedemptionDeadline ||
+      !formData.goldRedemptionDeadlineTime ||
       !formData.silverRedemptionLocation.trim() ||
       !formData.silverRedemptionDeadline ||
+      !formData.silverRedemptionDeadlineTime ||
       !formData.standardRedemptionLocation.trim() ||
       !formData.standardRedemptionDeadline ||
+      !formData.standardRedemptionDeadlineTime ||
       !formData.rewardResponsible.trim() ||
       !formData.rewardEmail.trim() ||
       !formData.goldTotal.trim() ||
@@ -503,16 +509,19 @@ export default function CheckoutPage({ lang, setLang }) {
           reward: '',
           redemptionLocation: formData.goldRedemptionLocation.trim(),
           redemptionDeadline: formData.goldRedemptionDeadline,
+          redemptionDeadlineTime: formData.goldRedemptionDeadlineTime,
         },
         silver: {
           reward: '',
           redemptionLocation: formData.silverRedemptionLocation.trim(),
           redemptionDeadline: formData.silverRedemptionDeadline,
+          redemptionDeadlineTime: formData.silverRedemptionDeadlineTime,
         },
         standard: {
           reward: '',
           redemptionLocation: formData.standardRedemptionLocation.trim(),
           redemptionDeadline: formData.standardRedemptionDeadline,
+          redemptionDeadlineTime: formData.standardRedemptionDeadlineTime,
         },
       };
 
@@ -738,6 +747,9 @@ export default function CheckoutPage({ lang, setLang }) {
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
                 <input type="date" name="goldRedemptionDeadline" value={formData.goldRedemptionDeadline} onChange={handleChange} />
                 {fieldError('goldRedemptionDeadline') && <small>{text.common.required}</small>}
+                <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
+                <input type="time" name="goldRedemptionDeadlineTime" value={formData.goldRedemptionDeadlineTime} onChange={handleChange} />
+                {fieldError('goldRedemptionDeadlineTime') && <small>{text.common.required}</small>}
               </label>
 
               <label>
@@ -747,6 +759,9 @@ export default function CheckoutPage({ lang, setLang }) {
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
                 <input type="date" name="silverRedemptionDeadline" value={formData.silverRedemptionDeadline} onChange={handleChange} />
                 {fieldError('silverRedemptionDeadline') && <small>{text.common.required}</small>}
+                <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
+                <input type="time" name="silverRedemptionDeadlineTime" value={formData.silverRedemptionDeadlineTime} onChange={handleChange} />
+                {fieldError('silverRedemptionDeadlineTime') && <small>{text.common.required}</small>}
               </label>
 
               <label>
@@ -756,6 +771,9 @@ export default function CheckoutPage({ lang, setLang }) {
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
                 <input type="date" name="standardRedemptionDeadline" value={formData.standardRedemptionDeadline} onChange={handleChange} />
                 {fieldError('standardRedemptionDeadline') && <small>{text.common.required}</small>}
+                <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
+                <input type="time" name="standardRedemptionDeadlineTime" value={formData.standardRedemptionDeadlineTime} onChange={handleChange} />
+                {fieldError('standardRedemptionDeadlineTime') && <small>{text.common.required}</small>}
               </label>
             </div>
           </div>
