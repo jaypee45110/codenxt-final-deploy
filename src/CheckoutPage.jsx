@@ -387,6 +387,7 @@ export default function CheckoutPage({ lang, setLang }) {
   };
   const [formData, setFormData] = useState(emptyForm);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const [triedSubmit, setTriedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -960,7 +961,36 @@ export default function CheckoutPage({ lang, setLang }) {
           <p>{pageText.termsText}</p>
           <label className="check-row">
             <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} />
-            {pageText.accept}
+            <span>
+              {{
+                no: 'Jeg godtar ',
+                en: 'I accept the ',
+                de: 'Ich akzeptiere die ',
+                fr: "J’accepte les ",
+                es: 'Acepto las ',
+              }[lang] || 'I accept the '}
+              <button
+                type="button"
+                onClick={() => setShowTermsModal(true)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  color: '#f5d27a',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  fontWeight: 600,
+                }}
+              >
+                {{
+                  no: 'vilkårene for codePerks',
+                  en: 'codePerks terms',
+                  de: 'Bedingungen für codePerks',
+                  fr: 'conditions de codePerks',
+                  es: 'condiciones de codePerks',
+                }[lang] || 'codePerks terms'}
+              </button>
+            </span>
           </label>
           {triedSubmit && !termsAccepted && <small>{text.common.required}</small>}
         </div>
@@ -981,6 +1011,86 @@ export default function CheckoutPage({ lang, setLang }) {
           {submitting ? pageText.creating : pageText.continue}
         </button>
       </section>
+
+      {showTermsModal && (
+        <div
+          onClick={() => setShowTermsModal(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,.72)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '24px',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: '720px',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              background: '#111',
+              border: '1px solid rgba(245,210,122,.3)',
+              borderRadius: '22px',
+              padding: '28px',
+              color: '#f5f5f5',
+              lineHeight: 1.65,
+              boxShadow: '0 30px 90px rgba(0,0,0,.45)',
+            }}
+          >
+            <h2 style={{ marginTop: 0 }}>
+              {{
+                no: 'Vilkår for codePerks',
+                en: 'codePerks Terms',
+                de: 'codePerks Bedingungen',
+                fr: 'Conditions codePerks',
+                es: 'Condiciones de codePerks',
+              }[lang] || 'codePerks Terms'}
+            </h2>
+
+            <p>
+              {{
+                no: 'codePerks brukes til QR- og lenkebasert tilgang, digitale fordeler, sertifikater, e-postutsendelser og innløsning av kampanjefordeler.',
+                en: 'codePerks is used for QR and link-based access, digital rewards, certificates, email delivery and redemption handling.',
+                de: 'codePerks wird für QR- und Link-Zugang, digitale Vorteile, Zertifikate, E-Mail-Zustellung und Einlösung verwendet.',
+                fr: 'codePerks est utilisé pour les accès QR et lien, les avantages numériques, les certificats, les e-mails et la validation.',
+                es: 'codePerks se utiliza para acceso mediante QR y enlaces, beneficios digitales, certificados, correos electrónicos y validación.',
+              }[lang]}
+            </p>
+
+            <p>
+              {{
+                no: 'Arrangør eller kampanjeansvarlig er ansvarlig for at all informasjon som registreres er korrekt, inkludert datoer, hentesteder, kontaktinformasjon og innløsningsregler.',
+                en: 'The organizer or campaign operator is responsible for ensuring all registered information is correct, including dates, pickup locations, contact details and redemption rules.',
+                de: 'Der Veranstalter oder Kampagnenverantwortliche ist für die Richtigkeit aller Angaben verantwortlich.',
+                fr: 'L’organisateur ou responsable de campagne est responsable de l’exactitude des informations enregistrées.',
+                es: 'El organizador o responsable de campaña es responsable de que toda la información registrada sea correcta.',
+              }[lang]}
+            </p>
+
+            <div style={{ marginTop: '26px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                className="primary-cta"
+                onClick={() => setShowTermsModal(false)}
+              >
+                {{
+                  no: 'Lukk',
+                  en: 'Close',
+                  de: 'Schließen',
+                  fr: 'Fermer',
+                  es: 'Cerrar',
+                }[lang] || 'Close'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
           <style>{`
 
         .field-label {
