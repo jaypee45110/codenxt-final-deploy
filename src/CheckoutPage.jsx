@@ -529,9 +529,16 @@ export default function CheckoutPage({ lang, setLang }) {
   const getFormatMessage = (type) => (formatMessages[lang] || formatMessages.en)[type];
 
   const isValidDateValue = (value) => {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return false;
-    const date = new Date(`${value}T00:00:00`);
-    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+    const raw = String(value || '').trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return false;
+
+    const [year, month, day] = raw.split('-').map(Number);
+    if (year < 2026 || year > 2035) return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+
+    const date = new Date(`${raw}T00:00:00`);
+    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === raw;
   };
 
   const isValidTimeValue = (value) => /^\d{2}:\d{2}$/.test(String(value || ''));
@@ -774,7 +781,7 @@ export default function CheckoutPage({ lang, setLang }) {
           </label>
           <label>
             <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>6</span>{pageText.fields.releaseDate} *</span>
-            <input type="date" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
+            <input type="date" min="2026-01-01" max="2035-12-31" name="releaseDate" value={formData.releaseDate} onChange={handleChange} />
             {fieldError('releaseDate') && <small>{text.common.required}</small>}
           </label>
 
@@ -788,7 +795,7 @@ export default function CheckoutPage({ lang, setLang }) {
           <label>
             <span className="field-label"><span className="field-badge" style={{ color: "#000", WebkitTextFillColor: "#000", background: "#d9d9d9" }}>8</span>{pageText.fields.bonusActive} *</span>
             <input
-              type="date"
+              type="date" min="2026-01-01" max="2035-12-31"
               name="campaignEndDate"
               value={formData.campaignEndDate}
               onChange={handleChange}
@@ -834,7 +841,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="goldRedemptionLocation" value={formData.goldRedemptionLocation} onChange={handleChange} placeholder="Backstage-inngang" />
                 {fieldError('goldRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="date" name="goldRedemptionDeadline" value={formData.goldRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('goldRedemptionDeadline', 'date')} />
+                <input type="date" min="2026-01-01" max="2035-12-31" name="goldRedemptionDeadline" value={formData.goldRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('goldRedemptionDeadline', 'date')} />
                 {formatError('goldRedemptionDeadline', 'date') && <small>{formatError('goldRedemptionDeadline', 'date')}</small>}
                 {fieldError('goldRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
@@ -848,7 +855,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="silverRedemptionLocation" value={formData.silverRedemptionLocation} onChange={handleChange} placeholder="Spa-avdelingen" />
                 {fieldError('silverRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="date" name="silverRedemptionDeadline" value={formData.silverRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('silverRedemptionDeadline', 'date')} />
+                <input type="date" min="2026-01-01" max="2035-12-31" name="silverRedemptionDeadline" value={formData.silverRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('silverRedemptionDeadline', 'date')} />
                 {formatError('silverRedemptionDeadline', 'date') && <small>{formatError('silverRedemptionDeadline', 'date')}</small>}
                 {fieldError('silverRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
@@ -862,7 +869,7 @@ export default function CheckoutPage({ lang, setLang }) {
                 <input name="standardRedemptionLocation" value={formData.standardRedemptionLocation} onChange={handleChange} placeholder="Merchandise-stand" />
                 {fieldError('standardRedemptionLocation') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Gyldig til *</span>
-                <input type="date" name="standardRedemptionDeadline" value={formData.standardRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('standardRedemptionDeadline', 'date')} />
+                <input type="date" min="2026-01-01" max="2035-12-31" name="standardRedemptionDeadline" value={formData.standardRedemptionDeadline} onChange={handleChange} onBlur={keepFocusIfInvalid('standardRedemptionDeadline', 'date')} />
                 {formatError('standardRedemptionDeadline', 'date') && <small>{formatError('standardRedemptionDeadline', 'date')}</small>}
                 {fieldError('standardRedemptionDeadline') && <small>{text.common.required}</small>}
                 <span className="field-label" style={{ marginTop: "12px" }}>Innen kl. *</span>
