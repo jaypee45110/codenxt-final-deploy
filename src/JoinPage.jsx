@@ -467,7 +467,7 @@ export default function JoinPage({ lang, setLang }) {
   };
 
   const assignedTier = ownershipCertificate?.benefitTier || ownershipCertificate?.tier || '';
-  const tierText = assignedTier ? (b[assignedTier] || b.general) : (b.verifiedBenefit || 'VERIFIED BENEFIT');
+  const tierText = assignedTier ? (b[assignedTier] || b.general) : b.verifiedBenefit;
 
   useEffect(() => {
     let alive = true;
@@ -1132,7 +1132,7 @@ export default function JoinPage({ lang, setLang }) {
 
         <section className="bonus-claim">
           <p className="line-one">{b.headlineLine1 || b.listened}</p>
-          <p className="line-three">{assignedTier ? `${tierText} ${b.bonus}` : (b.verifiedBenefit || 'VERIFIED BENEFIT')}</p>
+          <p className="line-three">{assignedTier ? `${tierText} ${b.bonus}` : b.verifiedBenefit}</p>
         </section>
 
         <section className="release-block">
@@ -1160,7 +1160,7 @@ export default function JoinPage({ lang, setLang }) {
         ) : null}
 
         <section className="bonus-content">
-          <p className="bonus-content-title">{assignedTier ? `${tierText} ${b.bonus}` : (b.verifiedBenefit || 'VERIFIED BENEFIT')}</p>
+          <p className="bonus-content-title">{assignedTier ? `${tierText} ${b.bonus}` : b.verifiedBenefit}</p>
           <div className="reward-stage">{renderReward()}</div>
           {currentBonusDetails ? (
             <div className="claim-location-box">
