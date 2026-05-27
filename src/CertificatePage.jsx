@@ -365,6 +365,7 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
           rewardTitle: certificateRewardTitle || certificateBonusDetails?.reward || '',
           redemptionLocation: certificateBonusDetails?.redemptionLocation || data.redemptionLocation || '',
           redemptionDeadline: certificateBonusDetails?.redemptionDeadline || '',
+          redemptionDeadlineTime: certificateBonusDetails?.redemptionDeadlineTime || '',
           redemptionInstructions: certificateBonusDetails?.instructions || '',
         }),
       });
@@ -432,7 +433,11 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
             </div>
             <div>
               <span>{c.validUntil}</span>
-              <strong>{certificateBonusDetails?.redemptionDeadline || c.notRegistered}</strong>
+              <strong>
+                {certificateBonusDetails?.redemptionDeadline
+                  ? `${certificateBonusDetails.redemptionDeadline}${certificateBonusDetails?.redemptionDeadlineTime ? ` ${certificateBonusDetails.redemptionDeadlineTime}` : ''}`
+                  : c.notRegistered}
+              </strong>
             </div>
             <div>
               <span>{c.instructions}</span>
