@@ -604,6 +604,44 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const handleContinue = async () => {
     setTriedSubmit(true);
+
+    const hardValidationChecks = [
+      ['releaseDate', 'date'],
+      ['releaseTime', 'time'],
+      ['campaignEndDate', 'date'],
+      ['email', 'email'],
+      ['phone', 'phone'],
+      ['rewardEmail', 'email'],
+      ['goldRedemptionDeadline', 'date'],
+      ['goldRedemptionDeadlineTime', 'time'],
+      ['silverRedemptionDeadline', 'date'],
+      ['silverRedemptionDeadlineTime', 'time'],
+      ['standardRedemptionDeadline', 'date'],
+      ['standardRedemptionDeadlineTime', 'time'],
+    ];
+
+    const invalidCheck = hardValidationChecks.find(([field, type]) => {
+      const value = String(formData[field] || '').trim();
+      if (!value) return true;
+      if (type === 'date') return !isValidDateValue(value);
+      if (type === 'time') return !isValidTimeValue(value);
+      if (type === 'email') return !isValidEmailValue(value);
+      if (type === 'phone') return !isValidPhoneValue(value);
+      return false;
+    });
+
+    if (invalidCheck) {
+      const [field, type] = invalidCheck;
+      setError(getFormatMessage(type));
+      setTimeout(() => {
+        const el = document.querySelector(`[name="${field}"]`);
+        el?.focus();
+        el?.setCustomValidity?.(getFormatMessage(type));
+        el?.reportValidity?.();
+        setTimeout(() => el?.setCustomValidity?.(''), 500);
+      }, 0);
+      return;
+    }
     setError('');
     if (!canContinue) return;
 
