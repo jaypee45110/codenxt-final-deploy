@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import LanguageSwitcher from './components/LanguageSwitcher';
 
 const API_BASE = 'https://codenxt-backend-production.up.railway.app';
@@ -188,7 +188,23 @@ const certificateText = {
 
 export default function CertificatePage({ lang: initialLang = 'no' }) {
   const { eventCode, certificateId } = useParams();
-  const [lang, setLang] = useState(initialLang || 'no');
+  const [searchParams] = useSearchParams();
+  const getInitialParticipantLang = () => {
+    const urlLang = searchParams.get('lang');
+    if (urlLang) return urlLang;
+    try {
+      return localStorage.getItem('codeperks_participant_lang') || initialLang || 'no';
+    } catch {
+      return initialLang || 'no';
+    }
+  };
+  const [lang, setLangState] = useState(getInitialParticipantLang);
+  const setLang = (nextLang) => {
+    setLangState(nextLang);
+    try {
+      localStorage.setItem('codeperks_participant_lang', nextLang);
+    } catch {}
+  };
   const c = certificateText[lang] || certificateText.en;
   const eventData = useMemo(() => readJson('codenxt_event'), []);
   const latestEvent = useMemo(() => readJson('codeperks_latest_event'), []);
@@ -367,6 +383,7 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
           redemptionDeadline: certificateBonusDetails?.redemptionDeadline || '',
           redemptionDeadlineTime: certificateBonusDetails?.redemptionDeadlineTime || '',
           redemptionInstructions: certificateBonusDetails?.instructions || '',
+          participantLang: lang,
         }),
       });
 

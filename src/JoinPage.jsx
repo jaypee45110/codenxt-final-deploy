@@ -187,6 +187,12 @@ function openPdfDataUrl(dataUrl) {
 }
 
 export default function JoinPage({ lang, setLang }) {
+  const setParticipantLang = (nextLang) => {
+    try {
+      localStorage.setItem('codeperks_participant_lang', nextLang);
+    } catch {}
+    if (setLang) setLang(nextLang);
+  };
   const { eventCode } = useParams();
   const text = t(lang);
   const j = text.join;
@@ -1111,7 +1117,7 @@ export default function JoinPage({ lang, setLang }) {
 
       <section className="bonus-card">
         <header className="bonus-top">
-          <LanguageSwitcher lang={lang} onChange={setLang} />
+          <LanguageSwitcher lang={lang} onChange={setParticipantLang} />
         </header>
 
         <section className="bonus-claim">
@@ -1259,7 +1265,7 @@ export default function JoinPage({ lang, setLang }) {
 
                   <a
                     className="primary-cta full-width certificate-claim-button"
-                    href={`/certificate/${eventCode}/${ownershipCertificate.certificateId}`}
+                    href={`/certificate/${eventCode}/${ownershipCertificate.certificateId}?lang=${encodeURIComponent(lang || 'no')}`}
                   >
                     {b.claimReward || 'VIEW / CLAIM REWARD'}
                   </a>
