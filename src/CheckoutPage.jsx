@@ -54,7 +54,7 @@ export default function CheckoutPage({ lang, setLang }) {
   const c = text.checkout;
   const pageTextByLang = {
     no: {
-      title: 'Sett opp bonuskampanjen',
+      title: 'Sett opp kampanje-informasjon',
       subtitle: 'Koble kampanje, bonus og innløsing direkte til kunden.',
       fields: {
         stackName: 'Kampanjenavn',
