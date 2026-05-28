@@ -335,6 +335,24 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
     data?.bonusDetails?.[certificateTier] ||
     (certificateTier === 'standard' ? data?.bonusDetails?.general : null) ||
     null;
+  const formatDeadlineDisplay = (dateValue, timeValue) => {
+    if (!dateValue) return c.notRegistered;
+
+    const raw = String(dateValue || '').trim();
+    const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const displayDate = match ? `${match[3]}/${match[2]}/${match[1]}` : raw;
+
+    const prefix = {
+      no: 'innen kl.',
+      en: 'by',
+      de: 'bis',
+      fr: 'avant',
+      es: 'antes de las',
+    }[lang] || 'by';
+
+    return timeValue ? `${displayDate} ${prefix} ${timeValue}` : displayDate;
+  };
+
   const certificateRewardTitle =
     certificateReward?.title ||
     certificateReward?.content ||
@@ -460,9 +478,10 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
             <div>
               <span>{c.validUntil}</span>
               <strong>
-                {certificateBonusDetails?.redemptionDeadline
-                  ? `${certificateBonusDetails.redemptionDeadline}${certificateBonusDetails?.redemptionDeadlineTime ? ` ${certificateBonusDetails.redemptionDeadlineTime}` : ''}`
-                  : c.notRegistered}
+                {formatDeadlineDisplay(
+                  certificateBonusDetails?.redemptionDeadline,
+                  certificateBonusDetails?.redemptionDeadlineTime
+                )}
               </strong>
             </div>
             <div>
