@@ -413,13 +413,12 @@ export default function CheckoutPage({ lang, setLang }) {
     if (month < 1 || month > 12) return null;
     if (day < 1 || day > 31) return null;
 
-    const iso = `${yyyy}-${mm}-${dd}`;
-    const date = new Date(`${iso}T00:00:00`);
+    const utcDate = new Date(Date.UTC(year, month - 1, day));
+    if (utcDate.getUTCFullYear() !== year) return null;
+    if (utcDate.getUTCMonth() !== month - 1) return null;
+    if (utcDate.getUTCDate() !== day) return null;
 
-    if (Number.isNaN(date.getTime())) return null;
-    if (date.toISOString().slice(0, 10) !== iso) return null;
-
-    return iso;
+    return `${yyyy}-${mm}-${dd}`;
   };
 
   const isValidDateValue = (value) => Boolean(parseEuropeanDate(value));
@@ -430,48 +429,122 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const isValidPhoneValue = (value) => /^\+[1-9]\d{5,14}$/.test(String(value || '').replace(/[\s()-]/g, ''));
 
-  const missingRequired = useMemo(() => {
-    return (
-      !formData.stackName.trim() ||
-      !formData.companyName.trim() ||
-      !formData.releaseTitle.trim() ||
-      !formData.releaseDate.trim() ||
-      !formData.releaseTime.trim() ||
-      !formData.platform.trim() ||
-      !formData.contactName.trim() ||
-      !formData.email.trim() ||
-      !formData.phone.trim() ||
-      !formData.goldRedemptionLocation.trim() ||
-      !formData.goldRedemptionDeadline ||
-      !formData.goldRedemptionDeadlineTime ||
-      !formData.silverRedemptionLocation.trim() ||
-      !formData.silverRedemptionDeadline ||
-      !formData.silverRedemptionDeadlineTime ||
-      !formData.standardRedemptionLocation.trim() ||
-      !formData.standardRedemptionDeadline ||
-      !formData.standardRedemptionDeadlineTime ||
-      !formData.rewardResponsible.trim() ||
-      !formData.rewardEmail.trim() ||
-      !formData.goldTotal.trim() ||
-      Number(formData.goldTotal) < 0 ||
-      !formData.silverTotal.trim() ||
-      Number(formData.silverTotal) < 0 ||
-      !formData.campaignEndDate.trim() ||
-      !formData.stackLogo ||
-      !isValidDateValue(formData.releaseDate) ||
-      !isValidTimeValue(formData.releaseTime) ||
-      !isValidDateValue(formData.campaignEndDate) ||
-      !isValidEmailValue(formData.email) ||
-      !isValidPhoneValue(formData.phone) ||
-      !isValidEmailValue(formData.rewardEmail) ||
-      !isValidDateValue(formData.goldRedemptionDeadline) ||
-      !isValidTimeValue(formData.goldRedemptionDeadlineTime) ||
-      !isValidDateValue(formData.silverRedemptionDeadline) ||
-      !isValidTimeValue(formData.silverRedemptionDeadlineTime) ||
-      !isValidDateValue(formData.standardRedemptionDeadline) ||
-      !isValidTimeValue(formData.standardRedemptionDeadlineTime)
-    );
-  }, [formData]);
+  const validateCheckout = (data, acceptedTerms) => {
+    const errors = {};
+    const parsedDates = {};
+
+    const requiredFields = [
+      'stackName',
+      'companyName',
+      'releaseTitle',
+      'platform',
+      'releaseDate',
+      'releaseTime',
+      'campaignEndDate',
+      'contactName',
+      'email',
+      'phone',
+      'goldRedemptionLocation',
+      'goldRedemptionDeadline',
+      'goldRedemptionDeadlineTime',
+      'silverRedemptionLocation',
+      'silverRedemptionDeadline',
+      'silverRedemptionDeadlineTime',
+      'standardRedemptionLocation',
+      'standardRedemptionDeadline',
+      'standardRedemptionDeadlineTime',
+      'goldTotal',
+      'silverTotal',
+      'rewardResponsible',
+      'rewardEmail',
+    ];
+
+    requiredFields.forEach((field) => {
+      if (!String(data[field] || '').trim()) {
+        errors[field] = 'required';
+      }
+    });
+
+    if (!data.stackLogo) errors.stackLogo = 'required';
+
+    const dateFields = [
+      'releaseDate',
+      'campaignEndDate',
+      'goldRedemptionDeadline',
+      'silverRedemptionDeadline',
+      'standardRedemptionDeadline',
+    ];
+
+    dateFields.forEach((field) => {
+      if (String(data[field] || '').trim()) {
+        const parsed = parseEuropeanDate(data[field]);
+        if (!parsed) {
+          errors[field] = 'date';
+        } else {
+          parsedDates[field] = parsed;
+        }
+      }
+    });
+
+    const timeFields = [
+      'releaseTime',
+      'goldRedemptionDeadlineTime',
+      'silverRedemptionDeadlineTime',
+      'standardRedemptionDeadlineTime',
+    ];
+
+    timeFields.forEach((field) => {
+      if (String(data[field] || '').trim() && !isValidTimeValue(data[field])) {
+        errors[field] = 'time';
+      }
+    });
+
+    if (String(data.email || '').trim() && !isValidEmailValue(data.email)) {
+      errors.email = 'email';
+    }
+
+    if (String(data.rewardEmail || '').trim() && !isValidEmailValue(data.rewardEmail)) {
+      errors.rewardEmail = 'email';
+    }
+
+    if (String(data.phone || '').trim() && !isValidPhoneValue(data.phone)) {
+      errors.phone = 'phone';
+    }
+
+    if (String(data.goldTotal || '').trim() && Number(data.goldTotal) < 0) {
+      errors.goldTotal = 'required';
+    }
+
+    if (String(data.silverTotal || '').trim() && Number(data.silverTotal) < 0) {
+      errors.silverTotal = 'required';
+    }
+
+    if (!acceptedTerms) {
+      errors.termsAccepted = 'required';
+    }
+
+    const fieldOrder = [
+      ...requiredFields,
+      'stackLogo',
+      'termsAccepted',
+    ];
+
+    const firstInvalidField = fieldOrder.find((field) => errors[field]) || '';
+
+    return {
+      errors,
+      parsedDates,
+      firstInvalidField,
+      isValid: Object.keys(errors).length === 0,
+    };
+  };
+
+  const validationResult = useMemo(
+    () => validateCheckout(formData, termsAccepted),
+    [formData, termsAccepted]
+  );
+
+  const missingRequired = !validationResult.isValid;
 
   const canContinue = !missingRequired && termsAccepted && !submitting;
 
@@ -660,73 +733,41 @@ export default function CheckoutPage({ lang, setLang }) {
   const handleContinue = async () => {
     setTriedSubmit(true);
 
-    const hardDateFields = [
-      'releaseDate',
-      'campaignEndDate',
-      'goldRedemptionDeadline',
-      'silverRedemptionDeadline',
-      'standardRedemptionDeadline',
-    ];
+    const currentValidation = validateCheckout(formData, termsAccepted);
 
-    const firstBadDate = hardDateFields.find((field) => !isValidDateValue(formData[field]));
+    if (!currentValidation.isValid) {
+      const firstField = currentValidation.firstInvalidField;
+      const errorType = currentValidation.errors[firstField];
 
-    if (firstBadDate) {
-      setError(getFormatMessage('date'));
+      if (errorType === 'date') {
+        setError(getFormatMessage('date'));
+      } else if (errorType === 'time') {
+        setError(getFormatMessage('time'));
+      } else if (errorType === 'email') {
+        setError(getFormatMessage('email'));
+      } else if (errorType === 'phone') {
+        setError(getFormatMessage('phone'));
+      } else {
+        setError(pageText.validationIncomplete || 'Campaign setup incomplete.');
+      }
+
       setTimeout(() => {
-        const el = document.querySelector(`[name="${firstBadDate}"]`);
+        const el = document.querySelector(`[name="${firstField}"]`);
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
           el.focus();
+          if (errorType && errorType !== 'required') {
+            const message = getFormatMessage(errorType);
+            el.setCustomValidity?.(message);
+            el.reportValidity?.();
+            setTimeout(() => el.setCustomValidity?.(''), 700);
+          }
         }
       }, 50);
+
       return;
     }
 
-    const hardValidationChecks = [
-      ['releaseDate', 'date'],
-      ['releaseTime', 'time'],
-      ['campaignEndDate', 'date'],
-      ['email', 'email'],
-      ['phone', 'phone'],
-      ['rewardEmail', 'email'],
-      ['goldRedemptionDeadline', 'date'],
-      ['goldRedemptionDeadlineTime', 'time'],
-      ['silverRedemptionDeadline', 'date'],
-      ['silverRedemptionDeadlineTime', 'time'],
-      ['standardRedemptionDeadline', 'date'],
-      ['standardRedemptionDeadlineTime', 'time'],
-    ];
-
-    const invalidCheck = hardValidationChecks.find(([field, type]) => {
-      const value = String(formData[field] || '').trim();
-      if (!value) return true;
-      if (type === 'date') return !isValidDateValue(value);
-      if (type === 'time') return !isValidTimeValue(value);
-      if (type === 'email') return !isValidEmailValue(value);
-      if (type === 'phone') return !isValidPhoneValue(value);
-      return false;
-    });
-
-    if (invalidCheck) {
-      const [field, type] = invalidCheck;
-
-      setTimeout(() => {
-        const el = document.querySelector(`[name="${field}"]`);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          el.focus();
-        }
-      }, 50);
-      setError(getFormatMessage(type));
-      setTimeout(() => {
-        const el = document.querySelector(`[name="${field}"]`);
-        el?.focus();
-        el?.setCustomValidity?.(getFormatMessage(type));
-        el?.reportValidity?.();
-        setTimeout(() => el?.setCustomValidity?.(''), 500);
-      }, 0);
-      return;
-    }
     setError('');
 
     setSubmitting(true);
@@ -734,13 +775,13 @@ export default function CheckoutPage({ lang, setLang }) {
 
     try {
       const artistLogo = formData.stackLogo.trim();
-      const releaseDate = parseEuropeanDate(formData.releaseDate);
+      const releaseDate = currentValidation.parsedDates.releaseDate;
       const releaseTime = formData.releaseTime || '06:00';
-      const campaignEndDate = parseEuropeanDate(formData.campaignEndDate);
+      const campaignEndDate = currentValidation.parsedDates.campaignEndDate;
       const campaignEndTime = formData.campaignEndTime || '23:00';
-      const goldRedemptionDeadline = parseEuropeanDate(formData.goldRedemptionDeadline);
-      const silverRedemptionDeadline = parseEuropeanDate(formData.silverRedemptionDeadline);
-      const standardRedemptionDeadline = parseEuropeanDate(formData.standardRedemptionDeadline);
+      const goldRedemptionDeadline = currentValidation.parsedDates.goldRedemptionDeadline;
+      const silverRedemptionDeadline = currentValidation.parsedDates.silverRedemptionDeadline;
+      const standardRedemptionDeadline = currentValidation.parsedDates.standardRedemptionDeadline;
       const claimWindowHours = Math.max(0, Number(formData.claimWindowHours || 24));
 
       const unlockAt = new Date(`${releaseDate}T${releaseTime}:00`);
