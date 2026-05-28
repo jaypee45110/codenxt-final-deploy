@@ -93,7 +93,7 @@ export default function CheckoutPage({ lang, setLang }) {
       submitError: 'Kunne ikke opprette bonuskampanjen. Prøv igjen.',
     },
     en: {
-      title: 'Set up your bonus',
+      title: 'Set up campaign information',
       subtitle: 'Connect a customer moment, bonus and company directly to the customer.',
       fields: {
         stackName: 'Bonus / offer',
