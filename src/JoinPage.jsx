@@ -202,6 +202,12 @@ function openPdfDataUrl(dataUrl) {
   window.open(URL.createObjectURL(blob), '_blank', 'noopener,noreferrer');
 }
 
+const normalizeInternationalPhone = (value = '') =>
+  String(value || '').replace(/[\s\-().]/g, '').trim();
+
+const isValidInternationalPhone = (value = '') =>
+  /^\+[1-9]\d{7,14}$/.test(normalizeInternationalPhone(value));
+
 export default function JoinPage({ lang, setLang }) {
   const setParticipantLang = (nextLang) => {
     try {
