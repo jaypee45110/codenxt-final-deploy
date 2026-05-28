@@ -426,6 +426,14 @@ export default function JoinPage({ lang, setLang }) {
     const benefitWindowMessage = renderBenefitWindowMessage();
     if (benefitWindowMessage) return benefitWindowMessage;
 
+    if (status === 'invalid-phone') {
+      return (
+        <p className="muted center">
+          {j.invalidPhone || 'Use international format, e.g. +4794433450'}
+        </p>
+      );
+    }
+
     if (status === 'locked') {
       return (
         <p className="muted center">
