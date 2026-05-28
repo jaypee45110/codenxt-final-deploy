@@ -728,7 +728,6 @@ export default function CheckoutPage({ lang, setLang }) {
       return;
     }
     setError('');
-    if (!canContinue) return;
 
     setSubmitting(true);
     let releaseCode = generateReleaseCode();
