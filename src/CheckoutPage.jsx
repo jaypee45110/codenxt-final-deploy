@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { t } from './i18n';
@@ -394,6 +394,7 @@ export default function CheckoutPage({ lang, setLang }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [logoError, setLogoError] = useState('');
+  const logoUrlRef = useRef('');
 
   useEffect(() => {
     document.title = 'Checkout - codePerks';
@@ -469,7 +470,7 @@ export default function CheckoutPage({ lang, setLang }) {
       }
     });
 
-    if (!data.stackLogo) errors.stackLogo = 'required';
+    if (!data.stackLogo && !logoUrlRef.current) errors.stackLogo = 'required';
 
     const dateFields = [
       'releaseDate',
@@ -621,6 +622,8 @@ export default function CheckoutPage({ lang, setLang }) {
         url: data.url,
         fileName: file.name,
       });
+
+      logoUrlRef.current = data.url;
 
       setFormData((prev) => ({
         ...prev,
@@ -793,7 +796,7 @@ export default function CheckoutPage({ lang, setLang }) {
     let releaseCode = generateReleaseCode();
 
     try {
-      const artistLogo = formData.stackLogo.trim();
+      const artistLogo = (formData.stackLogo || logoUrlRef.current || '').trim();
       const releaseDate = currentValidation.parsedDates.releaseDate;
       const releaseTime = formData.releaseTime || '06:00';
       const campaignEndDate = currentValidation.parsedDates.campaignEndDate;
