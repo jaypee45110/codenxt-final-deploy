@@ -92,6 +92,7 @@ export default function CheckoutPage({ lang, setLang }) {
       creating: 'Oppretter bonuskampanje...',
       submitError: 'Kunne ikke opprette bonuskampanjen. Prøv igjen.',
       validationIncomplete: 'Kampanjeoppsettet er ikke fullført.',
+      phoneFormat: 'Bruk internasjonalt format, f.eks. +4794433450',
     },
     en: {
       title: 'Set up campaign information',
@@ -427,7 +428,10 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const isValidEmailValue = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
 
-  const isValidPhoneValue = (value) => /^\+[1-9]\d{5,14}$/.test(String(value || '').replace(/[\s()-]/g, ''));
+  const isValidPhoneValue = (value) => {
+    const cleaned = String(value || '').replace(/[\s()-]/g, '').trim();
+    return /^\+[1-9]\d{5,14}$/.test(cleaned);
+  };
 
   const validateCheckout = (data, acceptedTerms) => {
     const errors = {};
