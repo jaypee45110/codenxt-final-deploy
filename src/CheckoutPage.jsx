@@ -392,6 +392,7 @@ export default function CheckoutPage({ lang, setLang }) {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [triedSubmit, setTriedSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [error, setError] = useState('');
   const [logoError, setLogoError] = useState('');
   const logoUrlRef = useRef('');
@@ -777,7 +778,8 @@ export default function CheckoutPage({ lang, setLang }) {
 
     setError('');
 
-    setSubmitting(true);
+    setShowPaymentModal(true);
+    return;
     let releaseCode = generateReleaseCode();
 
     try {
@@ -1344,6 +1346,100 @@ export default function CheckoutPage({ lang, setLang }) {
           text-align: center;
         }
       `}</style>
+
+      {showPaymentModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.82)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '460px',
+              background: '#111',
+              border: '1px solid rgba(245,210,107,0.35)',
+              borderRadius: '24px',
+              padding: '32px',
+              color: '#f5d26b',
+              textAlign: 'center',
+              boxShadow: '0 0 40px rgba(245,210,107,0.12)',
+            }}
+          >
+            <div style={{ fontSize: '0.8rem', letterSpacing: '0.18em', opacity: 0.7 }}>
+              PAYMENT MODEL
+            </div>
+
+            <h2 style={{ marginTop: '14px', fontSize: '2rem', fontWeight: 800 }}>
+              codePerks Pilot
+            </h2>
+
+            <p style={{ marginTop: '16px', lineHeight: 1.6, color: '#f3e7bf' }}>
+              Payment processing is not active in this pilot version yet.
+            </p>
+
+            <div
+              style={{
+                marginTop: '22px',
+                padding: '18px',
+                borderRadius: '16px',
+                background: 'rgba(245,210,107,0.08)',
+                border: '1px solid rgba(245,210,107,0.18)',
+              }}
+            >
+              <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+                CURRENT MODEL
+              </div>
+
+              <div style={{ marginTop: '8px', fontSize: '1.5rem', fontWeight: 800 }}>
+                Pilot / Invoice
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={continueAfterPayment}
+              style={{
+                width: '100%',
+                marginTop: '28px',
+                background: '#f5d26b',
+                color: '#000',
+                border: 'none',
+                borderRadius: '999px',
+                padding: '16px',
+                fontWeight: 800,
+                fontSize: '1rem',
+                cursor: 'pointer',
+              }}
+            >
+              CONTINUE TO DASHBOARD
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowPaymentModal(false)}
+              style={{
+                marginTop: '14px',
+                background: 'transparent',
+                color: '#f5d26b',
+                border: 'none',
+                cursor: 'pointer',
+                opacity: 0.7,
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 }
