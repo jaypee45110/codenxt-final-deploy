@@ -398,18 +398,32 @@ export default function CheckoutPage({ lang, setLang }) {
     document.title = 'Checkout - codePerks';
   }, []);
 
-  const isValidDateValue = (value) => {
+  const parseEuropeanDate = (value) => {
     const raw = String(value || '').trim();
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return false;
+    const match = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
 
-    const [year, month, day] = raw.split('-').map(Number);
-    if (year < 2026 || year > 2035) return false;
-    if (month < 1 || month > 12) return false;
-    if (day < 1 || day > 31) return false;
+    if (!match) return null;
 
-    const date = new Date(`${raw}T00:00:00`);
-    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === raw;
+    const [, dd, mm, yyyy] = match;
+
+    const day = Number(dd);
+    const month = Number(mm);
+    const year = Number(yyyy);
+
+    if (year < 2026 || year > 2035) return null;
+    if (month < 1 || month > 12) return null;
+    if (day < 1 || day > 31) return null;
+
+    const iso = `${yyyy}-${mm}-${dd}`;
+    const date = new Date(`${iso}T00:00:00`);
+
+    if (Number.isNaN(date.getTime())) return null;
+    if (date.toISOString().slice(0, 10) !== iso) return null;
+
+    return iso;
   };
+
+  const isValidDateValue = (value) => Boolean(parseEuropeanDate(value));
 
   const isValidTimeValue = (value) => /^\d{2}:\d{2}$/.test(String(value || ''));
 
