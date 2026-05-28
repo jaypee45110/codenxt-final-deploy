@@ -18,6 +18,8 @@ const bonusCopy = {
     insideTitle: 'codePerks-info',
     insideText: 'Få relevant informasjon om denne fordelen direkte på telefonen.',
     phone: 'Mobilnummer',
+    invalidPhone: 'Verwende internationales Format, z.B. +4794433450',
+    invalidPhone: 'Bruk internasjonalt format, f.eks. +4794433450',
     confirm: 'KOM INSIDE',
     joined: 'VELKOMMEN INSIDE',
     date: 'Dato',
@@ -51,6 +53,7 @@ const bonusCopy = {
     insideTitle: 'codePerks-info',
     insideText: 'Receive exclusive updates, bonus content, and early access directly to your phone.',
     phone: 'Mobile number',
+    invalidPhone: 'Use international format, e.g. +4794433450',
     confirm: 'COME INSIDE',
     joined: 'WELCOME INSIDE',
     date: 'Date',
@@ -84,6 +87,7 @@ const bonusCopy = {
     insideTitle: 'codePerks-info',
     insideText: 'Erhalte exklusive Updates, Bonusinhalte und frühen Zugang direkt auf dein Telefon.',
     phone: 'Mobilnummer',
+    invalidPhone: 'Verwende internationales Format, z.B. +4794433450',
     confirm: 'KOMM INSIDE',
     joined: 'WILLKOMMEN INSIDE',
     date: 'Datum',
@@ -116,6 +120,7 @@ const bonusCopy = {
     insideTitle: 'codePerks-info',
     insideText: 'Recevez des mises à jour exclusives, du contenu bonus et un accès anticipé directement sur votre téléphone.',
     phone: 'Numéro mobile',
+    invalidPhone: 'Utilisez le format international, ex. +4794433450',
     confirm: 'ENTRER INSIDE',
     joined: 'BIENVENUE INSIDE',
     date: 'Date',
@@ -143,6 +148,7 @@ const bonusCopy = {
     insideTitle: 'codePerks-info',
     insideText: 'Recibe actualizaciones exclusivas, contenido adicional y acceso anticipado directamente en tu teléfono.',
     phone: 'Número móvil',
+    invalidPhone: 'Usa formato internacional, ej. +4794433450',
     confirm: 'ENTRAR INSIDE',
     joined: 'BIENVENIDO INSIDE',
     date: 'Fecha',
@@ -323,13 +329,20 @@ export default function JoinPage({ lang, setLang }) {
   }, [eventCode]);
 
   const submitPhone = async () => {
-    if (!phone.trim() || !consent) return;
+    const normalizedPhone = normalizeInternationalPhone(phone);
+
+    if (!normalizedPhone || !consent) return;
+
+    if (!isValidInternationalPhone(normalizedPhone)) {
+      setJoinStatus(t.invalidPhone);
+      return;
+    }
 
     const joinRes = await fetch(`${API_BASE}/inner-circle`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        phone: phone.trim(),
+        phone: normalizedPhone,
         eventCode,
         vertical: 'codeperks',
         source: 'codeperks_join',
