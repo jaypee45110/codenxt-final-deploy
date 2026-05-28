@@ -340,7 +340,7 @@ export default function JoinPage({ lang, setLang }) {
     if (!normalizedPhone || !consent) return;
 
     if (!isValidInternationalPhone(normalizedPhone)) {
-      setJoinStatus(t.invalidPhone);
+      setStatus('invalid-phone');
       return;
     }
 
