@@ -612,6 +612,11 @@ export default function CheckoutPage({ lang, setLang }) {
         fileName: file.name,
       });
 
+      console.log('CODEPERKS_LOGO_UPLOAD_OK', {
+        url: data.url,
+        fileName: file.name,
+      });
+
       setFormData((prev) => ({
         ...prev,
         stackLogo: data.url,
