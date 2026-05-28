@@ -76,7 +76,7 @@ const certificateText = {
     fullName: 'Full name',
     email: 'Email',
     sendClaim: 'SEND CLAIM BY EMAIL',
-    duplicateClaim: c.duplicateClaim,
+    duplicateClaim: 'A claim has already been registered for this certificate.',
     back: 'Back to benefit',
     missingFields: 'Please complete name and email first.',
     registered: 'Email claim registered.',
