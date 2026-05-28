@@ -405,7 +405,6 @@ export default function CheckoutPage({ lang, setLang }) {
     if (!match) return null;
 
     const [, dd, mm, yyyy] = match;
-
     const day = Number(dd);
     const month = Number(mm);
     const year = Number(yyyy);
@@ -660,6 +659,28 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const handleContinue = async () => {
     setTriedSubmit(true);
+
+    const hardDateFields = [
+      'releaseDate',
+      'campaignEndDate',
+      'goldRedemptionDeadline',
+      'silverRedemptionDeadline',
+      'standardRedemptionDeadline',
+    ];
+
+    const firstBadDate = hardDateFields.find((field) => !isValidDateValue(formData[field]));
+
+    if (firstBadDate) {
+      setError(getFormatMessage('date'));
+      setTimeout(() => {
+        const el = document.querySelector(`[name="${firstBadDate}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+        }
+      }, 50);
+      return;
+    }
 
     const hardValidationChecks = [
       ['releaseDate', 'date'],
