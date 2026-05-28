@@ -397,6 +397,25 @@ export default function CheckoutPage({ lang, setLang }) {
     document.title = 'Checkout - codePerks';
   }, []);
 
+  const isValidDateValue = (value) => {
+    const raw = String(value || '').trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return false;
+
+    const [year, month, day] = raw.split('-').map(Number);
+    if (year < 2026 || year > 2035) return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+
+    const date = new Date(`${raw}T00:00:00`);
+    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === raw;
+  };
+
+  const isValidTimeValue = (value) => /^\d{2}:\d{2}$/.test(String(value || ''));
+
+  const isValidEmailValue = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+
+  const isValidPhoneValue = (value) => /^\+[1-9]\d{5,14}$/.test(String(value || '').replace(/[\s()-]/g, ''));
+
   const missingRequired = useMemo(() => {
     return (
       !formData.stackName.trim() ||
@@ -545,24 +564,6 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const getFormatMessage = (type) => (formatMessages[lang] || formatMessages.en)[type];
 
-  const isValidDateValue = (value) => {
-    const raw = String(value || '').trim();
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return false;
-
-    const [year, month, day] = raw.split('-').map(Number);
-    if (year < 2026 || year > 2035) return false;
-    if (month < 1 || month > 12) return false;
-    if (day < 1 || day > 31) return false;
-
-    const date = new Date(`${raw}T00:00:00`);
-    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === raw;
-  };
-
-  const isValidTimeValue = (value) => /^\d{2}:\d{2}$/.test(String(value || ''));
-
-  const isValidEmailValue = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
-
-  const isValidPhoneValue = (value) => /^\+[1-9]\d{5,14}$/.test(String(value || '').replace(/[\s()-]/g, ''));
 
   const formatError = (field, type) => {
     const value = String(formData[field] || '').trim();
