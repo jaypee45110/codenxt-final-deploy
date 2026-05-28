@@ -225,6 +225,7 @@ export default function JoinPage({ lang, setLang }) {
   const [status, setStatus] = useState('loading');
   const [choice, setChoice] = useState('ask');
   const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [joined, setJoined] = useState(false);
   const [consent, setConsent] = useState(false);
   const [ownershipCertificate, setOwnershipCertificate] = useState(null);
@@ -340,9 +341,11 @@ export default function JoinPage({ lang, setLang }) {
     if (!normalizedPhone || !consent) return;
 
     if (!isValidInternationalPhone(normalizedPhone)) {
-      setStatus('invalid-phone');
+      setPhoneError(j.invalidPhone || 'Use international format, e.g. +4794433450');
       return;
     }
+
+    setPhoneError('');
 
     const joinRes = await fetch(`${API_BASE}/inner-circle`, {
       method: 'POST',
@@ -425,14 +428,6 @@ export default function JoinPage({ lang, setLang }) {
     if (status === 'loading') return <p className="muted center">{j.loading}</p>;
     const benefitWindowMessage = renderBenefitWindowMessage();
     if (benefitWindowMessage) return benefitWindowMessage;
-
-    if (status === 'invalid-phone') {
-      return (
-        <p className="muted center">
-          {j.invalidPhone || 'Use international format, e.g. +4794433450'}
-        </p>
-      );
-    }
 
     if (status === 'locked') {
       return (
@@ -1226,9 +1221,17 @@ export default function JoinPage({ lang, setLang }) {
                   name="phone"
                   id="inside-phone"
                   value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
+                  onChange={(event) => {
+                    setPhone(event.target.value);
+                    if (phoneError) setPhoneError('');
+                  }}
                   placeholder={b.phone}
                 />
+                {phoneError && (
+                  <p style={{ margin: '8px 0 0', color: '#f5d26b', fontWeight: 700, fontSize: '0.9rem' }}>
+                    {phoneError}
+                  </p>
+                )}
                 <label className="privacy-text" style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                   <input
                     type="checkbox"
