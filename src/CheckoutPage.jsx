@@ -701,6 +701,10 @@ export default function CheckoutPage({ lang, setLang }) {
     return '';
   };
 
+  const continueAfterPayment = () => {
+    handleContinue(true);
+  };
+
   const keepFocusIfInvalid = (field, type) => (event) => {
     const value = String(event.target.value || '').trim();
     if (!value) return;
@@ -738,7 +742,7 @@ export default function CheckoutPage({ lang, setLang }) {
     }
   };
 
-  const handleContinue = async () => {
+  const handleContinue = async (paymentConfirmed = false) => {
     setTriedSubmit(true);
 
     const currentValidation = validateCheckout(formData, termsAccepted);
@@ -778,8 +782,12 @@ export default function CheckoutPage({ lang, setLang }) {
 
     setError('');
 
-    setShowPaymentModal(true);
-    return;
+    if (!paymentConfirmed) {
+      setShowPaymentModal(true);
+      return;
+    }
+
+    setSubmitting(true);
     let releaseCode = generateReleaseCode();
 
     try {
