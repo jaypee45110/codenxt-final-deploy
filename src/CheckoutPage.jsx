@@ -608,21 +608,6 @@ export default function CheckoutPage({ lang, setLang }) {
         throw new Error(data?.error || 'Upload failed');
       }
 
-      console.log('CODEPERKS_LOGO_UPLOAD_OK', {
-        url: data.url,
-        fileName: file.name,
-      });
-
-      console.log('CODEPERKS_LOGO_UPLOAD_OK', {
-        url: data.url,
-        fileName: file.name,
-      });
-
-      console.log('CODEPERKS_LOGO_UPLOAD_OK', {
-        url: data.url,
-        fileName: file.name,
-      });
-
       logoUrlRef.current = data.url;
 
       setFormData((prev) => ({
