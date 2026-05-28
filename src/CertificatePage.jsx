@@ -395,6 +395,10 @@ export default function CertificatePage({ lang: initialLang = 'no' }) {
       const json = await response.json().catch(() => ({}));
 
       if (!response.ok || !json.ok) {
+        if (response.status === 409 || json.duplicate) {
+          setClaimStatus(c.duplicateClaim);
+          return false;
+        }
         throw new Error(json.error || `Could not register claim (${response.status})`);
       }
       setClaimStatus(c.registered);
