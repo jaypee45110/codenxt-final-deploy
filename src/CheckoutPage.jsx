@@ -91,6 +91,7 @@ export default function CheckoutPage({ lang, setLang }) {
       continue: 'OPPRETT BONUSKAMPANJE',
       creating: 'Oppretter bonuskampanje...',
       submitError: 'Kunne ikke opprette bonuskampanjen. Prøv igjen.',
+      validationIncomplete: 'Kampanjeoppsettet er ikke fullført.',
     },
     en: {
       title: 'Set up campaign information',
@@ -529,6 +530,14 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const fieldError = (field) => triedSubmit && !String(formData[field] || '').trim();
 
+  const invalidField = (field) =>
+    triedSubmit &&
+    (
+      !String(formData[field] || '').trim() ||
+      (field.toLowerCase().includes('email') && !isValidEmailValue(formData[field])) ||
+      (field === 'phone' && !isValidPhoneValue(formData[field]))
+    );
+
   const formatMessages = {
     no: {
       date: 'Bruk formatet DD/MM/ÅÅÅÅ, f.eks. 01/06/2026.',
@@ -642,6 +651,14 @@ export default function CheckoutPage({ lang, setLang }) {
 
     if (invalidCheck) {
       const [field, type] = invalidCheck;
+
+      setTimeout(() => {
+        const el = document.querySelector(`[name="${field}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+        }
+      }, 50);
       setError(getFormatMessage(type));
       setTimeout(() => {
         const el = document.querySelector(`[name="${field}"]`);
@@ -1082,7 +1099,11 @@ export default function CheckoutPage({ lang, setLang }) {
           {triedSubmit && !termsAccepted && <small>{text.common.required}</small>}
         </div>
 
-        {error && <div className="error-box">{error}</div>}
+        {(error || triedSubmit && missingRequired) && (
+          <div className="error-box">
+            {error || pageText.validationIncomplete}
+          </div>
+        )}
 
         <p className="checkout-required-note">
           {{
