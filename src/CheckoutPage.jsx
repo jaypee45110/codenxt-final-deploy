@@ -530,13 +530,36 @@ export default function CheckoutPage({ lang, setLang }) {
 
   const fieldError = (field) => triedSubmit && !String(formData[field] || '').trim();
 
-  const invalidField = (field) =>
-    triedSubmit &&
-    (
-      !String(formData[field] || '').trim() ||
-      (field.toLowerCase().includes('email') && !isValidEmailValue(formData[field])) ||
-      (field === 'phone' && !isValidPhoneValue(formData[field]))
-    );
+  const invalidField = (field) => {
+    if (!triedSubmit) return false;
+
+    const value = String(formData[field] || '').trim();
+    if (!value) return true;
+
+    if (field.toLowerCase().includes('email')) return !isValidEmailValue(value);
+    if (field === 'phone') return !isValidPhoneValue(value);
+
+    if (
+      field === 'releaseDate' ||
+      field === 'campaignEndDate' ||
+      field === 'goldRedemptionDeadline' ||
+      field === 'silverRedemptionDeadline' ||
+      field === 'standardRedemptionDeadline'
+    ) {
+      return !isValidDateValue(value);
+    }
+
+    if (
+      field === 'releaseTime' ||
+      field === 'goldRedemptionDeadlineTime' ||
+      field === 'silverRedemptionDeadlineTime' ||
+      field === 'standardRedemptionDeadlineTime'
+    ) {
+      return !isValidTimeValue(value);
+    }
+
+    return false;
+  };
 
   const formatMessages = {
     no: {
