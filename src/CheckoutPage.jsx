@@ -1173,7 +1173,7 @@ export default function CheckoutPage({ lang, setLang }) {
           }[lang] || 'All fields must be completed before you can continue.'}
         </p>
 
-        <button type="button" className="primary-cta checkout-submit" disabled={!canContinue} onClick={handleContinue}>
+        <button type="button" className="primary-cta checkout-submit" disabled={submitting} onClick={handleContinue}>
           {submitting ? pageText.creating : pageText.continue}
         </button>
       </section>
