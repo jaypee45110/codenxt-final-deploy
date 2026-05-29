@@ -85,16 +85,8 @@ const dashboardCopy = {
     collaborationLabel: 'I samarbeid med',
     sentDate: 'Sendt dato',
     eventCodeLabel: 'Kampanjekode',
-    teamLeaderLabel: 'Teamleder',
-    teamLeaderEmailLabel: 'Teamleder e-post',
-    campaignSummary: 'Kampanjesammendrag',
-    claimStatusTitle: 'Fordelsstatus',
-    issuedLabel: 'Utstedt',
-    fulfilledLabel: 'Levert',
-    pendingLabel: 'Venter',
-    awaitingShipmentLabel: 'Venter på forsendelse',
-    bonusDistribution24h: 'Fordelsfordeling',
-    bonusActive24h: 'Fordel aktiv i 24 timer etter start',
+    bonusDistribution24h: 'Beneficiofordeling (24 timer etter release)',
+    bonusActive24h: 'Beneficio aktiv: 24 timer etter release',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Ikke tilgjengelig',
     verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
@@ -166,16 +158,8 @@ const dashboardCopy = {
     collaborationLabel: 'In collaboration with',
     sentDate: 'Start date',
     eventCodeLabel: 'Campaign code',
-    teamLeaderLabel: 'Team leader',
-    teamLeaderEmailLabel: 'Team leader email',
-    campaignSummary: 'Campaign summary',
-    claimStatusTitle: 'Benefit status',
-    issuedLabel: 'Issued',
-    fulfilledLabel: 'Fulfilled',
-    pendingLabel: 'Pending',
-    awaitingShipmentLabel: 'Awaiting shipment',
-    bonusDistribution24h: 'Benefit distribution',
-    bonusActive24h: 'Benefit active for 24 hours after start',
+    bonusDistribution24h: 'Beneficio distribution (24 hours after release)',
+    bonusActive24h: 'Beneficio active: 24 hours after release',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Unavailable',
     verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
@@ -247,16 +231,8 @@ const dashboardCopy = {
     collaborationLabel: 'In Zusammenarbeit mit',
     sentDate: 'Startdatum',
     eventCodeLabel: 'Kampagnencode',
-    teamLeaderLabel: 'Teamleiter',
-    teamLeaderEmailLabel: 'Teamleiter E-Mail',
-    campaignSummary: 'Kampagnenzusammenfassung',
-    claimStatusTitle: 'Vorteilsstatus',
-    issuedLabel: 'Ausgegeben',
-    fulfilledLabel: 'Erfüllt',
-    pendingLabel: 'Ausstehend',
-    awaitingShipmentLabel: 'Wartet auf Versand',
-    bonusDistribution24h: 'Vorteilsverteilung',
-    bonusActive24h: 'Vorteil 24 Stunden nach Kampagnenstart aktiv',
+    bonusDistribution24h: 'Beneficioverteilung (24 Stunden nach Kampagnenstart)',
+    bonusActive24h: 'Beneficio aktiv: 24 Stunden nach Kampagnenstart',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Nicht verfuegbar',
     verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
@@ -328,16 +304,8 @@ const dashboardCopy = {
     collaborationLabel: 'En collaboration avec',
     sentDate: 'Date de début',
     eventCodeLabel: 'Code campagne',
-    teamLeaderLabel: 'Responsable d’équipe',
-    teamLeaderEmailLabel: 'E-mail du responsable',
-    campaignSummary: 'Résumé de campagne',
-    claimStatusTitle: 'Statut des avantages',
-    issuedLabel: 'Émis',
-    fulfilledLabel: 'Livré',
-    pendingLabel: 'En attente',
-    awaitingShipmentLabel: 'En attente d’expédition',
-    bonusDistribution24h: 'Répartition des avantages',
-    bonusActive24h: 'Avantage actif pendant 24 heures après le début',
+    bonusDistribution24h: 'Répartition bonus (24 heures après le début)',
+    bonusActive24h: 'Beneficio actif : 24 heures après le début',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Indisponible',
     verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
@@ -409,16 +377,8 @@ const dashboardCopy = {
     collaborationLabel: 'En colaboracion con',
     sentDate: 'Fecha de publicacion',
     eventCodeLabel: 'Código de campaña',
-    teamLeaderLabel: 'Responsable de equipo',
-    teamLeaderEmailLabel: 'Email del responsable',
-    campaignSummary: 'Resumen de campaña',
-    claimStatusTitle: 'Estado del beneficio',
-    issuedLabel: 'Emitido',
-    fulfilledLabel: 'Entregado',
-    pendingLabel: 'Pendiente',
-    awaitingShipmentLabel: 'En espera de envío',
-    bonusDistribution24h: 'Distribución de beneficios',
-    bonusActive24h: 'Beneficio activo durante 24 horas después del inicio',
+    bonusDistribution24h: 'Distribucion de bonus (24 horas despues del lanzamiento)',
+    bonusActive24h: 'Beneficio activo: 24 horas despues del lanzamiento',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'No disponible',
     verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
@@ -475,12 +435,6 @@ function normalizeReleaseData(data = {}, previous = {}) {
     estimatedMembers: memberCount,
     audienceSize: memberCount,
     companyName: firstValue(data.companyName, data.company, data.presenter, previous.companyName, previous.company),
-    customerName: firstValue(data.customerName, data.contactName, previous.customerName, previous.contactName),
-    contactName: firstValue(data.customerName, data.contactName, previous.customerName, previous.contactName),
-    email: firstValue(data.email, data.contactEmail, previous.email, previous.contactEmail),
-    contactEmail: firstValue(data.email, data.contactEmail, previous.email, previous.contactEmail),
-    phone: firstValue(data.phone, data.contactPhone, previous.phone, previous.contactPhone),
-    contactPhone: firstValue(data.phone, data.contactPhone, previous.phone, previous.contactPhone),
     platform,
     venue: platform,
     joinUrl,
@@ -1009,13 +963,6 @@ export default function Dashboard({ lang: appLang, setLang }) {
     const goldCount = claimsForPdf.filter((claim) => tierOf(claim) === 'gold').length;
     const silverCount = claimsForPdf.filter((claim) => tierOf(claim) === 'silver').length;
     const generalCount = claimsForPdf.filter((claim) => tierOf(claim) === 'general').length;
-    const statusOf = (claim) => String(claim?.status || '').toLowerCase();
-    const issuedCount = claimsForPdf.length;
-    const fulfilledCount = claimsForPdf.filter((claim) => statusOf(claim) === 'fulfilled' || claim?.redeemed === true).length;
-    const pendingCount = claimsForPdf.filter((claim) => !['fulfilled', 'rejected'].includes(statusOf(claim))).length;
-    const awaitingShipmentCount = claimsForPdf.filter((claim) => claim?.type === 'post' && !['fulfilled', 'rejected'].includes(statusOf(claim))).length;
-    const conversionPercent = reportForPdf.totalScans ? Math.round((reportForPdf.joins / reportForPdf.totalScans) * 100) : 0;
-    const summaryText = `${reportForPdf.totalScans || 0} ${text.scans || 'scans'} · ${reportForPdf.joins || 0} ${text.insideJoins || 'InSide'} · ${reportForPdf.ownershipCertificates || 0} ${text.ownershipCertificates || 'certificates'}`;
 
     const generatedAt = new Date().toLocaleString();
 
@@ -1327,59 +1274,41 @@ export default function Dashboard({ lang: appLang, setLang }) {
         ">
           ${eventData.releaseDate ? `${esc(text.sentDate || 'Sendt dato')}: ${esc(String(eventData.releaseDate).slice(0, 10))}<br/>` : ''}
           ${esc(text.eventCodeLabel || 'Campaign code')}: ${esc(eventData.eventCode)}
-          ${eventData.customerName ? `<br/>${esc(text.teamLeaderLabel || 'Team leader')}: ${esc(eventData.customerName)}` : ''}
-          ${eventData.email ? `<br/>${esc(text.teamLeaderEmailLabel || 'Team leader email')}: ${esc(eventData.email)}` : ''}
         </p>
       </div>
     </div>
 
     <div class="content">
-      <div class="section-title">${esc(text.campaignSummary || "Campaign summary")}</div>
-      <table style="margin-bottom: 26px;">
-        <tbody>
-          <tr><td>${esc(text.company || "Company")}</td><td><strong>${esc(eventData.companyName || "")}</strong></td></tr>
-          <tr><td>${esc(text.teamLeaderLabel || "Team leader")}</td><td><strong>${esc(eventData.customerName || "")}</strong></td></tr>
-          <tr><td>${esc(text.teamLeaderEmailLabel || "Team leader email")}</td><td><strong>${esc(eventData.email || "")}</strong></td></tr>
-          <tr><td>${esc(text.eventCodeLabel || "Campaign code")}</td><td><strong>${esc(eventData.eventCode || "")}</strong></td></tr>
-        </tbody>
-      </table>
-
-      <div style="border:1px solid #eadfc8;border-radius:16px;padding:16px 18px;margin-bottom:26px;background:#fffaf1;font-size:14px;line-height:1.7;font-weight:700;color:#2f1f13;">
-        ${esc(summaryText)}
+      <div class="cards">
+        <div class="card"><div class="label">${esc(text.scans || "Scans")}</div><div class="value">${reportForPdf.totalScans || 0}</div></div>
+        <div class="card"><div class="label">${esc(text.uniqueScans || "Unique scans")}</div><div class="value">${reportForPdf.uniqueScans || 0}</div></div>
+        <div class="card"><div class="label">${esc(text.insideJoins || "InSide")}</div><div class="value">${reportForPdf.joins || 0}</div></div>
+        <div class="card"><div class="label">${esc(text.ownershipCertificates || "Ownership certificates")}</div><div class="value">${reportForPdf.ownershipCertificates || 0}</div></div>
+        <div class="card"><div class="label">${esc(text.conversionRate || "Conversion")}</div><div class="value">${reportForPdf.totalScans ? Math.round((reportForPdf.joins / reportForPdf.totalScans) * 100) : 0}%</div></div>
+        <div class="card"><div class="label">${esc(text.gold || "Gull")}</div><div class="value">${goldCount}</div></div>
+        <div class="card"><div class="label">${esc(text.silver || "Sølv")}</div><div class="value">${silverCount}</div></div>
+        <div class="card"><div class="label">${esc(text.general || "Generell")}</div><div class="value">${generalCount}</div></div>
       </div>
 
-      <div class="section-title">${esc(text.reportPdfTitle || text.report || "Key figures")}</div>
-      <table style="margin-bottom: 26px;">
-        <tbody>
-          <tr><td>${esc(text.scans || "Scans")}</td><td><strong>${reportForPdf.totalScans || 0}</strong></td></tr>
-          <tr><td>${esc(text.uniqueScans || "Unique scans")}</td><td><strong>${reportForPdf.uniqueScans || 0}</strong></td></tr>
-          <tr><td>${esc(text.insideJoins || "InSide")}</td><td><strong>${reportForPdf.joins || 0}</strong></td></tr>
-          <tr><td>${esc(text.ownershipCertificates || "Certificates")}</td><td><strong>${reportForPdf.ownershipCertificates || 0}</strong></td></tr>
-          <tr><td>${esc(text.conversionRate || "Conversion")}</td><td><strong>${conversionPercent}%</strong></td></tr>
-        </tbody>
-      </table>
+      <div class="section-title">${esc(text.bonusDistribution24h || "Beneficiofordeling (24 timer etter release)")}</div>
 
-      <div class="section-title">${esc(text.bonusDistribution24h || "Benefit distribution")}</div>
-      <table style="margin-bottom: 26px;">
-        <tbody>
-          <tr><td>${esc(text.gold || "Gold")}</td><td><strong>${goldCount}</strong></td></tr>
-          <tr><td>${esc(text.silver || "Silver")}</td><td><strong>${silverCount}</strong></td></tr>
-          <tr><td>${esc(text.general || "General")}</td><td><strong>${generalCount}</strong></td></tr>
-        </tbody>
-      </table>
-
-      <div class="section-title">${esc(text.claimStatusTitle || "Benefit status")}</div>
-      <table>
-        <tbody>
-          <tr><td>${esc(text.issuedLabel || "Issued")}</td><td><strong>${issuedCount}</strong></td></tr>
-          <tr><td>${esc(text.fulfilledLabel || "Fulfilled")}</td><td><strong>${fulfilledCount}</strong></td></tr>
-          <tr><td>${esc(text.pendingLabel || "Pending")}</td><td><strong>${pendingCount}</strong></td></tr>
-          <tr><td>${esc(text.awaitingShipmentLabel || "Awaiting shipment")}</td><td><strong>${awaitingShipmentCount}</strong></td></tr>
-        </tbody>
-      </table>
+      <div class="cards">
+        <div class="card">
+          <div class="label">${esc(text.gold || "Gull")}</div>
+          <div class="value">${goldCount}</div>
+        </div>
+        <div class="card">
+          <div class="label">${esc(text.silver || "Sølv")}</div>
+          <div class="value">${silverCount}</div>
+        </div>
+        <div class="card">
+          <div class="label">${esc(text.general || "Generell")}</div>
+          <div class="value">${generalCount}</div>
+        </div>
+      </div>
 
       <div class="footer">
-        <div>${esc(text.reportPdfTitle || text.report || "Report")}: ${esc(generatedAt)}</div>
+        <div>${esc(text.bonusActive24h || text.bonusDistribution24h || "Beneficio aktiv: 24 timer etter release")}</div>
         <div>codePerks by codeNXT</div>
       </div>
     </div>
