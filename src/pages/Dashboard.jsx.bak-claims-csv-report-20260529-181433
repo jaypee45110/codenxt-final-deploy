@@ -97,15 +97,6 @@ const dashboardCopy = {
     bonusDistribution24h: 'Fordelsfordeling',
     bonusActive24h: 'Fordel aktiv i 24 timer etter start',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
-    csvCertificateId: 'Sertifikat-ID',
-    csvTier: 'Nivå',
-    csvStatus: 'Status',
-    csvIssuedAt: 'Utstedt',
-    csvRedeemed: 'Innløst',
-    csvClaimant: 'Mottaker',
-    csvPhone: 'Telefon',
-    csvEmail: 'E-post',
-    csvReward: 'Fordel',
     unavailable: 'Ikke tilgjengelig',
     verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
     verifiedNetworkTitle: 'Hver fordel får sitt eget sertifikatspor.',
@@ -1400,68 +1391,36 @@ export default function Dashboard({ lang: appLang, setLang }) {
   }, [adminHeaders, claims, eventData, report, text.reportUnavailable]);
 
 
-  const downloadCsv = useCallback(async () => {
-    let claimRows = Array.isArray(claims) ? claims : [];
-
-    try {
-      const res = await fetch(`${API_BASE}/reward-claims/${encodeURIComponent(eventData.eventCode)}`, {
-        headers: adminHeaders,
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        claimRows = Array.isArray(data?.claims) ? data.claims : claimRows;
-        setClaims(claimRows);
-      }
-    } catch (error) {
-      console.warn('CSV claims fetch failed:', error);
-    }
-
-    const rows = claimRows.map((claim) => ({
-      certificateId: claim.certificateId || '',
-      tier: claim.tier || claim.benefitTier || claim.rewardTier || '',
-      status: claim.status || '',
-      issuedAt: claim.createdAt || '',
-      redeemed: claim.redeemed ? 'yes' : 'no',
-      claimant: claim.claimant?.fullName || claim.fullName || '',
-      phone: claim.claimant?.phone || claim.phone || claim.scanPhone || '',
-      email: claim.claimant?.email || claim.email || '',
-      reward: claim.rewardTitle || claim.reward || '',
-    }));
-
+  const downloadCsv = useCallback(() => {
+    const rows = report.rows.length
+      ? report.rows
+      : [{
+          eventCode: eventData.eventCode,
+          scanId: '',
+          phone: '',
+          timestamp: '',
+          tier: '',
+          source: report.source,
+        }];
     const csv = [
-      [
-        text.csvCertificateId || 'Certificate ID',
-        text.csvTier || 'Tier',
-        text.csvStatus || 'Status',
-        text.csvIssuedAt || 'Issued',
-        text.csvRedeemed || 'Redeemed',
-        text.csvClaimant || 'Claimant',
-        text.csvPhone || 'Phone',
-        text.csvEmail || 'Email',
-        text.csvReward || 'Reward',
-      ].map(csvEscape).join(','),
+      ['eventCode', 'scanId', 'phone', 'timestamp', 'tier', 'source'].map(csvEscape).join(','),
       ...rows.map((row) => [
-        row.certificateId,
-        row.tier,
-        row.status,
-        row.issuedAt,
-        row.redeemed,
-        row.claimant,
+        row.eventCode || eventData.eventCode,
+        row.scanId,
         row.phone,
-        row.email,
-        row.reward,
+        row.timestamp,
+        row.tier,
+        row.source,
       ].map(csvEscape).join(',')),
     ].join('\n');
-
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${eventData.eventCode || 'codeperks'}-claims.csv`;
+    link.download = `${eventData.eventCode || 'codeperks'}-report.csv`;
     link.click();
     URL.revokeObjectURL(url);
-  }, [adminHeaders, claims, eventData.eventCode, text]);
+  }, [eventData.eventCode, report.rows, report.source]);
 
   const sendFulfillmentList = useCallback(async () => {
     if (!eventData.eventCode) return;
