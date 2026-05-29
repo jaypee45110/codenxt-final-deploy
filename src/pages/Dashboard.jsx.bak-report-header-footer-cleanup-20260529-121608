@@ -1078,8 +1078,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
   }
 
   .logo-box img {
-    max-width: 180px;
-    max-height: 95px;
+    max-width: 140px;
+    max-height: 85px;
     object-fit: contain;
   }
 
@@ -1264,8 +1264,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
                 margin-bottom: 8px;
               ">
                 <div class="logo-box" style="
-                  width: 190px;
-                  height: 105px;
+                  width: 150px;
+                  height: 95px;
                   margin: 0 auto;
                 ">
                   <img src="${esc(logoUrl)}" alt="" />
@@ -1275,7 +1275,31 @@ export default function Dashboard({ lang: appLang, setLang }) {
             : ''
         }
 
+        <div style="
+          color: rgba(255,255,255,0.68);
+          font-size: 14px;
+          font-weight: 700;
+          margin-bottom: 12px;
+        ">
+          ${esc(text.collaborationLabel || 'I samarbeid med')}
+        </div>
 
+        <div style="
+          display:flex;
+          justify-content:center;
+          margin-bottom:10px;
+        ">
+          <img
+            src="https://codeperks.codenxt.global/codePerks-logo.png?v=2"
+            alt="codePerks"
+            style="
+              width: 135px;
+              max-width: 60%;
+              height: auto;
+              display: block;
+            "
+          />
+        </div>
 
         <div class="brand" style="
           font-size: 14px;
@@ -1306,7 +1330,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           line-height: 1.45;
           font-weight: 600;
         ">
-          ${eventData.releaseDate ? `${esc(String(eventData.releaseDate).slice(0, 10))}<br/>` : ''}
+          ${eventData.releaseDate ? `${esc(text.sentDate || 'Sendt dato')}: ${esc(String(eventData.releaseDate).slice(0, 10))}<br/>` : ''}
           ${esc(text.eventCodeLabel || 'Campaign code')}: ${esc(eventData.eventCode)}
           ${eventData.customerName ? `<br/>${esc(text.teamLeaderLabel || 'Team leader')}: ${esc(eventData.customerName)}` : ''}
           ${eventData.email ? `<br/>${esc(text.teamLeaderEmailLabel || 'Team leader email')}: ${esc(eventData.email)}` : ''}
@@ -1349,8 +1373,9 @@ export default function Dashboard({ lang: appLang, setLang }) {
         </tbody>
       </table>
 
-      <div class="footer" style="display:block;text-align:center;margin-top:22px;padding-top:14px;">
-        <div style="font-size:11px;">${esc(text.reportFooter || 'A report from codePerks/codeNXT')}</div>
+      <div class="footer">
+        <div>${esc(text.reportPdfTitle || text.report || "Report")}: ${esc(generatedAt)}</div>
+        <div>${esc(text.reportFooter || 'A report from codePerks/codeNXT')}</div>
       </div>
     </div>
   </div>
