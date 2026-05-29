@@ -86,7 +86,7 @@ const dashboardCopy = {
     sentDate: 'Sendt dato',
     eventCodeLabel: 'Kampanjekode',
     bonusDistribution24h: 'Beneficiofordeling (24 timer etter release)',
-    bonusActive24h: 'Beneficio aktiv: 24 timer etter release',
+    bonusActive24h: '${esc(text.bonusActive24h || text.bonusDistribution24h || "Beneficio aktiv: 24 timer etter release")}',
     csvColumns: 'eventCode, scanId, phone, timestamp, tier, source',
     unavailable: 'Ikke tilgjengelig',
     verifiedNetworkEyebrow: 'Verifisert fordelsnettverk',
@@ -944,26 +944,6 @@ export default function Dashboard({ lang: appLang, setLang }) {
       .replaceAll('"', '&quot;');
 
     const rows = Array.isArray(reportForPdf.rows) ? reportForPdf.rows : [];
-
-    let claimsForPdf = Array.isArray(claims) ? claims : [];
-    try {
-      const claimsRes = await fetch(`${API_BASE}/reward-claims/${encodeURIComponent(eventData.eventCode)}`, {
-        headers: adminHeaders,
-      });
-      if (claimsRes.ok) {
-        const claimsData = await claimsRes.json();
-        claimsForPdf = Array.isArray(claimsData?.claims) ? claimsData.claims : claimsForPdf;
-        setClaims(claimsForPdf);
-      }
-    } catch (error) {
-      console.warn('PDF claims fetch failed:', error);
-    }
-
-    const tierOf = (claim) => String(claim?.tier || claim?.benefitTier || claim?.rewardTier || '').toLowerCase();
-    const goldCount = claimsForPdf.filter((claim) => tierOf(claim) === 'gold').length;
-    const silverCount = claimsForPdf.filter((claim) => tierOf(claim) === 'silver').length;
-    const generalCount = claimsForPdf.filter((claim) => tierOf(claim) === 'general').length;
-
     const generatedAt = new Date().toLocaleString();
 
     const logoUrl = eventData.pageLogo || eventData.artistLogo || eventData.logoUrl || '';
@@ -1284,10 +1264,10 @@ export default function Dashboard({ lang: appLang, setLang }) {
         <div class="card"><div class="label">${esc(text.uniqueScans || "Unique scans")}</div><div class="value">${reportForPdf.uniqueScans || 0}</div></div>
         <div class="card"><div class="label">${esc(text.insideJoins || "InSide")}</div><div class="value">${reportForPdf.joins || 0}</div></div>
         <div class="card"><div class="label">${esc(text.ownershipCertificates || "Ownership certificates")}</div><div class="value">${reportForPdf.ownershipCertificates || 0}</div></div>
-        <div class="card"><div class="label">${esc(text.conversionRate || "Conversion")}</div><div class="value">${reportForPdf.totalScans ? Math.round((reportForPdf.joins / reportForPdf.totalScans) * 100) : 0}%</div></div>
-        <div class="card"><div class="label">${esc(text.gold || "Gull")}</div><div class="value">${goldCount}</div></div>
-        <div class="card"><div class="label">${esc(text.silver || "Sølv")}</div><div class="value">${silverCount}</div></div>
-        <div class="card"><div class="label">${esc(text.general || "Generell")}</div><div class="value">${generalCount}</div></div>
+        <div class="card"><div class="label">${esc(text.conversion || "Conversion")}</div><div class="value">${reportForPdf.totalScans ? Math.round((reportForPdf.joins / reportForPdf.totalScans) * 100) : 0}%</div></div>
+        <div class="card"><div class="label">${esc(text.gold || "Gull")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'gold').length}</div></div>
+        <div class="card"><div class="label">${esc(text.silver || "Sølv")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'silver').length}</div></div>
+        <div class="card"><div class="label">${esc(text.general || "Generell")}</div><div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'general').length}</div></div>
       </div>
 
       <div class="section-title">${esc(text.bonusDistribution24h || "Beneficiofordeling (24 timer etter release)")}</div>
@@ -1295,15 +1275,15 @@ export default function Dashboard({ lang: appLang, setLang }) {
       <div class="cards">
         <div class="card">
           <div class="label">${esc(text.gold || "Gull")}</div>
-          <div class="value">${goldCount}</div>
+          <div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'gold').length}</div>
         </div>
         <div class="card">
           <div class="label">${esc(text.silver || "Sølv")}</div>
-          <div class="value">${silverCount}</div>
+          <div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'silver').length}</div>
         </div>
         <div class="card">
           <div class="label">${esc(text.general || "Generell")}</div>
-          <div class="value">${generalCount}</div>
+          <div class="value">${rows.filter(r => (r.tier || '').toLowerCase() === 'general').length}</div>
         </div>
       </div>
 
@@ -1336,7 +1316,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
     };
 
     setReportMessage('PDF-rapport åpnet. Velg Skriv ut eller Lagre som PDF.');
-  }, [adminHeaders, claims, eventData, report, text.reportUnavailable]);
+  }, [eventData, report, text.reportUnavailable]);
 
 
   const downloadCsv = useCallback(() => {
