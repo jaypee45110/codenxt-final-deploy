@@ -841,12 +841,8 @@ export default function CheckoutPage({ lang, setLang }) {
         claimWindowHours,
       };
 
-      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-
       const payload = {
         vertical: 'codeperks',
-        timeZone: userTimeZone,
-        timezone: userTimeZone,
         productName: 'codePerks',
         engine: 'codeNXT',
         eventCode: releaseCode,
