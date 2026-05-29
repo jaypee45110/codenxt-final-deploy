@@ -1402,7 +1402,6 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
   const downloadCsv = useCallback(async () => {
     let claimRows = Array.isArray(claims) ? claims : [];
-    const scanRows = Array.isArray(report.rows) ? report.rows : [];
 
     try {
       const res = await fetch(`${API_BASE}/reward-claims/${encodeURIComponent(eventData.eventCode)}`, {
@@ -1418,19 +1417,17 @@ export default function Dashboard({ lang: appLang, setLang }) {
       console.warn('CSV claims fetch failed:', error);
     }
 
-    const rows = claimRows.map((claim, index) => {
-      const scanFallback = scanRows[index] || {};
-      return {
-        certificateId: claim.certificateId || '',
-        tier: claim.tier || claim.benefitTier || claim.rewardTier || '',
-        status: claim.status || '',
-        issuedAt: claim.createdAt || '',
-        redeemed: claim.redeemed ? 'yes' : 'no',
-        claimant: claim.claimant?.fullName || claim.fullName || '',
-        phone: claim.claimant?.phone || claim.phone || claim.scanPhone || scanFallback.phone || '',
-        reward: claim.rewardTitle || claim.reward || '',
-      };
-    });
+    const rows = claimRows.map((claim) => ({
+      certificateId: claim.certificateId || '',
+      tier: claim.tier || claim.benefitTier || claim.rewardTier || '',
+      status: claim.status || '',
+      issuedAt: claim.createdAt || '',
+      redeemed: claim.redeemed ? 'yes' : 'no',
+      claimant: claim.claimant?.fullName || claim.fullName || '',
+      phone: claim.claimant?.phone || claim.phone || claim.scanPhone || '',
+      email: claim.claimant?.email || claim.email || '',
+      reward: claim.rewardTitle || claim.reward || '',
+    }));
 
     const csv = [
       [
@@ -1439,8 +1436,9 @@ export default function Dashboard({ lang: appLang, setLang }) {
         text.csvStatus || 'Status',
         text.csvIssuedAt || 'Issued',
         text.csvRedeemed || 'Redeemed',
-        text.csvClaimant || 'Name',
+        text.csvClaimant || 'Claimant',
         text.csvPhone || 'Phone',
+        text.csvEmail || 'Email',
         text.csvReward || 'Reward',
       ].map(csvEscape).join(','),
       ...rows.map((row) => [
@@ -1451,6 +1449,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
         row.redeemed,
         row.claimant,
         row.phone,
+        row.email,
         row.reward,
       ].map(csvEscape).join(',')),
     ].join('\n');
@@ -1462,7 +1461,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
     link.download = `${eventData.eventCode || 'codeperks'}-claims.csv`;
     link.click();
     URL.revokeObjectURL(url);
-  }, [adminHeaders, claims, eventData.eventCode, report.rows, text]);
+  }, [adminHeaders, claims, eventData.eventCode, text]);
 
   const sendFulfillmentList = useCallback(async () => {
     if (!eventData.eventCode) return;
