@@ -1049,7 +1049,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
       radial-gradient(circle at 18% 12%, rgba(177,132,84,0.18), transparent 34%),
       linear-gradient(135deg, #050b18 0%, #071426 58%, #03141b 100%);
     color: white;
-    padding: 18px 30px 20px;
+    padding: 34px 38px 32px;
   }
 
   .brand-row {
@@ -1113,7 +1113,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
   }
 
   .content {
-    padding: 18px 30px 22px;
+    padding: 30px 38px 36px;
   }
 
   .cards {
@@ -1165,7 +1165,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
     text-align: left;
     background: #07111f;
     color: white;
-    padding: 8px 10px;
+    padding: 12px 10px;
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: .08em;
@@ -1173,7 +1173,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
   td {
     border-bottom: 1px solid #e8eef6;
-    padding: 7px 10px;
+    padding: 11px 10px;
     color: #172335;
     vertical-align: top;
   }
@@ -1282,13 +1282,13 @@ export default function Dashboard({ lang: appLang, setLang }) {
         <div style="
           display:flex;
           justify-content:center;
-          margin-bottom:10px;
+          margin-bottom:18px;
         ">
           <img
             src="https://codeperks.codenxt.global/codePerks-logo.png?v=2"
             alt="codePerks"
             style="
-              width: 135px;
+              width: 180px;
               max-width: 60%;
               height: auto;
               display: block;
@@ -1299,14 +1299,14 @@ export default function Dashboard({ lang: appLang, setLang }) {
         <div class="brand" style="
           font-size: 18px;
           letter-spacing: .14em;
-          margin-bottom: 10px;
+          margin-bottom: 22px;
         ">
           ${esc(text.reportPdfTitle || text.report)}
         </div>
 
         <h1 style="
           margin: 0 0 8px;
-          font-size: 32px;
+          font-size: 42px;
         ">
           ${esc(eventData.pageName || 'codePerks')}
         </h1>
@@ -1334,12 +1334,22 @@ export default function Dashboard({ lang: appLang, setLang }) {
     </div>
 
     <div class="content">
+      <div class="section-title">${esc(text.campaignSummary || "Campaign summary")}</div>
+      <table style="margin-bottom: 26px;">
+        <tbody>
+          <tr><td>${esc(text.company || "Company")}</td><td><strong>${esc(eventData.companyName || "")}</strong></td></tr>
+          <tr><td>${esc(text.teamLeaderLabel || "Team leader")}</td><td><strong>${esc(eventData.customerName || "")}</strong></td></tr>
+          <tr><td>${esc(text.teamLeaderEmailLabel || "Team leader email")}</td><td><strong>${esc(eventData.email || "")}</strong></td></tr>
+          <tr><td>${esc(text.eventCodeLabel || "Campaign code")}</td><td><strong>${esc(eventData.eventCode || "")}</strong></td></tr>
+        </tbody>
+      </table>
+
       <div style="border:1px solid #eadfc8;border-radius:16px;padding:16px 18px;margin-bottom:26px;background:#fffaf1;font-size:14px;line-height:1.7;font-weight:700;color:#2f1f13;">
         ${esc(summaryText)}
       </div>
 
       <div class="section-title">${esc(text.reportPdfTitle || text.report || "Key figures")}</div>
-      <table style="margin-bottom: 16px;">
+      <table style="margin-bottom: 26px;">
         <tbody>
           <tr><td>${esc(text.scans || "Scans")}</td><td><strong>${reportForPdf.totalScans || 0}</strong></td></tr>
           <tr><td>${esc(text.uniqueScans || "Unique scans")}</td><td><strong>${reportForPdf.uniqueScans || 0}</strong></td></tr>
@@ -1350,7 +1360,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
       </table>
 
       <div class="section-title">${esc(text.bonusDistribution24h || "Benefit distribution")}</div>
-      <table style="margin-bottom: 16px;">
+      <table style="margin-bottom: 26px;">
         <tbody>
           <tr><td>${esc(text.gold || "Gold")}</td><td><strong>${goldCount}</strong></td></tr>
           <tr><td>${esc(text.silver || "Silver")}</td><td><strong>${silverCount}</strong></td></tr>
