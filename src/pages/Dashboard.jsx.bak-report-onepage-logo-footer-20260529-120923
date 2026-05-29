@@ -25,7 +25,6 @@ const dashboardCopy = {
     title: 'KONTROLLSENTER',
     subtitle: 'Kontrollpanel for presentasjon, bonusinnhold og rapportering.',
     byline: 'codePerks by codeNXT',
-    reportFooter: 'En rapport fra codePerks/codeNXT',
     missingRelease: 'Ingen medlemsfordel funnet. Opprett medlemsfordelen i Checkout først.',
     refreshData: 'Oppdater fra Checkout',
     pageFallback: 'Verifisert fordel mangler',
@@ -111,7 +110,6 @@ const dashboardCopy = {
     title: 'CONTROL CENTER',
     subtitle: 'Control panel for presentation, bonus content, and reporting.',
     byline: 'codePerks by codeNXT',
-    reportFooter: 'A report from codePerks/codeNXT',
     missingRelease: 'No member benefit found. Create the member benefit in Checkout first.',
     refreshData: 'Refresh from Checkout',
     pageFallback: 'Verified Benefit missing',
@@ -193,7 +191,6 @@ const dashboardCopy = {
     title: 'KONTROLLZENTRUM',
     subtitle: 'Kontrollpanel fuer Praesentation, Beneficioinhalte und Reporting.',
     byline: 'codePerks by codeNXT',
-    reportFooter: 'Ein Bericht von codePerks/codeNXT',
     missingRelease: 'Kein Kundenvorteil gefunden. Erstellen Sie den Kundenvorteil zuerst im Checkout.',
     refreshData: 'Aus Checkout aktualisieren',
     pageFallback: 'Verifizierter Vorteil fehlt',
@@ -275,7 +272,6 @@ const dashboardCopy = {
     title: 'CENTRE DE CONTROLE',
     subtitle: 'Panneau de controle pour presentation, contenu bonus et reporting.',
     byline: 'codePerks by codeNXT',
-    reportFooter: 'Un rapport de codePerks/codeNXT',
     missingRelease: 'Aucun avantage client trouvé. Créez d’abord l’avantage client dans Checkout.',
     refreshData: 'Actualiser depuis Checkout',
     pageFallback: 'Avantage client manquant',
@@ -357,7 +353,6 @@ const dashboardCopy = {
     title: 'CENTRO DE CONTROL',
     subtitle: 'Panel de control para presentacion, contenido extra e informes.',
     byline: 'codePerks by codeNXT',
-    reportFooter: 'Un informe de codePerks/codeNXT',
     missingRelease: 'No se encontró ninguna campaña. Créala primero en Checkout.',
     refreshData: 'Actualizar desde Checkout',
     pageFallback: 'Beneficio faltante',
@@ -1034,7 +1029,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 <style>
   body {
     margin: 0;
-    padding: 12px;
+    padding: 34px;
     font-family: Arial, Helvetica, sans-serif;
     background: #eef3f8;
     color: #2f1f13;
@@ -1054,7 +1049,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
       radial-gradient(circle at 18% 12%, rgba(177,132,84,0.18), transparent 34%),
       linear-gradient(135deg, #050b18 0%, #071426 58%, #03141b 100%);
     color: white;
-    padding: 10px 26px 14px;
+    padding: 18px 30px 20px;
   }
 
   .brand-row {
@@ -1078,8 +1073,8 @@ export default function Dashboard({ lang: appLang, setLang }) {
   }
 
   .logo-box img {
-    max-width: 140px;
-    max-height: 85px;
+    max-width: 82px;
+    max-height: 82px;
     object-fit: contain;
   }
 
@@ -1131,7 +1126,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
   .card {
     border: 1px solid rgba(184,141,67,.35);
     border-radius: 18px;
-    padding: 10px;
+    padding: 18px;
     background: linear-gradient(135deg, #f3e4bf 0%, #d8bd78 55%, #b88d43 100%);
   }
 
@@ -1145,13 +1140,13 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
   .value {
     margin-top: 8px;
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 950;
     color: #2f1f13;
   }
 
   .section-title {
-    margin: 6px 0 8px;
+    margin: 8px 0 12px;
     font-size: 17px;
     font-weight: 950;
     color: #2f1f13;
@@ -1188,14 +1183,14 @@ export default function Dashboard({ lang: appLang, setLang }) {
   }
 
   .footer {
-    margin-top: 12px;
+    margin-top: 26px;
     display: flex;
     justify-content: space-between;
     gap: 20px;
     color: #7b8797;
     font-size: 9px;
     border-top: 1px solid #e8eef6;
-    padding-top: 8px;
+    padding-top: 16px;
   }
 
   @media print {
@@ -1261,11 +1256,11 @@ export default function Dashboard({ lang: appLang, setLang }) {
               <div style="
                 display:flex;
                 justify-content:center;
-                margin-bottom: 8px;
+                margin-bottom: 18px;
               ">
                 <div class="logo-box" style="
-                  width: 150px;
-                  height: 95px;
+                  width: 120px;
+                  height: 120px;
                   margin: 0 auto;
                 ">
                   <img src="${esc(logoUrl)}" alt="" />
@@ -1302,7 +1297,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
         </div>
 
         <div class="brand" style="
-          font-size: 14px;
+          font-size: 18px;
           letter-spacing: .14em;
           margin-bottom: 10px;
         ">
@@ -1311,14 +1306,14 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
         <h1 style="
           margin: 0 0 8px;
-          font-size: 24px;
+          font-size: 32px;
         ">
           ${esc(eventData.pageName || 'codePerks')}
         </h1>
 
         <p class="release" style="
           margin: 0 0 8px;
-          font-size: 14px;
+          font-size: 18px;
         ">
           ${esc(eventData.releaseTitle || '')}
         </p>
@@ -1327,7 +1322,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           margin: 0;
           color: rgba(255,255,255,.72);
           font-size: 14px;
-          line-height: 1.45;
+          line-height: 1.8;
           font-weight: 600;
         ">
           ${eventData.releaseDate ? `${esc(text.sentDate || 'Sendt dato')}: ${esc(String(eventData.releaseDate).slice(0, 10))}<br/>` : ''}
@@ -1375,7 +1370,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
       <div class="footer">
         <div>${esc(text.reportPdfTitle || text.report || "Report")}: ${esc(generatedAt)}</div>
-        <div>${esc(text.reportFooter || 'A report from codePerks/codeNXT')}</div>
+        <div>codePerks by codeNXT</div>
       </div>
     </div>
   </div>
@@ -1789,7 +1784,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
         }
         .panel-title {
           margin: 0 0 8px;
-          font-size: 14px;
+          font-size: 18px;
           line-height: 1.15;
         }
         .presentation-panel {
@@ -1865,7 +1860,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           gap: 8px;
           margin-top: 12px;
         }\n        .bonus-editor > .button-row {
-          margin-bottom: 8px;
+          margin-bottom: 18px;
         }
         .primary-button,
         .gcompany-button {
@@ -2984,7 +2979,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
 <style>{`
           .verification-panel {
             margin-top: 30px;
-            padding: 10px;
+            padding: 18px;
             border-radius: 18px;
             border: 1px solid rgba(214, 162, 72, .55);
             background: rgba(0,0,0,.22);
@@ -2993,7 +2988,7 @@ export default function Dashboard({ lang: appLang, setLang }) {
           .verification-panel .verification-copy h3 {
             margin: 6px 0 8px;
             color: #f7d88a;
-            font-size: 14px;
+            font-size: 18px;
           }
 
           .verification-panel .verification-copy p {
