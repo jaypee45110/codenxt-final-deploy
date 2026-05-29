@@ -1183,17 +1183,6 @@ export default function Dashboard({ lang: appLang, setLang }) {
     vertical-align: top;
   }
 
-  td:first-child {
-    width: 72%;
-  }
-
-  td:last-child {
-    width: 28%;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
   tr:nth-child(even) td {
     background: #f8fbfe;
   }
