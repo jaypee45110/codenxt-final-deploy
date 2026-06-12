@@ -1131,6 +1131,16 @@ export default function Dashboard({ lang: appLang, setLang }) {
     [text.insideJoins, report.joins.toLocaleString()],
     [text.conversionRate, conversionRate],
   ];
+  const partnerReward = eventData.partnerReward || {};
+  const partnerRewardActive = partnerReward.active === true || partnerReward.active === 'true';
+  const partnerRewardCards = [
+    ['Status', partnerRewardActive ? 'Active' : 'Inactive'],
+    ['Partner name', partnerReward.partnerName],
+    ['Reward title', partnerReward.title],
+    ['GoldXtra places', partnerReward.quantity],
+    ['Redemption location', partnerReward.redemptionLocation],
+    ['Deadline', partnerReward.redemptionDeadline],
+  ];
 
   return (
     <>
@@ -2113,11 +2123,24 @@ export default function Dashboard({ lang: appLang, setLang }) {
             box-sizing: border-box !important;
           }
 
-          .left-stack > .compact-report,
-          .bonus-panel {
-            height: 100% !important;
-          }
-      `}</style>
+	          .left-stack > .compact-report,
+	          .bonus-panel {
+	            height: 100% !important;
+	          }
+
+	          .left-stack > .compact-report {
+	            height: auto !important;
+	          }
+
+	          .partner-reward-panel {
+	            flex: 0 0 auto !important;
+	            margin-top: 14px;
+	          }
+
+	          .partner-reward-grid {
+	            grid-template-columns: repeat(2, minmax(0, 1fr));
+	          }
+	      `}</style>
 
       <main className="dashboard-page">
         <div className="dashboard-shell">
@@ -2208,6 +2231,17 @@ export default function Dashboard({ lang: appLang, setLang }) {
 
               <p className="csv-note">{text.reportLifecycle}</p>
 
+            </section>
+            <section className="panel partner-reward-panel">
+              <h2 className="panel-title">Partner Reward</h2>
+              <div className="grid partner-reward-grid">
+                {partnerRewardCards.map(([label, value]) => (
+                  <div className="mini-card" key={label}>
+                    <div className="label">{label}</div>
+                    <div className="value">{value || text.unavailable}</div>
+                  </div>
+                ))}
+              </div>
             </section>
             </div>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { checkoutPartnerRewardCopy, getLang } from './i18n';
 
 const API_BASE = "https://codenxt-backend-production.up.railway.app";
 const compressImageDataUrl = (dataUrl, maxWidth = 900, maxHeight = 900, quality = 0.72) =>
@@ -60,7 +61,7 @@ const compressImageDataUrl = (dataUrl, maxWidth = 900, maxHeight = 900, quality 
   const [triedSubmit, setTriedSubmit] = useState(false);
   const [logoPreview, setLogoPreview] = useState('');
   const [logoTooLarge, setLogoTooLarge] = useState(false);
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(() => getLang());
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
 
@@ -74,6 +75,13 @@ const compressImageDataUrl = (dataUrl, maxWidth = 900, maxHeight = 900, quality 
     audienceSize: '',
     comment: '',
     logoFileName: '',
+    partnerRewardActive: false,
+    partnerRewardPartnerName: '',
+    partnerRewardTitle: '',
+    partnerRewardQuantity: '',
+    partnerRewardLocation: '',
+    partnerRewardDeadline: '',
+    partnerRewardInstructions: '',
   });
 
   const eventTypes = [
@@ -101,27 +109,28 @@ const copy = {
     subtitle:
       'Fullfør bestillingsoppsettet, velg arrangementstype, se gjennom vilkår og gå videre til dashboardet.',
   },
-  sv: {
-    eyebrow: 'Checkout',
-    title: 'Sätt upp ditt Control Center',
-    subtitle:
-      'Slutför orderupplägget, välj arrangemangstyp, granska villkor och gå vidare till din dashboard.',
-  },
   de: {
     eyebrow: 'Checkout',
     title: 'Richte dein Control Center ein',
     subtitle:
       'Schließe das Bestell-Setup ab, wähle den Eventtyp, prüfe die Bedingungen und gehe weiter zu deinem Dashboard.',
   },
-  th: {
+  fr: {
     eyebrow: 'Checkout',
-    title: 'Checkout',
+    title: 'Configurer votre Control Center',
     subtitle:
-      'กรอกข้อมูลการสั่งซื้อ เลือกประเภทงาน ตรวจสอบเงื่อนไข และไปต่อยังแดชบอร์ดของคุณ',
+      'Finalisez la commande, choisissez le type d arrangement, verifiez les conditions et continuez vers votre dashboard.',
+  },
+  es: {
+    eyebrow: 'Checkout',
+    title: 'Configura tu Control Center',
+    subtitle:
+      'Completa la configuracion, elige el tipo de arreglo, revisa los terminos y continua al dashboard.',
   },
 };
 
 const text = copy[lang];
+const partnerRewardText = checkoutPartnerRewardCopy[lang] || checkoutPartnerRewardCopy.en;
 
   const toggleType = (type) => {
     if (selectedTypes.includes(type)) {
@@ -196,6 +205,19 @@ const handleContinue = async () => {
 
   let eventCode = generateEventCode();
 
+  const partnerReward = {
+    active: Boolean(formData.partnerRewardActive),
+    rewardType: 'partner_reward',
+    tier: 'gold',
+    displayTier: 'GoldXtra',
+    partnerName: formData.partnerRewardPartnerName.trim(),
+    title: formData.partnerRewardTitle.trim(),
+    quantity: Math.max(0, Number(formData.partnerRewardQuantity || 0)),
+    redemptionLocation: formData.partnerRewardLocation.trim(),
+    redemptionDeadline: formData.partnerRewardDeadline.trim(),
+    redemptionInstructions: formData.partnerRewardInstructions.trim(),
+  };
+
   const payload = {
     customerName: formData.customerName.trim(),
     email: formData.email.trim(),
@@ -214,6 +236,7 @@ const handleContinue = async () => {
     termsAccepted,
     eventCode,
     shortLink: `codetone.codenxt.global/join/${eventCode}`,
+    partnerReward,
     createdAt: new Date().toISOString(),
   };
 
@@ -224,16 +247,18 @@ const handleContinue = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
-body: JSON.stringify({
-  code: eventCode,
-  name: payload.artistName,
-  artistLogo: payload.artistLogo || '',
+	body: JSON.stringify({
+	  vertical: 'codepod',
+	  code: eventCode,
+	  name: payload.artistName,
+	  artistLogo: payload.artistLogo || '',
   startAt: new Date().toISOString(),
   unlockAt: new Date(Date.now() + 60 * 1000).toISOString(),
-  endAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-  maxClaims: 5000,
-  status: 'active',
-}),
+	  endAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+	  maxClaims: 5000,
+	  status: 'active',
+	  partnerReward,
+	}),
     });
 
 const rawEventResponse = await eventRes.text();
@@ -482,6 +507,54 @@ navigate(`/dashboard?event=${finalEventCode}&t=${Date.now()}`, {
                   )}
                 </div>
               </div>
+            </div>
+
+            <div style={styles.card}>
+              <div style={styles.cardTitle}>{partnerRewardText.title}</div>
+
+              <label style={styles.checkboxCard}>
+                <input
+                  type="checkbox"
+                  checked={formData.partnerRewardActive}
+                  onChange={(event) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      partnerRewardActive: event.target.checked,
+                    }))
+                  }
+                  style={styles.checkbox}
+                />
+                <span>{partnerRewardText.enable}</span>
+              </label>
+
+              {formData.partnerRewardActive ? (
+                <div style={styles.twoCol}>
+                  <div style={styles.fieldBlock}>
+                    <label style={styles.label}>{partnerRewardText.partnerName}</label>
+                    <input name="partnerRewardPartnerName" value={formData.partnerRewardPartnerName} onChange={handleChange} placeholder={partnerRewardText.placeholders.partnerName} style={styles.input} />
+                  </div>
+                  <div style={styles.fieldBlock}>
+                    <label style={styles.label}>{partnerRewardText.rewardTitle}</label>
+                    <input name="partnerRewardTitle" value={formData.partnerRewardTitle} onChange={handleChange} placeholder={partnerRewardText.placeholders.rewardTitle} style={styles.input} />
+                  </div>
+                  <div style={styles.fieldBlock}>
+                    <label style={styles.label}>{partnerRewardText.quantity}</label>
+                    <input type="number" min="0" step="1" name="partnerRewardQuantity" value={formData.partnerRewardQuantity} onChange={handleChange} placeholder={partnerRewardText.placeholders.quantity} style={styles.input} />
+                  </div>
+                  <div style={styles.fieldBlock}>
+                    <label style={styles.label}>{partnerRewardText.redemptionLocation}</label>
+                    <input name="partnerRewardLocation" value={formData.partnerRewardLocation} onChange={handleChange} placeholder={partnerRewardText.placeholders.redemptionLocation} style={styles.input} />
+                  </div>
+                  <div style={styles.fieldBlock}>
+                    <label style={styles.label}>{partnerRewardText.redemptionDeadline}</label>
+                    <input type="date" name="partnerRewardDeadline" value={formData.partnerRewardDeadline} onChange={handleChange} style={styles.input} />
+                  </div>
+                  <div style={{ ...styles.fieldBlock, gridColumn: '1 / -1' }}>
+                    <label style={styles.label}>{partnerRewardText.redemptionInstructions}</label>
+                    <textarea name="partnerRewardInstructions" value={formData.partnerRewardInstructions} onChange={handleChange} placeholder={partnerRewardText.placeholders.redemptionInstructions} style={styles.textarea} />
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
 

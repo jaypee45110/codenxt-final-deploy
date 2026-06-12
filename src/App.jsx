@@ -2,6 +2,8 @@ import React, { Suspense, lazy, useMemo, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import PrintPoster from './pages/PrintPoster';
 import ScreenPlayer from './pages/ScreenPlayer';
+import RedemptionPage from './RedemptionPage';
+import { getLang } from './i18n';
 
 const CheckoutPage = lazy(() => import('./CheckoutPage'));
 const DashboardPage = lazy(() => import('./pages/Dashboard'));
@@ -122,7 +124,7 @@ function HomePage({ lang, setLang }) {
     };
   }, []);
 
-  const text = copy[lang];
+  const text = copy[lang] || copy.en;
 
 
   return (
@@ -163,7 +165,7 @@ function HomePage({ lang, setLang }) {
 }
 
 function App() {
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(() => getLang());
 
   return (
     <Suspense
@@ -178,6 +180,7 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage lang={lang} setLang={setLang} />} />
         <Route path="/dashboard" element={<DashboardPage lang={lang} setLang={setLang} />} />
         <Route path="/join/:eventCode" element={<JoinPage lang={lang} setLang={setLang} />} />
+        <Route path="/redemption/:token" element={<RedemptionPage />} />
         <Route path="/print/:eventCode" element={<PrintPoster />} />
         <Route path="/screen/:eventCode" element={<ScreenPlayer />} />
       </Routes>

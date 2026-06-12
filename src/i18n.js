@@ -1,3 +1,19 @@
+export const DEFAULT_LANG = 'no';
+
+export const LANGUAGES = [
+  { code: 'no', flag: '🇳🇴', label: 'Norsk' },
+  { code: 'en', flag: '🇬🇧', label: 'English' },
+  { code: 'de', flag: '🇩🇪', label: 'Deutsch' },
+  { code: 'fr', flag: '🇫🇷', label: 'Français' },
+  { code: 'es', flag: '🇪🇸', label: 'Español' },
+];
+
+const normalizeLang = (lang) => {
+  const code = String(lang || '').trim().toLowerCase();
+  if (code === 'sv' || code === 'th') return 'en';
+  return LANGUAGES.some((language) => language.code === code) ? code : DEFAULT_LANG;
+};
+
 export const copy = {
   en: {
     start: 'Start',
@@ -147,168 +163,109 @@ export const copy = {
     contactText: 'codeTone er laget for tidsstyrt tilgang, kontrollerte drops og sterkere publikumsrespons etter live-øyeblikket.',
     contactBtn: 'Kontakt',
     footer: 'Ingen app. Tidsstyrt tilgang. Kontrollerte digitale souvenirs.'
-  },
-
-  sv: {
-    start: 'Start',
-    createEvent: 'Skapa event',
-    next: 'Nästa',
-    upload: 'Ladda upp reward',
-    openNow: 'Öppna nu',
-    drop: 'Drop redo',
-    preparing: 'Förbereder drop…',
-    join: 'Gå med i InnerCircle',
-    joinNow: 'Gå med',
-    nextDrop: 'Vill du ha nästa drop direkt?',
-    success: 'Du är med',
-    phone: 'Mobilnummer',
-
-    navHow: 'Så fungerar det',
-    navWhy: 'Varför det betyder något',
-    navUse: 'Användning',
-    navContact: 'Kontakt',
-
-    topTag: 'LIVE-ÅTKOMST. INGEN APP.',
-    heroTitle: 'Gör sista tonen till en digital souvenir.',
-    heroText: 'Tidsstyrd QR-åtkomst för konserter, festivaler, klubbar och liveevent. Publiken skannar. Åtkomst öppnar. Ögonblicket fortsätter.',
-    ctaPrimary: 'Se flödet',
-    ctaSecondary: 'Beställ upplägg',
-
-    stat1Title: 'Ingen app',
-    stat1Text: 'Snabb mobil ingång',
-    stat2Title: 'Tidsstyrd åtkomst',
-    stat2Text: 'Korta release-fönster',
-    stat3Title: 'Publikinsikt',
-    stat3Text: 'Se skanningar och respons',
-
-    panelTitle: 'Live drop-flöde',
-    panelHeadline: 'Release vid sista tonen',
-    panelBox1: 'Publiktopp',
-    panelBox2: 'Aktivt fönster',
-    panelBox3: 'Aktionsgrad',
-
-    howTitle: 'Så fungerar det',
-    howText: 'Stor skärm. Snabb skanning. Tajt fönster. En release som håller sig kopplad till rummet.',
-    step1: 'QR på skärm',
-    step1Text: 'En kod visas i exakt det ögonblick du väljer.',
-    step2: 'Direkt skanning',
-    step2Text: 'Publiken går in via mobilwebb. Ingen appbutik.',
-    step3: 'Tidsstyrd release',
-    step3Text: 'Åtkomst öppnar i minuter, timmar eller ett kort fönster efter showen.',
-    step4: 'Digital souvenir',
-    step4Text: 'Ljud, klipp, bonusspår, meddelande eller annat exklusivt drop.',
-
-    whyTitle: 'Varför det betyder något',
-    whyText: 'Det här är inte bara ännu en QR-kampanj. Det kopplar fysisk närvaro till en kontrollerad digital release.',
-    why1: 'Rätt ögonblick',
-    why1Text: 'Poängen är timing, inte trafik.',
-    why2: 'Låg friktion',
-    why2Text: 'Snabb ingång betyder mycket när tusentals rör sig samtidigt.',
-    why3: 'Mer kontroll',
-    why3Text: 'Korta fönster håller droppet nära eventet.',
-    why4: 'Bättre signal',
-    why4Text: 'Du ser vem som agerade, när, och hur droppet fungerade.',
-
-    useTitle: 'Tre rena användningsfall',
-    useText: 'Samma motor. Olika release-logik.',
-    use1: 'Gratis preview',
-    use1Text: 'Teaser först. Fullversion sedan.',
-    use2: 'Venue först',
-    use2Text: 'Gratis inne. Annan väg senare.',
-    use3: 'Fan capture',
-    use3Text: 'Håll ingången enkel. Bygg direkt kanal efteråt.',
-
-    contactTitle: 'Byggt för artister, managers, festivaler, klubbar och venues.',
-    contactText: 'codeTone är gjort för tidsstyrd åtkomst, kontrollerade drops och starkare publikrespons efter liveögonblicket.',
-    contactBtn: 'Kontakt',
-    footer: 'Ingen app. Tidsstyrd åtkomst. Kontrollerade digitala souvenirs.'
-  },
-
-  th: {
-    start: 'เริ่ม',
-    createEvent: 'สร้างอีเวนต์',
-    next: 'ถัดไป',
-    upload: 'อัปโหลด',
-    openNow: 'เปิดเลย',
-    drop: 'เปิดแล้ว',
-    preparing: 'กำลังเตรียม…',
-    join: 'เข้าร่วม InnerCircle',
-    joinNow: 'เข้าร่วม',
-    nextDrop: 'รับครั้งถัดไปโดยตรง?',
-    success: 'คุณเข้าร่วมแล้ว',
-    phone: 'เบอร์มือถือ',
-
-    navHow: 'วิธีทำงาน',
-    navWhy: 'ทำไมมันสำคัญ',
-    navUse: 'รูปแบบใช้',
-    navContact: 'ติดต่อ',
-
-    topTag: 'เข้าถึงสด. ไม่ต้องใช้แอป.',
-    heroTitle: 'เปลี่ยนโน้ตสุดท้ายให้เป็นดิจิทัลซูเวเนียร์',
-    heroText: 'QR access แบบตั้งเวลา สำหรับคอนเสิร์ต เทศกาล คลับ และงานไลฟ์ ผู้ชมสแกน การเข้าถึงเปิด โมเมนต์ยังเดินต่อ',
-    ctaPrimary: 'ดู flow',
-    ctaSecondary: 'สั่งตั้งค่า',
-
-    stat1Title: 'ไม่ต้องใช้แอป',
-    stat1Text: 'เข้าได้เร็วผ่านมือถือ',
-    stat2Title: 'เข้าถึงแบบตั้งเวลา',
-    stat2Text: 'ช่วงเวลาเปิดสั้น',
-    stat3Title: 'อินไซต์ผู้ชม',
-    stat3Text: 'ดูการสแกนและการตอบสนอง',
-
-    panelTitle: 'live drop flow',
-    panelHeadline: 'ปล่อยตอนโน้ตสุดท้าย',
-    panelBox1: 'พีคของผู้ชม',
-    panelBox2: 'ช่วงเวลาเปิด',
-    panelBox3: 'อัตราการตอบสนอง',
-
-    howTitle: 'วิธีทำงาน',
-    howText: 'จอใหญ่. สแกนเร็ว. ช่วงเวลาสั้น. การปล่อยที่ยังเชื่อมกับบรรยากาศในงาน.',
-    step1: 'QR บนจอ',
-    step1Text: 'โค้ดขึ้นในจังหวะที่คุณเลือกพอดี',
-    step2: 'สแกนทันที',
-    step2Text: 'ผู้ชมเข้าได้ผ่าน mobile web ไม่ต้องผ่าน app store',
-    step3: 'ปล่อยแบบตั้งเวลา',
-    step3Text: 'เปิดให้เข้าได้เป็นนาที ชั่วโมง หรือช่วงสั้นหลังจบโชว์',
-    step4: 'ดิจิทัลซูเวเนียร์',
-    step4Text: 'เสียง คลิป โบนัสแทร็ก ข้อความ หรือดรอปพิเศษอื่น ๆ',
-
-    whyTitle: 'ทำไมมันสำคัญ',
-    whyText: 'นี่ไม่ใช่แค่ QR campaign อีกอัน แต่มันเชื่อมการอยู่ในสถานที่จริงกับการปล่อยดิจิทัลแบบควบคุมได้',
-    why1: 'จังหวะที่ใช่',
-    why1Text: 'หัวใจคือ timing ไม่ใช่ traffic',
-    why2: 'เสียดทานต่ำ',
-    why2Text: 'การเข้าไวสำคัญมากเมื่อคนจำนวนมากขยับพร้อมกัน',
-    why3: 'คุมได้มากกว่า',
-    why3Text: 'ช่วงเวลาสั้นช่วยให้ drop ยังอยู่ใกล้งาน',
-    why4: 'สัญญาณชัดกว่า',
-    why4Text: 'คุณเห็นว่าใครตอบสนอง เมื่อไร และ drop ทำงานแค่ไหน',
-
-    useTitle: '3 use case ที่ชัด',
-    useText: 'เครื่องเดิม. logic ต่างกัน.',
-    use1: 'พรีวิวฟรี',
-    use1Text: 'ให้ลองก่อน แล้วค่อยไปต่อเต็มเวอร์ชัน',
-    use2: 'ใน venue ก่อน',
-    use2Text: 'ข้างในฟรี ข้างนอกเป็นอีกเส้นทางภายหลัง',
-    use3: 'เก็บแฟนตรง',
-    use3Text: 'เข้าให้ง่ายก่อน แล้วค่อยสร้าง direct channel',
-
-    contactTitle: 'สร้างมาสำหรับศิลปิน ผู้จัดการ เทศกาล คลับ และ venue',
-    contactText: 'codeTone เหมาะกับการเข้าถึงแบบตั้งเวลา ดรอปที่ควบคุมได้ และการตอบสนองจากแฟนที่แรงขึ้นหลังโมเมนต์สด',
-    contactBtn: 'ติดต่อ',
-    footer: 'ไม่ต้องใช้แอป. เข้าถึงแบบตั้งเวลา. ดิจิทัลซูเวเนียร์แบบควบคุมได้.'
   }
+};
+
+export const checkoutPartnerRewardCopy = {
+  no: {
+    title: 'Partner Reward',
+    enable: 'Aktiver Partner Reward',
+    partnerName: 'Partnernavn',
+    rewardTitle: 'Reward-tittel',
+    quantity: 'GoldXtra-plasser',
+    redemptionLocation: 'Innløsningssted',
+    redemptionDeadline: 'Innløsningsfrist',
+    redemptionInstructions: 'Innløsningsinstruksjoner',
+    placeholders: {
+      partnerName: 'Partner eller sponsor',
+      rewardTitle: 'Signert bok, kinobillett, kaffe...',
+      quantity: '20',
+      redemptionLocation: 'Hvor lytteren viser QR-koden',
+      redemptionInstructions: 'Vis GoldXtra QR-koden hos partneren.',
+    },
+  },
+  en: {
+    title: 'Partner Reward',
+    enable: 'Enable Partner Reward',
+    partnerName: 'Partner name',
+    rewardTitle: 'Reward title',
+    quantity: 'GoldXtra places',
+    redemptionLocation: 'Redemption location',
+    redemptionDeadline: 'Redemption deadline',
+    redemptionInstructions: 'Redemption instructions',
+    placeholders: {
+      partnerName: 'Partner or sponsor',
+      rewardTitle: 'Signed book, cinema ticket, coffee...',
+      quantity: '20',
+      redemptionLocation: 'Where the listener shows the QR code',
+      redemptionInstructions: 'Show the GoldXtra QR code to the partner.',
+    },
+  },
+  de: {
+    title: 'Partner Reward',
+    enable: 'Partner Reward aktivieren',
+    partnerName: 'Partnername',
+    rewardTitle: 'Reward-Titel',
+    quantity: 'GoldXtra-Plaetze',
+    redemptionLocation: 'Einloesungsort',
+    redemptionDeadline: 'Einloesungsfrist',
+    redemptionInstructions: 'Einloesungsanweisungen',
+    placeholders: {
+      partnerName: 'Partner oder Sponsor',
+      rewardTitle: 'Signiertes Buch, Kinoticket, Kaffee...',
+      quantity: '20',
+      redemptionLocation: 'Wo der Hoerer den QR-Code zeigt',
+      redemptionInstructions: 'GoldXtra QR-Code beim Partner zeigen.',
+    },
+  },
+  fr: {
+    title: 'Partner Reward',
+    enable: 'Activer Partner Reward',
+    partnerName: 'Nom du partenaire',
+    rewardTitle: 'Titre du reward',
+    quantity: 'Places GoldXtra',
+    redemptionLocation: 'Lieu de validation',
+    redemptionDeadline: 'Date limite de validation',
+    redemptionInstructions: 'Instructions de validation',
+    placeholders: {
+      partnerName: 'Partenaire ou sponsor',
+      rewardTitle: 'Livre signe, billet de cinema, cafe...',
+      quantity: '20',
+      redemptionLocation: 'Ou l’auditeur montre le QR code',
+      redemptionInstructions: 'Presenter le QR code GoldXtra au partenaire.',
+    },
+  },
+  es: {
+    title: 'Partner Reward',
+    enable: 'Activar Partner Reward',
+    partnerName: 'Nombre del partner',
+    rewardTitle: 'Titulo del reward',
+    quantity: 'Plazas GoldXtra',
+    redemptionLocation: 'Lugar de validacion',
+    redemptionDeadline: 'Fecha limite de validacion',
+    redemptionInstructions: 'Instrucciones de validacion',
+    placeholders: {
+      partnerName: 'Partner o patrocinador',
+      rewardTitle: 'Libro firmado, entrada de cine, cafe...',
+      quantity: '20',
+      redemptionLocation: 'Donde el oyente muestra el QR',
+      redemptionInstructions: 'Mostrar el codigo QR GoldXtra al partner.',
+    },
+  },
 };
 
 export const getLang = () => {
   const params = new URLSearchParams(window.location.search);
-  return params.get('lang') || 'en';
+  return normalizeLang(params.get('lang') || localStorage.getItem('codepod_lang'));
 };
 
 export const setLang = (lang) => {
+  const next = normalizeLang(lang);
   const url = new URL(window.location);
-  url.searchParams.set('lang', lang);
+  url.searchParams.set('lang', next);
   window.history.replaceState({}, '', url);
+  localStorage.setItem('codepod_lang', next);
+  return next;
 };
 
 export const t = (lang) => copy[lang] || copy.en;
